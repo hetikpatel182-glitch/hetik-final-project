@@ -1,0 +1,86 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+   
+</head>
+
+<body>
+
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">My Wishlist</h1>
+        <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Pages</a></li>
+            <li class="breadcrumb-item active text-white">My Wishlist</li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
+
+
+
+    <!-- Shop Page Start -->
+    <div class="container-fluid shop py-5">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-lg-9 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="tab-content">
+                        <div id="tab-5" class="tab-pane fade show p-0 active">
+                            <div class="row g-4 product">
+                                {% if wishlists %}
+                                {% for i in wishlists %}
+                                <div class="col-lg-4">
+                                    <div class="product-item rounded wow fadeInUp" data-wow-delay="0.1s">
+                                        <div class="product-item-inner border rounded">
+                                            <div class="product-item-inner-item">
+                                                <img src="{{i.product.product_picture.url}}" style="width: 300px;height: 250px;" class="img-fluid w-100 rounded-top" alt="">
+                                                
+                                            </div>
+                                            <div class="text-center rounded-bottom p-4">
+                                                <a href="#" class="d-block mb-2">{{i.product.product_category}}</a>
+                                                <a href="#" class="d-block h4">{{i.product.product_name}}</a>
+                                               
+                                                <span class="text-primary fs-5">{{i.product.product_price}}</span>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="product-item-add border border-top-0 rounded-bottom  text-center p-4 pt-0">
+                                            <a href="{% url 'product-details' pk=i.product.pk %}"
+                                                class="btn btn-primary border-secondary rounded-pill py-2 px-4 mb-4"><i
+                                                    class="bi bi-info-circle"> </i>Details</a>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                
+                                                <div class="d-flex">
+                                                    
+                                                    <a href="#"
+                                                        class="text-primary d-flex align-items-center justify-content-center me-0"><span
+                                                            class="rounded-circle btn-sm-square border"><i
+                                                                class="fas fa-heart"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                    <h1>No Product In Wishlist</h1>
+                                {% endif %}
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Shop Page End -->
+</body>
+</html>
+{% endblock %}

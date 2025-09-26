@@ -1,0 +1,76 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <script src="https://js.stripe.com/v3/"></script>
+</head>
+
+<body>
+
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">Order Page</h1>
+        <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Pages</a></li>
+            <li class="breadcrumb-item active text-white">Order Page</li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
+
+    <!-- Cart Page Start -->
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Total</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in carts %}
+                        <tr>
+                            <th scope="row">
+                                <p class="mb-0 py-4">{{i.product.product_name}}</p>
+                            </th>
+                            
+                            <td>
+                                <p class="mb-0 py-4">Rs. {{i.product_price}}</p>
+                            </td>
+                            <td>
+                                <div class="input-group quantity py-4" style="width: 100px;">
+                                    <form name="change-qty" method="post" action="{% url 'change-qty' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="cid" value="{{i.pk}}">
+                                        <input type="number" min="1" max="10" name="product_qty" value="{{i.product_qty}}" readonly>
+                                    </form>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <p class="mb-0 py-4">Rs. {{i.total_price}}</p>
+                            </td>
+                           
+                        </tr>
+                        {% endfor %}
+                      
+                    </tbody>
+                </table>
+            </div>
+           
+        </div>
+    </div>
+    <!-- Cart Page End -->
+    
+</body>
+
+</html>
+{% endblock %}

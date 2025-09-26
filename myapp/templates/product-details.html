@@ -1,0 +1,79 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+</head>
+
+<body>
+
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">Single Product</h1>
+        <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Pages</a></li>
+            <li class="breadcrumb-item active text-white">Single Product</li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
+
+
+    <!-- Single Products Start -->
+    <div class="container-fluid shop py-5">
+        <div class="container py-5">
+            <div class="row g-4">
+                
+                <div class="col-lg-7 col-xl-9 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="row g-4 single-product">
+                        <div class="col-xl-6">
+                            <div class="single-carousel owl-carousel">
+                                <div class="single-item"
+                                    data-dot="<img class='img-fluid' src='{{product.product_picture.url}}' alt=''>">
+                                    <div class="single-inner bg-light rounded">
+                                        <img src="{{product.product_picture.url}}" class="img-fluid rounded" alt="Image">
+                                    </div>
+                                </div>
+                               
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <h4 class="fw-bold mb-3">{{product.product_name}}</h4>
+                            <p class="mb-3">Category: {{product.product_category}}</p>
+                            
+                            <div class="mb-3">
+                                {% if request.session.email %}
+                                {% if cart_flag == False %}
+                                    <a href="{% url 'add-to-cart' pk=product.pk %}"><div class="btn btn-primary d-inline-block rounded text-white py-1 px-4 me-2"><i
+                                        class="bi bi-cart-plus"></i> Add To Cart </div></a>
+                                {% else %}
+                                    <a href="{% url 'remove-from-cart' pk=product.pk %}"><div class="btn btn-primary d-inline-block rounded text-white py-1 px-4 me-2"><i
+                                        class="bi bi-cart-dash"></i> Remove From Cart </div></a>
+                                {% endif %}
+                                        {% if wishlist_flag == False %}
+                                            <a href="{% url 'add-to-wishlist' pk=product.pk %}"><div class="btn btn-primary d-inline-block rounded text-white py-1 px-4 me-2"><i
+                                            class="bi bi-heart-fill"></i> Add To Wishlist </div></a>
+                                        {% else %}
+                                            <a href="{% url 'remove-from-wishlist' pk=product.pk %}"><div class="btn btn-primary d-inline-block rounded text-white py-1 px-4 me-2"><i
+                                            class="bi bi-heartbreak"></i> Remove From Wishlist </div></a>
+                                        {% endif %}
+                                {% else %}
+                                <a href="{% url 'login' %}"><div class="btn btn-primary d-inline-block rounded text-white py-1 px-4 me-2"><i
+                                        class="bi bi-box-arrow-in-right"></i> Login </div></a>
+                                {% endif %}
+                            </div>
+                            <p class="mb-4">{{product.product_desc}}</p>    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Single Products End -->
+</body>
+</html>
+{% endblock %}

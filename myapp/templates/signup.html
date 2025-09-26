@@ -1,0 +1,114 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+</head>
+
+<body>
+
+   
+
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">Sign Up</h1>
+        <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Account</a></li>
+            <li class="breadcrumb-item active text-white">Sign Up</li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
+
+    <!-- Contucts Start -->
+    <div class="container-fluid contact py-5">
+        <div class="container py-5">
+            <div class="p-5 bg-light rounded">
+                <div class="row g-4">
+                   
+                    <div class="col-lg-12">
+                       {% if msg %}
+                           <b style="color: blue;">{{msg}}</b>
+                        {% endif %}
+                        <form method="post" action="{% url 'signup' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row g-4 wow fadeInUp" data-wow-delay="0.1s">
+                                <div class="col-lg-12 col-xl-12">
+                                    <div class="form-floating">
+                                        <select name="usertype" class="form-control" id="name">
+                                            <option>---Select User Type---</option>
+                                            <option value="buyer">Buyer</option>
+                                            <option value="seller">Seller</option>
+                                        </select>
+                                       
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-xl-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="name" name="fname" placeholder="Your First Name">
+                                        <label for="name">Your First Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-xl-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="name" name="lname" placeholder="Your Last Name">
+                                        <label for="name">Your Last Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-xl-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="Your Email">
+                                        <label for="email">Your Email</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-xl-6">
+                                    <div class="form-floating">
+                                        <input type="phone" class="form-control" id="phone" name="mobile" placeholder="Mobile">
+                                        <label for="phone">Your Mobile</label>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" name="address" placeholder="Address" id="message" style="height: 160px"></textarea>
+                                        <label for="message">Address</label>
+                                    </div>
+                                </div>
+                                 <div class="col-lg-12 col-xl-6">
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control" id="phone" name="password" placeholder="Password">
+                                        <label for="phone">Your Password</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-xl-6">
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control" id="phone" name="cpassword" placeholder="Confirm Password">
+                                        <label for="phone">Your Confrim Password</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-xl-6">
+                                    <div class="form-floating">
+                                        <input type="file" class="form-control" id="phone" name="profile_picture">
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button class="btn btn-primary w-100 py-3">Sign Up</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Contuct End -->
+</body>
+</html>
+{% endblock %}
