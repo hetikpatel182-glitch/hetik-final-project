@@ -5,95 +5,328 @@
 <html lang="en">
 
 <head>
+    <title>Edit Product</title>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
+    <style>
+        /* Compact Sleek Page Header style - Light Theme */
+        .page-header-compact {
+            padding-top: 2.5rem !important;
+            padding-bottom: 2.2rem !important;
+            margin-bottom: 0 !important;
+            background: #ffffff !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            position: relative;
+        }
+        .page-header-compact h2 {
+            font-size: 2.1rem !important;
+            font-weight: 800 !important;
+            color: #1e293b !important;
+            letter-spacing: -0.8px;
+            margin-bottom: 8px !important;
+        }
+        .text-primary-gradient {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800 !important;
+        }
+        .page-header-compact p.header-subtitle {
+            font-size: 0.95rem !important;
+            font-weight: 400 !important;
+            color: #64748b !important;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+            letter-spacing: 0.1px;
+            line-height: 1.5;
+        }
+        .page-header-compact .breadcrumb-item, 
+        .page-header-compact .breadcrumb-item a {
+            font-size: 0.85rem !important;
+            font-weight: 500 !important;
+            color: #64748b !important;
+            text-decoration: none !important;
+            transition: color 0.2s;
+        }
+        .page-header-compact .breadcrumb-item a:hover {
+            color: #0d6efd !important;
+        }
+        .page-header-compact .breadcrumb-item.active {
+            color: #0d6efd !important;
+            font-weight: 600 !important;
+        }
+
+        /* Form background and layout */
+        .form-bg {
+            background-color: #f8fafc !important;
+            min-height: calc(100vh - 280px);
+            padding-top: 3rem !important;
+            padding-bottom: 4rem !important;
+        }
+        .form-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 24px !important;
+            padding: 3rem !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03) !important;
+            max-width: 860px;
+            margin: 0 auto !important;
+        }
+
+        /* Input Controls Upgrade */
+        .form-control, .form-select {
+            border: 1.5px solid #cbd5e1 !important;
+            border-radius: 12px !important;
+            padding: 12px 16px !important;
+            font-size: 0.95rem !important;
+            font-weight: 500 !important;
+            color: #334155 !important;
+            background-color: #ffffff !important;
+            transition: all 0.2s ease-in-out !important;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd !important;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1) !important;
+            background-color: #ffffff !important;
+        }
+        .form-floating > label {
+            padding: 12px 16px !important;
+            color: #64748b !important;
+            font-weight: 500 !important;
+        }
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            transform: scale(0.85) translateY(-0.6rem) translateX(0.15rem) !important;
+            color: #0d6efd !important;
+        }
+
+        /* Thumbnail wrap */
+        .thumb-preview-wrap {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 10px 15px;
+        }
+        .thumb-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: contain;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* Configuration Sections */
+        .sub-section-card {
+            background: #f8fafc !important;
+            border: 1px dashed #cbd5e1 !important;
+            border-radius: 16px !important;
+            padding: 1.5rem !important;
+        }
+
+        /* Primary Button Style */
+        .btn-submit-premium {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 14px !important;
+            padding: 14px 28px !important;
+            font-weight: 700 !important;
+            font-size: 1rem !important;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.2) !important;
+            transition: all 0.3s !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+        .btn-submit-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(13, 110, 253, 0.35) !important;
+            color: #ffffff !important;
+        }
+        .btn-submit-premium:active {
+            transform: translateY(0);
+        }
+
+        /* Alert notifications */
+        .custom-alert {
+            background-color: #eff6ff !important;
+            border: 1px solid #bfdbfe !important;
+            color: #1e40af !important;
+            padding: 1rem 1.5rem !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            font-size: 0.92rem !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
 </head>
 
 <body>
 
-   
-
     <!-- Single Page Header start -->
-    <div class="container-fluid page-header py-5">
-        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">Edit Product</h1>
+    <div class="container-fluid page-header-compact text-center">
+        <h2 class="wow fadeInUp" data-wow-delay="0.1s">Edit <span class="text-primary-gradient">Product</span> ✏️</h2>
+        <p class="header-subtitle mb-3 wow fadeInUp" data-wow-delay="0.2s">Update and optimize your listed product specifications and pricing details dynamically.</p>
         <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">Product</a></li>
-            <li class="breadcrumb-item active text-white">Edit Product</li>
+            <li class="breadcrumb-item"><a href="{% url 'seller-index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'seller-view-product' %}">Product</a></li>
+            <li class="breadcrumb-item active">Edit Product</li>
         </ol>
     </div>
     <!-- Single Page Header End -->
 
-    <!-- Contucts Start -->
-    <div class="container-fluid contact py-5">
-        <div class="container py-5">
-            <div class="p-5 bg-light rounded">
-                <div class="row g-4">
-                   
-                    <div class="col-lg-12">
-                       {% if msg %}
-                           <b style="color: blue;">{{msg}}</b>
-                        {% endif %}
-                        <form method="post" action="{% url 'seller-edit-product' pk=product.pk %}" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div class="row g-4 wow fadeInUp" data-wow-delay="0.1s">
-                                <div class="col-lg-12 col-xl-12">
-                                    <div class="form-floating">
-                                        <select name="product_category" class="form-control" id="name">
-                                            {% if product.product_category == "Mobile" %}
-                                                <option>---Select Product Category---</option>
-                                                <option value="Mobile" selected>Mobile</option>
-                                                <option value="Electronics">Electronics</option>
-                                            {% elif product.product_category == "Electronics"%}
-                                                <option>---Select Product Category---</option>
-                                                <option value="Mobile">Mobile</option>
-                                                <option value="Electronics" selected>Electronics</option>
-                                            {% endif %}
-                                            
-                                        </select>
-                                       
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="name" name="product_name" value="{{product.product_name}}">
-                                        <label for="name">Your Product Name</label>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="name" name="product_price" value="{{product.product_price}}">
-                                        <label for="name">Your Product Price</label>
-                                    </div>
-                                </div> 
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" name="product_desc" placeholder="Product Details" id="message" style="height: 160px">{{product.product_desc}}</textarea>
-                                        <label for="message">Product Details</label>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 col-xl-6">
-                                   <img src="{{product.product_picture.url}}" style="width: 100px;height: 100px;border-radius: 50%;">
-                                </div>
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                        <input type="file" class="form-control" id="phone" name="product_picture">
-                                    </div>
-                                </div>
+    <!-- Form Section Start -->
+    <div class="container-fluid form-bg">
+        <div class="container">
+            <div class="form-card wow fadeInUp" data-wow-delay="0.1s">
+                
+                {% if msg %}
+                    <div class="custom-alert mb-4">
+                        <i class="fas fa-info-circle"></i>
+                        <span>{{ msg }}</span>
+                    </div>
+                {% endif %}
 
-                                <div class="col-12">
-                                    <button class="btn btn-primary w-100 py-3">Update Product</button>
+                <form method="post" action="{% url 'seller-edit-product' pk=product.pk %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row g-4">
+                        <!-- Product Category Selection -->
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <select name="product_category" class="form-select" id="product_category" required style="height: 60px;">
+                                    <option value="" disabled>---Select Product Category---</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category }}" {% if product.product_category == category %}selected{% endif %}>{{ category }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="product_category">Product Category</label>
+                            </div>
+                        </div>
+
+                        <!-- Product Name -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="name" name="product_name" value="{{ product.product_name }}" placeholder="Your Product Name" required style="height: 60px;">
+                                <label for="name">Your Product Name</label>
+                            </div>
+                        </div>
+
+                        <!-- Product Price -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" inputmode="decimal" class="form-control price-format-input" id="product_price" name="product_price" value="{{ product.product_price }}" placeholder="Your Product Price" required style="height: 60px;">
+                                <label for="product_price">Your Product Price</label>
+                            </div>
+                        </div> 
+
+                        <!-- Description Details -->
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" name="product_desc" placeholder="Product Details" id="message" style="height: 150px" required>{{ product.product_desc }}</textarea>
+                                <label for="message">Product Details & Specifications</label>
+                            </div>
+                        </div>
+
+                        <!-- Stock Quantity -->
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="product_stock" name="product_stock" value="{{ product.product_stock }}" min="0" placeholder="Stock Quantity" required style="height: 60px;">
+                                <label for="product_stock">Stock Quantity</label>
+                            </div>
+                        </div>
+
+                        <!-- Thumbnail Preview display -->
+                        <div class="col-md-6">
+                            <div class="thumb-preview-wrap">
+                                <img src="{{ product.product_picture.url }}" class="thumb-preview" alt="Current image">
+                                <div class="d-flex flex-column">
+                                    <span class="text-xs text-muted" style="font-size: 0.72rem; font-weight: 600; text-transform: uppercase;">Current Picture</span>
+                                    <span class="text-sm text-dark fw-bold" style="font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;">{{ product.product_picture.name }}</span>
                                 </div>
                             </div>
-                        </form>
+                        </div>
+
+                        <!-- Picture File Input -->
+                        <div class="col-md-6">
+                            <div class="custom-input-group">
+                                <label for="product_picture" class="form-label fw-bold text-secondary mb-1.5" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-image text-primary me-1"></i> Change Product Image (Optional)</label>
+                                <input type="file" class="form-control" id="product_picture" name="product_picture" style="height: 60px; padding-top: 14px;">
+                            </div>
+                        </div>
+
+                        <!-- Return Policy Configuration -->
+                        <div class="col-12">
+                            <div class="sub-section-card">
+                                <h5 class="mb-3 text-dark d-flex align-items-center" style="font-weight: 700; font-size: 0.98rem; letter-spacing: -0.2px;">
+                                    <i class="fas fa-undo-alt me-2 text-primary" style="font-size: 1.1rem;"></i> Return Policy Configuration
+                                </h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="custom-input-group">
+                                            <label for="returnable" class="form-label fw-bold text-secondary mb-1.5" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-question-circle text-primary me-1"></i> Is Product Returnable?</label>
+                                            <select name="returnable" class="form-select" id="returnable" required onchange="toggleReturnWindow()" style="height: 60px;">
+                                                <option value="false" {% if not product.returnable %}selected{% endif %}>❌ No Return Available</option>
+                                                <option value="true" {% if product.returnable %}selected{% endif %}>✅ Return Available</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" id="return_days_container" style="display: {% if product.returnable %}block{% else %}none{% endif %};">
+                                        <div class="custom-input-group">
+                                            <label for="return_days" class="form-label fw-bold text-secondary mb-1.5" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-calendar-alt text-primary me-1"></i> Return Window (Days)</label>
+                                            <input type="number" class="form-control" id="return_days" name="return_days" min="0" value="{{ product.return_days|default:0 }}" placeholder="Return window (days)" style="height: 60px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn-submit-premium">
+                                <i class="fas fa-save"></i> Save Changes & Update Live
+                            </button>
+                        </div>
                     </div>
-                    
-                    
-                </div>
+
+                </form>
             </div>
         </div>
     </div>
-    <!-- Contuct End -->
+    <!-- Form Section End -->
+
+    <!-- Toggle return policy interactive client script -->
+    <script>
+        function toggleReturnWindow() {
+            const returnableSelect = document.getElementById('returnable');
+            const daysContainer = document.getElementById('return_days_container');
+            const daysInput = document.getElementById('return_days');
+            
+            if (returnableSelect && returnableSelect.value === 'true') {
+                daysContainer.style.display = 'block';
+                daysInput.required = true;
+                if (parseInt(daysInput.value) <= 0) {
+                    daysInput.value = 7;
+                }
+            } else if (daysContainer && daysInput) {
+                daysContainer.style.display = 'none';
+                daysInput.required = false;
+                daysInput.value = 0;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', toggleReturnWindow);
+    </script>
+
 </body>
 </html>
 {% endblock %}
-

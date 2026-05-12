@@ -1,0 +1,1303 @@
+{% extends 'seller-header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Sales & Orders</title>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        /* Compact Sleek Page Header style - Light Theme */
+        .page-header-compact {
+            padding-top: 2.5rem !important;
+            padding-bottom: 2.2rem !important;
+            margin-bottom: 0 !important;
+            background: #ffffff !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            position: relative;
+        }
+        .page-header-compact h2 {
+            font-size: 2.1rem !important;
+            font-weight: 800 !important;
+            color: #1e293b !important;
+            letter-spacing: -0.8px;
+            margin-bottom: 8px !important;
+        }
+        .text-primary-gradient {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800 !important;
+        }
+        .page-header-compact p.header-subtitle {
+            font-size: 0.95rem !important;
+            font-weight: 400 !important;
+            color: #64748b !important;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+            letter-spacing: 0.1px;
+            line-height: 1.5;
+        }
+        .page-header-compact .breadcrumb-item, 
+        .page-header-compact .breadcrumb-item a {
+            font-size: 0.85rem !important;
+            font-weight: 500 !important;
+            color: #64748b !important;
+            text-decoration: none !important;
+            transition: color 0.2s;
+        }
+        .page-header-compact .breadcrumb-item a:hover {
+            color: #0d6efd !important;
+        }
+        .page-header-compact .breadcrumb-item.active {
+            color: #0d6efd !important;
+            font-weight: 600 !important;
+        }
+
+        /* Background and container */
+        .orders-bg {
+            background-color: #f8fafc !important;
+            min-height: calc(100vh - 280px);
+            padding-top: 3rem !important;
+            padding-bottom: 4rem !important;
+        }
+
+        /* Order Cards Premium Styling */
+        .seller-orders-page .order-item {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 20px !important;
+            padding: 1.8rem !important;
+            margin-bottom: 1.8rem !important;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.015) !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        .seller-orders-page .order-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05) !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Highlight pulse */
+        .notif-highlight {
+            animation: pulseGlow 1.5s ease-in-out infinite alternate !important;
+            border: 2.5px solid #0d6efd !important;
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 5px rgba(13, 110, 253, 0.3); }
+            100% { box-shadow: 0 0 20px rgba(13, 110, 253, 0.6); }
+        }
+
+        .btn-cancel-order { transition: all 0.2s; }
+        .btn-cancel-order:disabled { opacity: 0.55; cursor: not-allowed; }
+        .order-cancelled td, .order-cancelled th { opacity: 0.65; }
+        .order-cancelled .product-name-cell { text-decoration: line-through; color: #999; }
+
+        #seller-toast-container {
+            position: fixed; bottom: 25px; right: 25px;
+            z-index: 9999; display: flex; flex-direction: column; gap: 10px;
+        }
+        .seller-toast {
+            min-width: 290px; padding: 14px 20px; border-radius: 10px;
+            color: #fff; font-weight: 500; font-size: 0.92rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+            animation: slideInToast 0.3s ease;
+        }
+        .seller-toast.success { background: #198754; }
+        .seller-toast.error   { background: #dc3545; }
+        @keyframes slideInToast {
+            from { transform: translateX(100px); opacity: 0; }
+            to   { transform: translateX(0);     opacity: 1; }
+        }
+        #cancelReasonText { resize: vertical; min-height: 110px; border-radius: 12px; }
+        #reasonError { display: none; color: #dc3545; font-size: 0.85rem; margin-top: 5px; }
+
+        /* Unified Premium Search Bar Style */
+        .seller-search-wrapper {
+            position: relative;
+            max-width: 320px;
+            width: 100%;
+        }
+        .seller-search-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 0.95rem;
+            pointer-events: none;
+            transition: color 0.2s;
+            z-index: 10;
+        }
+        .seller-search-input {
+            width: 100%;
+            background: #ffffff !important;
+            border: 1.5px solid #cbd5e1 !important;
+            border-radius: 50px !important;
+            font-size: 0.92rem !important;
+            font-weight: 500 !important;
+            color: #1e293b !important;
+            padding: 10px 16px 10px 44px !important;
+            transition: all 0.2s ease-in-out !important;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02) !important;
+        }
+        .seller-search-input::placeholder {
+            color: #94a3b8 !important;
+            font-weight: 400 !important;
+        }
+        .seller-search-input:focus {
+            border-color: #0d6efd !important;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.08) !important;
+            outline: none !important;
+        }
+        .seller-search-wrapper:focus-within i {
+            color: #0d6efd;
+        }
+
+
+        /* Order Tracking Timeline System */
+        :root {
+            --color-completed: #10b981;
+            --color-active: #2563eb;
+            --color-pending: #cbd5e1;
+            --color-cancelled: #ef4444;
+        }
+
+        .tracking-timeline-container {
+            position: relative;
+            margin: 25px 0 15px 0;
+            padding: 0 10px;
+        }
+        .tracking-progress-bg {
+            position: absolute;
+            top: 25px;
+            left: 40px;
+            right: 40px;
+            height: 6px;
+            background-color: #f1f5f9;
+            transform: translateY(-50%);
+            z-index: 1;
+            border-radius: 10px;
+        }
+        .tracking-progress-bar {
+            position: absolute;
+            top: 25px;
+            left: 40px;
+            height: 6px;
+            background: linear-gradient(90deg, var(--color-completed), var(--color-active));
+            transform: translateY(-50%);
+            z-index: 2;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 10px;
+            width: calc(var(--progress-pct, 0) * 1% - (var(--progress-pct, 0) * 0.8px));
+        }
+
+        .tracking-timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: relative;
+            z-index: 3;
+            margin: 0;
+            padding: 0;
+        }
+        .tracking-step {
+            position: relative;
+            text-align: center;
+            flex: 1;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+        .tracking-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 18px;
+            border: 3px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .tracking-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #64748b;
+            margin-top: 4px;
+            transition: color 0.3s ease;
+        }
+        .tracking-date {
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: #94a3b8;
+            margin-top: 3px;
+            white-space: nowrap;
+        }
+
+        .tracking-step.completed .tracking-icon {
+            background: var(--color-completed);
+            color: #ffffff;
+            border-color: #a7f3d0;
+            transform: scale(1.05);
+        }
+        .tracking-step.completed .tracking-label {
+            color: #059669;
+        }
+        .tracking-step.completed .tracking-date {
+            color: #10b981;
+        }
+
+        .tracking-step.active .tracking-icon {
+            background: var(--color-active);
+            color: #ffffff;
+            border-color: #bfdbfe;
+            transform: scale(1.15);
+            animation: ripplePulse 2s infinite;
+        }
+        .tracking-step.active .tracking-label {
+            color: #1d4ed8;
+            font-weight: 800;
+        }
+        .tracking-step.active .tracking-date {
+            color: #2563eb;
+        }
+
+        @keyframes ripplePulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+
+        @media (max-width: 767px) {
+            .tracking-timeline-container {
+                padding-left: 45px;
+                margin: 20px 0;
+            }
+            .tracking-progress-bg {
+                top: 0;
+                bottom: 0;
+                left: 20px;
+                width: 6px;
+                height: 100%;
+                transform: none;
+            }
+            .tracking-progress-bar {
+                top: 0;
+                left: 20px;
+                width: 6px;
+                height: calc(var(--progress-pct, 0) * 1% - (var(--progress-pct, 0) * 0.5px));
+                transform: none;
+                background: linear-gradient(180deg, var(--color-completed), var(--color-active));
+            }
+            .tracking-timeline {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 24px;
+            }
+            .tracking-step {
+                display: flex;
+                align-items: center;
+                text-align: left;
+                width: 100%;
+            }
+            .tracking-icon {
+                margin: 0 20px 0 0;
+                flex-shrink: 0;
+                width: 44px;
+                height: 44px;
+                font-size: 16px;
+            }
+            .tracking-step-info {
+                display: flex;
+                flex-direction: column;
+                text-align: left;
+            }
+            .tracking-label {
+                margin-top: 0;
+            }
+        }
+
+        /* Order Details Styling */
+        .seller-orders-page .product-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+        .seller-orders-page .product-meta {
+            font-size: 0.88rem;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+        .seller-orders-page .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+        .seller-orders-page .order-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .seller-orders-page .order-details-left {
+            flex: 1;
+            min-width: 250px;
+        }
+        .seller-orders-page .order-details-right {
+            text-align: right;
+            min-width: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .seller-orders-page .order-actions {
+            margin-top: 15px;
+            width: 100%;
+            max-width: 200px;
+        }
+        .seller-orders-page .order-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 20px 0;
+            border: none;
+        }
+        
+        .seller-orders-page .price-breakdown {
+            padding: 14px 18px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            max-width: 320px;
+        }
+
+        .btn-action-premium {
+            border-radius: 12px !important;
+            padding: 10px 18px !important;
+            font-size: 0.88rem !important;
+            font-weight: 700 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.22s;
+            width: 100%;
+            border: none;
+        }
+        .btn-action-premium:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Empty state view */
+        .empty-orders-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 24px !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03) !important;
+            max-width: 580px;
+            margin: 3rem auto !important;
+            padding: 4rem 2rem !important;
+            text-align: center;
+        }
+        .empty-orders-icon {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 1.5rem;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 2.5rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Single Page Header -->
+    <div class="container-fluid page-header-compact text-center">
+        <h2 class="wow fadeInUp" data-wow-delay="0.1s">Sales &amp; <span class="text-primary-gradient">Orders</span> 📦</h2>
+        <p class="header-subtitle mb-3 wow fadeInUp" data-wow-delay="0.2s">Monitor order progress, confirm payments, handle returns, and keep track of your performance.</p>
+        <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="{% url 'seller-index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Seller</a></li>
+            <li class="breadcrumb-item active">My Orders</li>
+        </ol>
+    </div>
+
+    <!-- Orders Section -->
+    <div class="container-fluid orders-bg">
+        <div class="container">
+            <div class="seller-orders-page">
+                
+                {% if orders %}
+                    <!-- Header Search Bar -->
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                        <h3 class="fw-bold mb-0 text-dark" style="font-size: 1.35rem; letter-spacing: -0.3px;"><i class="fas fa-route text-primary me-2"></i>Order Tracking</h3>
+                        <div class="seller-search-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="orderSearchInput" class="seller-search-input" placeholder="Search Order ID or Product..." autocomplete="off">
+                        </div>
+                    </div>
+
+                    {% for order in orders %}
+                    <div class="order-item" id="order-row-{{ order.pk }}" data-product-id="{{ order.product.pk }}">
+                        <!-- Top Content: Product Info & Status -->
+                        <div class="order-content">
+                            <!-- Left Side: Details -->
+                            <div class="order-details-left">
+                                <h3 class="product-title product-name-cell" {% if order.is_cancelled %}style="text-decoration: line-through; color: #94a3b8;"{% endif %}>
+                                    {{order.product.product_name}}
+                                </h3>
+                                <div class="mt-2 mb-1 d-flex flex-wrap gap-2">
+                                    <span class="badge bg-light text-dark border" style="font-size: 0.8rem; padding: 6px 12px; font-weight: 600; border-radius: 8px;" title="Main Order ID"><i class="fas fa-folder text-primary me-1"></i>Order ID: <strong>{{ order.display_order_id }}</strong></span>
+                                    <span class="badge bg-light text-dark border" style="font-size: 0.8rem; padding: 6px 12px; font-weight: 600; border-radius: 8px;" title="Individual Product ID"><i class="fas fa-tag text-success me-1"></i>Item ID: <strong>{{ order.display_item_order_id }}</strong></span>
+                                </div>
+                                
+                                <div class="price-breakdown mt-3 mb-3">
+                                    <div class="d-flex justify-content-between text-muted" style="font-size: 0.88rem; font-weight: 500;">
+                                        <span>Subtotal ({{order.product_qty}} item{% if order.product_qty > 1 %}s{% endif %}):</span>
+                                        <span>Rs. {{order.total_price}}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between text-muted mt-1.5" style="font-size: 0.88rem; font-weight: 500;">
+                                        <span>GST (18%):</span>
+                                        <span>Rs. {{order.gst_amount|floatformat:2}}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between text-muted mt-1.5" style="font-size: 0.88rem; font-weight: 500;">
+                                        <span>Shipping:</span>
+                                        <span class="text-success fw-bold">Free</span>
+                                    </div>
+                                    <hr class="my-2" style="border-color: #e2e8f0;">
+                                    <div class="d-flex justify-content-between fw-bold text-dark" style="font-size: 1rem;">
+                                        <span>Total Amount:</span>
+                                        <span class="text-primary fw-extrabold">Rs. {{order.total_amount|floatformat:2}}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="product-meta mt-2 fw-semibold">
+                                    <strong>Buyer:</strong> <span class="text-dark">{{order.user.fname}} {{order.user.lname}}</span>
+                                </div>
+                                <div class="product-meta mt-2 text-muted" style="font-size: 0.82rem; line-height: 1.5; border-left: 3px solid {% if order.delivery_address %}#0d6efd{% else %}#64748b{% endif %}; padding-left: 12px; background: #f8fafc; border-radius: 6px; padding-top: 10px; padding-bottom: 10px;">
+                                    <i class="fas fa-map-marker-alt {% if order.delivery_address %}text-primary{% else %}text-secondary{% endif %} me-1"></i> 
+                                    {% if order.delivery_address %}
+                                        {{order.delivery_address}}
+                                    {% else %}
+                                        {{order.user.address}} <span class="badge bg-secondary ms-2" style="font-size: 0.75em; border-radius: 4px;">Profile Address</span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Buyer Review Display Section -->
+                                {% if order.review %}
+                                    <div class="mt-3 p-3 rounded-4 border bg-light-subtle" style="max-width: 500px; background: #f8fafc; border-radius: 14px;">
+                                        <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom" style="border-color: #e2e8f0 !important;">
+                                            <span class="fw-bold small text-muted"><i class="fas fa-star text-warning me-1"></i>Buyer Product Review</span>
+                                            <span class="badge bg-primary rounded-pill px-2.5 py-1" style="font-size: 0.7rem; font-weight: 700;">Received</span>
+                                        </div>
+                                        <div class="text-warning mb-1" style="font-size: 0.9rem;">
+                                            {% for star in "12345" %}
+                                                {% if forloop.counter <= order.review.rating %}
+                                                    <i class="fas fa-star"></i>
+                                                {% else %}
+                                                    <i class="far fa-star"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <p class="mb-0 text-dark small" style="font-size: 0.85rem; line-height: 1.4; white-space: pre-line; {% if not order.review.review_text %}font-style: italic; color: #64748b !important;{% endif %}">
+                                            {% if order.review.review_text %}"{{ order.review.review_text }}"{% else %}No comment provided{% endif %}
+                                        </p>
+                                    </div>
+                                {% else %}
+                                    {% if order.delivery_status == 'delivered' and order.return_status != 'returned' %}
+                                        <div class="mt-3 text-muted small fw-medium">
+                                            <i class="far fa-comment-dots me-1"></i> No review received yet for this product.
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if order.return_status == 'returned' or order.return_status == 'REQUESTED' %}
+                                    <div class="mt-3 p-3 rounded-4 border" style="max-width: 500px; background: #fffbeb; border-color: #fde68a !important; border-radius: 14px;">
+                                        <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom" style="border-color: #fef3c7 !important;">
+                                            <span class="fw-bold small text-warning-emphasis"><i class="fas fa-hourglass-half me-1"></i>Return Request Processing</span>
+                                            <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1" style="font-size: 0.7rem; font-weight: 700;">Requested</span>
+                                        </div>
+                                        <p class="mb-0 text-dark small fw-semibold" style="font-size: 0.85rem; line-height: 1.4; white-space: pre-line;">
+                                            <span class="text-muted fw-normal" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px;">Reason for Return:</span><br>
+                                            "{{ order.return_reason|default:"No reason provided" }}"
+                                        </p>
+                                    </div>
+                                {% elif order.return_status == 'COMPLETED' %}
+                                    <div class="mt-3 p-3 rounded-4 border" style="max-width: 500px; background: #f0fdf4; border-color: #bbf7d0 !important; border-radius: 14px;">
+                                        <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom" style="border-color: #dcfce7 !important;">
+                                            <span class="fw-bold small text-success"><i class="fas fa-check-circle me-1"></i>Returned Successful</span>
+                                            <span class="badge bg-success text-white rounded-pill px-2.5 py-1" style="font-size: 0.7rem; font-weight: 700;">Completed</span>
+                                        </div>
+                                        <p class="mb-0 text-dark small fw-semibold" style="font-size: 0.85rem; line-height: 1.4; white-space: pre-line;">
+                                            <span class="text-muted fw-normal" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px;">Reason for Return:</span><br>
+                                            "{{ order.return_reason|default:"No reason provided" }}"
+                                        </p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Right Side: Status & Actions -->
+                            <div class="order-details-right">
+                                <div id="status-cell-{{ order.pk }}">
+                                    {% if order.is_cancelled %}
+                                        <div class="status-badge bg-danger text-white mb-2" style="font-weight: 700;">
+                                            <i class="fas fa-ban me-1"></i> 
+                                            {% if order.cancel_reason == 'Cancelled by buyer' %}
+                                                Cancelled by Buyer
+                                            {% else %}
+                                                Cancelled by Seller
+                                            {% endif %}
+                                        </div>
+                                        {% if order.cancel_reason %}
+                                            <div class="text-danger mt-1 text-end" style="font-size: 0.8rem; font-weight: 600; max-width: 250px;">
+                                                <i class="fas fa-info-circle me-1"></i>Reason: {{order.cancel_reason|truncatechars:60}}
+                                            </div>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if order.payment_method == 'COD' %}
+                                            {% if order.cod_payment_status == 'Done' %}
+                                                <div class="status-badge bg-success text-white mb-2" style="font-weight: 700;">
+                                                    <i class="fas fa-check-circle me-1"></i> COD (Completed)
+                                                </div>
+                                            {% else %}
+                                                <div class="status-badge bg-warning text-dark mb-2" style="font-weight: 700;">
+                                                    <i class="fas fa-clock me-1"></i> COD (Pending)
+                                                </div>
+                                            {% endif %}
+                                        {% else %}
+                                            <div class="status-badge bg-success text-white mb-2" style="font-weight: 700;">
+                                                <i class="fas fa-check-circle me-1"></i> Online (Paid)
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                <div class="text-muted mt-2 mb-2" style="font-size: 0.78rem; font-weight: 500;">
+                                    Ordered on {{ order.time|date:"M d, Y H:i" }}
+                                </div>
+                                
+                                <!-- Seller Actions -->
+                                <div class="order-actions">
+                                    {% if order.is_cancelled %}
+                                        <button class="btn btn-secondary btn-cancel-order btn-action-premium mb-1" id="cancel-btn-{{ order.pk }}" disabled>
+                                            <i class="fas fa-ban me-1"></i> Cancelled
+                                        </button>
+                                    {% else %}
+                                        {% if order.delivery_status == 'placed' %}
+                                            <button class="btn btn-success btn-action-premium mb-2 text-white"
+                                                    id="confirm-btn-{{ order.pk }}"
+                                                    onclick="confirmOrder({{ order.pk }})"
+                                                    style="background-color: #10b981 !important;">
+                                                <i class="fas fa-check me-1"></i> Confirm Order
+                                            </button>
+                                        {% elif order.delivery_status == 'confirmed' %}
+                                            <button class="btn btn-primary btn-action-premium mb-2"
+                                                    id="ship-btn-{{ order.pk }}"
+                                                    onclick="shipOrder({{ order.pk }})">
+                                                <i class="fas fa-shipping-fast me-1"></i> Ship Order
+                                            </button>
+                                        {% elif order.delivery_status == 'shipped' %}
+                                            <button class="btn btn-info text-white btn-action-premium mb-2"
+                                                    id="out-delivery-btn-{{ order.pk }}"
+                                                    onclick="outForDeliveryOrder({{ order.pk }})">
+                                                <i class="fas fa-truck me-1"></i> Out for Delivery
+                                            </button>
+                                        {% elif order.delivery_status == 'out_for_delivery' %}
+                                            <button class="btn btn-warning text-dark btn-action-premium mb-2"
+                                                    id="deliver-btn-{{ order.pk }}"
+                                                    onclick="deliverOrder({{ order.pk }})"
+                                                    style="background-color: #f59e0b !important;">
+                                                <i class="fas fa-home me-1"></i> Mark Delivered
+                                            </button>
+                                        {% elif order.delivery_status == 'delivered' %}
+                                            {% if order.return_status == 'returned' or order.return_status == 'REQUESTED' %}
+                                                <div class="alert alert-warning py-1.5 px-2 text-center mb-2 small fw-bold text-warning-emphasis border border-warning" style="border-radius: 10px; background-color: #fffbeb;">
+                                                    <i class="fas fa-hourglass-half me-1"></i> Return Processing
+                                                </div>
+                                                <button class="btn btn-warning text-dark btn-action-premium mb-2 fw-bold"
+                                                        id="receive-return-btn-{{ order.pk }}"
+                                                        onclick="receiveReturnOrder({{ order.pk }})"
+                                                        style="background-color: #f59e0b !important;">
+                                                    <i class="fas fa-check-double me-1"></i> Complete Return
+                                                </button>
+                                            {% elif order.return_status == 'COMPLETED' %}
+                                                <div class="alert alert-success py-1.5 px-2 text-center mb-2 small fw-bold text-success border border-success" style="border-radius: 10px; background-color: #f0fdf4;">
+                                                    <i class="fas fa-check-circle me-1"></i> Returned Successful
+                                                </div>
+                                            {% else %}
+                                                <div class="alert alert-success py-1 px-2 text-center mb-2 small fw-bold text-success border border-success" style="border-radius: 10px; background-color: #f0fdf4;">
+                                                    <i class="fas fa-check-double me-1"></i> Fulfilled
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+ 
+                                        {% if order.delivery_status == 'placed' or order.delivery_status == 'confirmed' %}
+                                        <button class="btn btn-outline-danger btn-cancel-order btn-action-premium"
+                                                id="cancel-btn-{{ order.pk }}"
+                                                onclick="openCancelModal({{ order.pk }}, '{{ order.product.product_name|escapejs }}')">
+                                            <i class="fas fa-times-circle me-1"></i> Cancel Order
+                                        </button>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="order-divider">
+
+                        <!-- Bottom Content: Tracking Timeline -->
+                        <div class="px-2 pb-2" id="tracking-row-{{ order.pk }}">
+                            {% if order.is_cancelled %}
+                                <div class="alert alert-danger mb-0 d-flex align-items-center" style="opacity: 0.85; border-radius: 12px; background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+                                    <i class="fas fa-exclamation-triangle fs-4 me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1 fw-bold" style="color: #991b1b;">Order Cancelled</h6>
+                                        <p class="mb-0 small" style="color: #991b1b; opacity: 0.85;">Tracking timeline is unavailable due to cancellation.</p>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="tracking-timeline-container" style="--progress-pct: {% if order.delivery_status == 'placed' %}0{% elif order.delivery_status == 'confirmed' %}25{% elif order.delivery_status == 'shipped' %}50{% elif order.delivery_status == 'out_for_delivery' %}75{% elif order.delivery_status == 'delivered' %}100{% else %}0{% endif %};">
+                                    <div class="tracking-progress-bg"></div>
+                                    <div class="tracking-progress-bar"></div>
+                                    <div class="tracking-timeline">
+                                        <!-- Step 1 -->
+                                        <div class="tracking-step {% if order.delivery_status == 'placed' %}active{% else %}completed{% endif %}">
+                                            <div class="tracking-icon"><i class="fas fa-clipboard-list"></i></div>
+                                            <div class="tracking-step-info">
+                                                <div class="tracking-label">Placed</div>
+                                                <div class="tracking-date">{{ order.time|date:"M d, H:i" }}</div>
+                                            </div>
+                                        </div>
+                                        <!-- Step 2 -->
+                                        <div class="tracking-step {% if order.delivery_status == 'confirmed' %}active{% elif order.delivery_status == 'shipped' or order.delivery_status == 'out_for_delivery' or order.delivery_status == 'delivered' %}completed{% endif %}">
+                                            <div class="tracking-icon"><i class="fas fa-check-circle"></i></div>
+                                            <div class="tracking-step-info">
+                                                <div class="tracking-label">Confirmed</div>
+                                                <div class="tracking-date">
+                                                    {% if order.delivery_status != 'placed' %}
+                                                        {{ order.time|date:"M d" }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Step 3 -->
+                                        <div class="tracking-step {% if order.delivery_status == 'shipped' %}active{% elif order.delivery_status == 'out_for_delivery' or order.delivery_status == 'delivered' %}completed{% endif %}">
+                                            <div class="tracking-icon"><i class="fas fa-box"></i></div>
+                                            <div class="tracking-step-info">
+                                                <div class="tracking-label">Shipped</div>
+                                                <div class="tracking-date">
+                                                    {% if order.delivery_status == 'shipped' or order.delivery_status == 'out_for_delivery' or order.delivery_status == 'delivered' %}
+                                                        In Transit
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Step 4 -->
+                                        <div class="tracking-step {% if order.delivery_status == 'out_for_delivery' %}active{% elif order.delivery_status == 'delivered' %}completed{% endif %}">
+                                            <div class="tracking-icon"><i class="fas fa-truck"></i></div>
+                                            <div class="tracking-step-info">
+                                                <div class="tracking-label">Out for Delivery</div>
+                                                <div class="tracking-date">
+                                                    {% if order.delivery_status == 'out_for_delivery' or order.delivery_status == 'delivered' %}
+                                                        On the Way
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Step 5 -->
+                                        <div class="tracking-step {% if order.delivery_status == 'delivered' %}completed{% endif %}">
+                                            <div class="tracking-icon"><i class="fas fa-home"></i></div>
+                                            <div class="tracking-step-info">
+                                                <div class="tracking-label">Delivered</div>
+                                                <div class="tracking-date">
+                                                    {% if order.delivery_status == 'delivered' and order.delivery_date %}
+                                                        {{ order.delivery_date|date:"M d, H:i" }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- Beautiful empty sales state -->
+                    <div class="empty-orders-card wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="empty-orders-icon">
+                            <i class="fas fa-shopping-basket"></i>
+                        </div>
+                        <h3 class="fw-bold text-dark" style="font-size: 1.4rem;">No orders received yet</h3>
+                        <p class="text-muted mb-0">You don't have any customer orders yet. They will appear here immediately once placed by a buyer.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= CANCEL ORDER MODAL ================= -->
+    <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius:20px; overflow:hidden;">
+                <div class="modal-header border-0 pb-0" style="background: linear-gradient(135deg, #dc3545 0%, #ef4444 100%); padding: 20px 24px;">
+                    <h5 class="modal-title text-white fw-bold" id="cancelOrderModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Cancel Order
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-1 small fw-medium">You are cancelling the order for:</p>
+                    <p class="fw-bold mb-4 fs-6" id="cancelProductName" style="color:#1e293b;"></p>
+
+                    <label for="cancelReasonText" class="form-label fw-semibold text-dark">
+                        Reason for Cancellation <span class="text-danger">*</span>
+                    </label>
+                    <textarea
+                        id="cancelReasonText"
+                        class="form-control"
+                        placeholder="Enter the reason for cancellation (e.g. Out of stock, Unable to deliver, Customer request)...">
+                    </textarea>
+                    <div id="reasonError">
+                        <i class="fas fa-exclamation-circle me-1"></i>Please enter a cancellation reason before proceeding.
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 pb-4 px-4 gap-2 justify-content-end">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal" style="font-weight: 600;">
+                        <i class="fas fa-arrow-left me-2"></i>Go Back
+                    </button>
+                    <button type="button" id="confirmCancelBtn" class="btn btn-danger rounded-pill px-4 fw-bold" onclick="submitCancellation()" style="background-color: #dc3545 !important;">
+                        <i class="fas fa-times-circle me-2"></i>Confirm Cancellation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= STATUS CONFIRMATION MODAL ================= -->
+    <div class="modal fade" id="statusConfirmModal" tabindex="-1" aria-labelledby="statusConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius:20px; overflow:hidden;">
+                <div class="modal-header border-0 pb-0" id="statusConfirmHeader" style="background: linear-gradient(135deg, #10b981, #059669); padding: 20px 24px;">
+                    <h5 class="modal-title text-white fw-bold" id="statusConfirmModalLabel">
+                        <i class="fas fa-question-circle me-2"></i>Confirm Status Update
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <div class="mb-3">
+                        <span id="statusConfirmIconContainer" class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle" style="width: 80px; height: 80px; font-size: 2.2rem; color: #10b981; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                            <i class="fas fa-check-circle" id="statusConfirmIcon"></i>
+                        </span>
+                    </div>
+                    <h5 class="fw-bold mb-2 text-dark" id="statusConfirmTitle">Confirm Update?</h5>
+                    <p class="text-muted mb-0" id="statusConfirmMessage" style="font-size: 0.92rem; line-height: 1.5;"></p>
+                </div>
+                <div class="modal-footer border-0 pt-0 pb-4 px-4 justify-content-center gap-3">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4 py-2" data-bs-dismiss="modal" style="min-width: 110px; font-size: 0.88rem; font-weight: 600;">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </button>
+                    <button type="button" id="statusConfirmYesBtn" class="btn btn-success rounded-pill px-4 py-2 fw-bold text-white" style="min-width: 110px; font-size: 0.88rem;">
+                        <i class="fas fa-check me-1"></i> Yes, Proceed
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="seller-toast-container"></div>
+
+    <script>
+        let currentOrderId = null;
+        let cancelModalInstance = null;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalEl = document.getElementById('cancelOrderModal');
+            if (modalEl) {
+                cancelModalInstance = new bootstrap.Modal(modalEl);
+                modalEl.addEventListener('hidden.bs.modal', function () {
+                    document.getElementById('cancelReasonText').value = '';
+                    document.getElementById('reasonError').style.display = 'none';
+                    const btn = document.getElementById('confirmCancelBtn');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-times-circle me-2"></i>Confirm Cancellation';
+                    currentOrderId = null;
+                });
+            }
+        });
+
+        function openCancelModal(orderId, productName) {
+            currentOrderId = orderId;
+            document.getElementById('cancelProductName').textContent = productName;
+            document.getElementById('cancelReasonText').value = '';
+            document.getElementById('reasonError').style.display = 'none';
+            if (cancelModalInstance) cancelModalInstance.show();
+        }
+
+        function submitCancellation() {
+            const reason = document.getElementById('cancelReasonText').value.trim();
+            if (!reason) {
+                document.getElementById('reasonError').style.display = 'block';
+                document.getElementById('cancelReasonText').focus();
+                return;
+            }
+            document.getElementById('reasonError').style.display = 'none';
+
+            const btn = document.getElementById('confirmCancelBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Cancelling...';
+
+            fetch('/seller-cancel-order/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ order_id: currentOrderId, cancel_reason: reason })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    if (cancelModalInstance) cancelModalInstance.hide();
+                    showToast('Order cancelled. Buyer has been notified via notifications.', 'success');
+
+                    // DOM update — no page reload needed
+                    const row = document.getElementById('order-row-' + currentOrderId);
+                    if (row) {
+                        row.classList.add('order-cancelled');
+
+                        const nameCell = row.querySelector('.product-name-cell');
+                        if (nameCell) nameCell.style.textDecoration = 'line-through';
+
+                        const statusCell = document.getElementById('status-cell-' + currentOrderId);
+                        if (statusCell) {
+                            const truncated = reason.length > 60 ? reason.substring(0, 60) + '...' : reason;
+                            statusCell.innerHTML = `
+                                <div class="status-badge bg-danger text-white mb-2" style="font-weight: 700;">
+                                    <i class="fas fa-ban me-1"></i> Cancelled by Seller
+                                </div>
+                                <div class="text-danger mt-1 text-end" style="font-size: 0.8rem; font-weight: 600; max-width: 250px;">
+                                    <i class="fas fa-info-circle me-1"></i>Reason: ${truncated}
+                                </div>`;
+                        }
+
+                        // Also hide the tracking timeline
+                        const trackingRow = document.getElementById('tracking-row-' + currentOrderId);
+                        if (trackingRow) {
+                            trackingRow.innerHTML = `
+                                <div class="alert alert-danger mb-0 d-flex align-items-center" style="opacity: 0.85; border-radius: 12px; background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+                                    <i class="fas fa-exclamation-triangle fs-4 me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1 fw-bold" style="color: #991b1b;">Order Cancelled</h6>
+                                        <p class="mb-0 small" style="color: #991b1b; opacity: 0.85;">Tracking timeline is unavailable due to cancellation.</p>
+                                    </div>
+                                </div>`;
+                        }
+
+                        // Hide progression button if it exists
+                        ['confirm-btn-', 'ship-btn-', 'out-delivery-btn-', 'deliver-btn-'].forEach(prefix => {
+                            const progBtn = document.getElementById(prefix + currentOrderId);
+                            if (progBtn) {
+                                progBtn.remove();
+                            }
+                        });
+
+                        const cancelBtn = document.getElementById('cancel-btn-' + currentOrderId);
+                        if (cancelBtn) {
+                            cancelBtn.disabled = true;
+                            cancelBtn.classList.remove('btn-outline-danger');
+                            cancelBtn.classList.add('btn-secondary');
+                            cancelBtn.innerHTML = '<i class="fas fa-ban me-1"></i> Cancelled';
+                        }
+                    }
+                } else {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-times-circle me-2"></i>Confirm Cancellation';
+                    showToast(data.error || 'Failed to cancel order. Please try again.', 'error');
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-times-circle me-2"></i>Confirm Cancellation';
+                showToast('Network error. Please check your connection and try again.', 'error');
+            });
+        }
+
+        let statusConfirmModalInstance = null;
+        let pendingStatusAction = null;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const statusModalEl = document.getElementById('statusConfirmModal');
+            if (statusModalEl) {
+                statusConfirmModalInstance = new bootstrap.Modal(statusModalEl);
+                statusModalEl.addEventListener('hidden.bs.modal', function () {
+                    pendingStatusAction = null;
+                });
+            }
+        });
+
+        function showStatusConfirmation(title, message, iconClass, colorGradient, onConfirm) {
+            document.getElementById('statusConfirmTitle').textContent = title;
+            document.getElementById('statusConfirmMessage').innerHTML = message;
+            
+            const iconEl = document.getElementById('statusConfirmIcon');
+            iconEl.className = `fas ${iconClass}`;
+            
+            const iconContainer = document.getElementById('statusConfirmIconContainer');
+            const colors = colorGradient.split(',');
+            const primaryColor = colors[0].trim();
+            iconContainer.style.color = primaryColor;
+            
+            const header = document.getElementById('statusConfirmHeader');
+            header.style.background = `linear-gradient(135deg, ${colorGradient})`;
+            
+            const yesBtn = document.getElementById('statusConfirmYesBtn');
+            yesBtn.className = 'btn rounded-pill px-4 py-2 fw-semibold text-white';
+            yesBtn.style.background = primaryColor;
+            yesBtn.style.border = `1px solid ${primaryColor}`;
+            
+            pendingStatusAction = onConfirm;
+            
+            if (statusConfirmModalInstance) {
+                statusConfirmModalInstance.show();
+            }
+        }
+
+        document.getElementById('statusConfirmYesBtn').addEventListener('click', function() {
+            if (pendingStatusAction) {
+                const btn = this;
+                const originalContent = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Processing...';
+                
+                pendingStatusAction()
+                    .then(() => {
+                        if (statusConfirmModalInstance) {
+                            statusConfirmModalInstance.hide();
+                        }
+                    })
+                    .catch(() => {
+                        // Enable button if failed so user can try again
+                    })
+                    .finally(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalContent;
+                    });
+            }
+        });
+
+        function confirmOrder(orderId) {
+            showStatusConfirmation(
+                "Confirm Order",
+                "Are you sure you want to <strong>Confirm</strong> this order?<br><span class='text-muted small'>This will notify the buyer and advance the tracking timeline.</span>",
+                "fa-check-circle",
+                "#10b981, #059669",
+                function() {
+                    return new Promise((resolve, reject) => {
+                        const btn = document.getElementById('confirm-btn-' + orderId);
+                        if (btn) {
+                            btn.disabled = true;
+                            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Confirming...';
+                        }
+
+                        fetch('/seller-confirm-order/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ order_id: orderId })
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                showToast('Order confirmed. Buyer tracking updated.', 'success');
+                                setTimeout(() => { window.location.reload(); }, 1200);
+                                resolve();
+                            } else {
+                                if (btn) {
+                                    btn.disabled = false;
+                                    btn.innerHTML = '<i class="fas fa-check me-1"></i> Confirm Order';
+                                }
+                                showToast(data.error || 'Failed to confirm order.', 'error');
+                                reject();
+                            }
+                        })
+                        .catch(() => {
+                            if (btn) {
+                                btn.disabled = false;
+                                btn.innerHTML = '<i class="fas fa-check me-1"></i> Confirm Order';
+                            }
+                            showToast('Network error while confirming.', 'error');
+                            reject();
+                        });
+                    });
+                }
+            );
+        }
+
+        function shipOrder(orderId) {
+            showStatusConfirmation(
+                "Ship Order",
+                "Are you sure you want to mark this order as <strong>Shipped</strong>?<br><span class='text-muted small'>This notifies the buyer that their item has been shipped out.</span>",
+                "fa-shipping-fast",
+                "#2563eb, #1d4ed8",
+                function() {
+                    return new Promise((resolve, reject) => {
+                        const btn = document.getElementById('ship-btn-' + orderId);
+                        if (btn) {
+                            btn.disabled = true;
+                            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Shipping...';
+                        }
+
+                        fetch('/seller-ship-order/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ order_id: orderId })
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                showToast('Order marked as Shipped. Buyer notified.', 'success');
+                                setTimeout(() => { window.location.reload(); }, 1200);
+                                resolve();
+                            } else {
+                                if (btn) {
+                                    btn.disabled = false;
+                                    btn.innerHTML = '<i class="fas fa-shipping-fast me-1"></i> Ship Order';
+                                }
+                                showToast(data.error || 'Failed to ship order.', 'error');
+                                reject();
+                            }
+                        })
+                        .catch(() => {
+                            if (btn) {
+                                btn.disabled = false;
+                                btn.innerHTML = '<i class="fas fa-shipping-fast me-1"></i> Ship Order';
+                            }
+                            showToast('Network error while shipping.', 'error');
+                            reject();
+                        });
+                    });
+                }
+            );
+        }
+
+        function outForDeliveryOrder(orderId) {
+            showStatusConfirmation(
+                "Out for Delivery",
+                "Are you sure you want to mark this order as <strong>Out for Delivery</strong>?<br><span class='text-muted small'>This notifies the buyer that their package is arriving today.</span>",
+                "fa-truck",
+                "#06b6d4, #0891b2",
+                function() {
+                    return new Promise((resolve, reject) => {
+                        const btn = document.getElementById('out-delivery-btn-' + orderId);
+                        if (btn) {
+                            btn.disabled = true;
+                            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Marking...';
+                        }
+
+                        fetch('/seller-out-for-delivery-order/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ order_id: orderId })
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                showToast('Order marked as Out for Delivery. Buyer notified.', 'success');
+                                setTimeout(() => { window.location.reload(); }, 1200);
+                                resolve();
+                            } else {
+                                if (btn) {
+                                    btn.disabled = false;
+                                    btn.innerHTML = '<i class="fas fa-truck me-1"></i> Out for Delivery';
+                                }
+                                showToast(data.error || 'Failed to mark out for delivery.', 'error');
+                                reject();
+                            }
+                        })
+                        .catch(() => {
+                            if (btn) {
+                                btn.disabled = false;
+                                btn.innerHTML = '<i class="fas fa-truck me-1"></i> Out for Delivery';
+                            }
+                            showToast('Network error.', 'error');
+                            reject();
+                        });
+                    });
+                }
+            );
+        }
+
+        function deliverOrder(orderId) {
+            showStatusConfirmation(
+                "Mark Delivered",
+                "Are you sure you want to mark this order as <strong>Delivered</strong>?<br><span class='text-muted small'>This will complete the tracking timeline and enable buyer return policies.</span>",
+                "fa-home",
+                "#f59e0b, #d97706",
+                function() {
+                    return new Promise((resolve, reject) => {
+                        const btn = document.getElementById('deliver-btn-' + orderId);
+                        if (btn) {
+                            btn.disabled = true;
+                            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Delivering...';
+                        }
+
+                        fetch('/seller-deliver-order/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ order_id: orderId })
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                showToast('Order marked as Delivered. Buyer notified.', 'success');
+                                setTimeout(() => { window.location.reload(); }, 1200);
+                                resolve();
+                            } else {
+                                if (btn) {
+                                    btn.disabled = false;
+                                    btn.innerHTML = '<i class="fas fa-home me-1"></i> Mark Delivered';
+                                }
+                                showToast(data.error || 'Failed to deliver order.', 'error');
+                                reject();
+                            }
+                        })
+                        .catch(() => {
+                            if (btn) {
+                                btn.disabled = false;
+                                btn.innerHTML = '<i class="fas fa-home me-1"></i> Mark Delivered';
+                            }
+                            showToast('Network error.', 'error');
+                            reject();
+                        });
+                    });
+                }
+            );
+        }
+
+        function receiveReturnOrder(orderId) {
+            showStatusConfirmation(
+                "Mark Return Completed",
+                "Are you sure you have successfully <strong>received the returned product</strong>?<br><span class='text-muted small'>This will complete the return flow, updating both buyer and seller dashboards.</span>",
+                "fa-check-double",
+                "#10b981, #059669",
+                function() {
+                    return new Promise((resolve, reject) => {
+                        const btn = document.getElementById('receive-return-btn-' + orderId);
+                        if (btn) {
+                            btn.disabled = true;
+                            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Completing...';
+                        }
+
+                        fetch('/seller-receive-return/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ order_id: orderId })
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                showToast('Return processed successfully! Status updated to Returned Successful.', 'success');
+                                setTimeout(() => { window.location.reload(); }, 1200);
+                                resolve();
+                            } else {
+                                if (btn) {
+                                    btn.disabled = false;
+                                    btn.innerHTML = '<i class="fas fa-check-double me-1"></i> Complete Return';
+                                }
+                                showToast(data.error || 'Failed to complete return.', 'error');
+                                reject();
+                            }
+                        })
+                        .catch(() => {
+                            if (btn) {
+                                btn.disabled = false;
+                                btn.innerHTML = '<i class="fas fa-check-double me-1"></i> Complete Return';
+                            }
+                            showToast('Network error while completing return.', 'error');
+                            reject();
+                        });
+                    });
+                }
+            );
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById('seller-toast-container');
+            const toast = document.createElement('div');
+            toast.className = `seller-toast ${type}`;
+            const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+            toast.innerHTML = `<i class="fas fa-${icon} me-2"></i>${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.transition = 'opacity 0.4s';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 450);
+            }, 4500);
+        }
+
+        // ===== Notification Deep-Link: Highlight & Scroll =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const highlightCartId = params.get('highlight_cart');
+            const highlightProductId = params.get('highlight');
+            
+            let target = null;
+            
+            if (highlightCartId) {
+                target = document.getElementById('order-row-' + highlightCartId);
+            }
+            
+            if (!target && highlightProductId) {
+                const cards = document.querySelectorAll(`[data-product-id="${highlightProductId}"]`);
+                if (cards.length) {
+                    target = cards[0];
+                }
+            }
+            
+            if (!target) return;
+
+            target.classList.add('notif-highlight');
+            setTimeout(() => {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 120);
+
+            setTimeout(() => { target.classList.remove('notif-highlight'); }, 4000);
+
+            // Clean URL without reload
+            window.history.replaceState({}, '', window.location.pathname);
+        });
+
+        // ===== Order Search Functionality =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('orderSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function() {
+                    const filter = this.value.toUpperCase();
+                    const orders = document.querySelectorAll('.order-item');
+                    orders.forEach(order => {
+                        const text = order.innerText.toUpperCase();
+                        order.style.display = text.indexOf(filter) > -1 ? "" : "none";
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
+{% endblock %}

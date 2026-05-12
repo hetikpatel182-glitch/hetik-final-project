@@ -5,82 +5,415 @@
 <html lang="en">
 
 <head>
+    <title>My Wishlist</title>
     <!-- Font Awesome CDN -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        /* Compact Sleek Page Header style - Light Theme */
+        .page-header-compact {
+            padding-top: 2.5rem !important;
+            padding-bottom: 2.2rem !important;
+            margin-bottom: 0 !important;
+            background: #ffffff !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            position: relative;
+        }
+        .page-header-compact h2 {
+            font-size: 2.1rem !important;
+            font-weight: 800 !important;
+            color: #1e293b !important;
+            letter-spacing: -0.8px;
+            margin-bottom: 8px !important;
+        }
+        .text-primary-gradient {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800 !important;
+        }
+        .page-header-compact p.header-subtitle {
+            font-size: 0.95rem !important;
+            font-weight: 400 !important;
+            color: #64748b !important;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+            letter-spacing: 0.1px;
+            line-height: 1.5;
+        }
+        .page-header-compact .breadcrumb-item, 
+        .page-header-compact .breadcrumb-item a {
+            font-size: 0.85rem !important;
+            font-weight: 500 !important;
+            color: #64748b !important;
+            text-decoration: none !important;
+            transition: color 0.2s;
+        }
+        .page-header-compact .breadcrumb-item a:hover {
+            color: #0d6efd !important;
+        }
+        .page-header-compact .breadcrumb-item.active {
+            color: #0d6efd !important;
+            font-weight: 600 !important;
+        }
 
-   
+        /* Wishlist Section Styling */
+        .wishlist-bg {
+            background-color: #f8fafc !important;
+            min-height: calc(100vh - 280px);
+            padding-top: 3rem !important;
+            padding-bottom: 4rem !important;
+        }
+
+        /* Premium Product Card Design */
+        .wishlist-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 18px !important;
+            overflow: hidden !important;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02) !important;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .wishlist-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08) !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Card Image Container & Heart Overlay */
+        .wishlist-img-wrapper {
+            position: relative;
+            background: #f8fafc;
+            padding-top: 100%;
+            overflow: hidden;
+            display: block;
+        }
+        .wishlist-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 1.5rem;
+            transition: transform 0.5s ease;
+        }
+        .wishlist-card:hover .wishlist-img {
+            transform: scale(1.06);
+        }
+
+        /* Heart Icon overlay removal */
+        .btn-remove-wishlist {
+            position: absolute;
+            top: 12px;
+            end: 12px;
+            right: 12px; /* fallback */
+            width: 36px;
+            height: 36px;
+            border-radius: 50% !important;
+            background: rgba(255, 255, 255, 0.9) !important;
+            border: 1px solid #f1f5f9 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ef4444 !important;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+        }
+        .btn-remove-wishlist:hover {
+            transform: scale(1.1);
+            background: #ef4444 !important;
+            color: #ffffff !important;
+            box-shadow: 0 6px 15px rgba(239, 68, 68, 0.25) !important;
+        }
+
+        /* Card Text Content Styling */
+        .wishlist-content {
+            padding: 1.5rem !important;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .wishlist-category {
+            font-size: 0.72rem !important;
+            font-weight: 700 !important;
+            color: #64748b !important;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 0.5rem !important;
+        }
+        .wishlist-title {
+            font-size: 1.05rem !important;
+            font-weight: 700 !important;
+            color: #1e293b !important;
+            line-height: 1.4;
+            margin-bottom: 0.75rem !important;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.8rem;
+            text-decoration: none !important;
+            transition: color 0.2s;
+        }
+        .wishlist-title:hover {
+            color: #0d6efd !important;
+        }
+
+        /* Price tag & Stock Info */
+        .wishlist-pricing {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 0.5rem;
+        }
+        .wishlist-price-val {
+            font-size: 1.35rem !important;
+            font-weight: 800 !important;
+            color: #0d6efd !important;
+            letter-spacing: -0.5px;
+        }
+        .stock-badge {
+            font-size: 0.78rem !important;
+            font-weight: 600 !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 0;
+            margin-bottom: 1.2rem;
+        }
+        .stock-in {
+            color: #10b981 !important;
+        }
+        .stock-low {
+            color: #f59e0b !important;
+        }
+
+        /* Interactive Action Buttons block */
+        .wishlist-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 1.2rem;
+        }
+        .btn-view-details {
+            background: #ffffff !important;
+            color: #475569 !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 12px !important;
+            padding: 10px 16px !important;
+            font-size: 0.88rem !important;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+            flex-grow: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none !important;
+        }
+        .btn-view-details:hover {
+            background: #f8fafc !important;
+            color: #1e293b !important;
+            border-color: #94a3b8 !important;
+            transform: translateY(-2px);
+        }
+        .btn-cart-circle {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 12px !important;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(13, 110, 253, 0.15) !important;
+            transition: all 0.3s !important;
+            text-decoration: none !important;
+        }
+        .btn-cart-circle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(13, 110, 253, 0.3) !important;
+        }
+        .btn-cart-circle.disabled {
+            background: #cbd5e1 !important;
+            color: #94a3b8 !important;
+            box-shadow: none !important;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Stunning empty state */
+        .empty-wishlist-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 24px !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03) !important;
+            max-width: 580px;
+            margin: 3rem auto !important;
+            padding: 4rem 2rem !important;
+            text-align: center;
+            animation: card-appear-wishlist 0.5s ease-out;
+        }
+        @keyframes card-appear-wishlist {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .empty-heart-pulsate {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 1.5rem;
+            background: #fff1f2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f43f5e;
+            font-size: 2.5rem;
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.1); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.1); }
+            70% { transform: scale(1); }
+        }
+        .empty-wishlist-card h3 {
+            font-size: 1.5rem !important;
+            font-weight: 800 !important;
+            color: #1e293b !important;
+            margin-bottom: 0.5rem !important;
+        }
+        .empty-wishlist-card p {
+            font-size: 0.95rem !important;
+            color: #64748b !important;
+            margin-bottom: 2rem !important;
+        }
+        .btn-browse-products {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 12px 36px !important;
+            font-weight: 600 !important;
+            font-size: 0.95rem !important;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.2) !important;
+            transition: all 0.3s !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none !important;
+        }
+        .btn-browse-products:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.35) !important;
+            color: #ffffff !important;
+        }
+    </style>
 </head>
 
 <body>
 
     <!-- Single Page Header start -->
-    <div class="container-fluid page-header py-5">
-        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">My Wishlist</h1>
+    <div class="container-fluid page-header-compact text-center">
+        <h2 class="wow fadeInUp" data-wow-delay="0.1s">My <span class="text-primary-gradient">Wishlist</span> ❤️</h2>
+        <p class="header-subtitle mb-3 wow fadeInUp" data-wow-delay="0.2s">Keep track of your favorite products and move them seamlessly to your cart</p>
         <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="#">Pages</a></li>
-            <li class="breadcrumb-item active text-white">My Wishlist</li>
+            <li class="breadcrumb-item active">My Wishlist</li>
         </ol>
     </div>
     <!-- Single Page Header End -->
 
+    <!-- Wishlist Page Start -->
+    <div class="container-fluid wishlist-bg">
+        <div class="container">
+            {% if wishlists %}
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 justify-content-start">
+                    {% for i in wishlists %}
+                    <div class="col wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="wishlist-card">
+                            
+                            <!-- Image Section with Overlay Remove Button -->
+                            <div class="wishlist-img-wrapper">
+                                <a href="{% url 'product-details' pk=i.product.pk %}">
+                                    <img src="{{i.product.product_picture.url}}" class="wishlist-img" alt="{{i.product.product_name}}">
+                                </a>
+                                
+                                <!-- Wishlist Removal Trigger Button -->
+                                <a href="{% url 'add-to-wishlist' pk=i.product.pk %}" class="btn-remove-wishlist" title="Remove from Wishlist">
+                                    <i class="fas fa-heart"></i>
+                                </a>
+                            </div>
 
-
-    <!-- Shop Page Start -->
-    <div class="container-fluid shop py-5">
-        <div class="container py-5">
-            <div class="row g-4">
-                <div class="col-lg-9 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="tab-content">
-                        <div id="tab-5" class="tab-pane fade show p-0 active">
-                            <div class="row g-4 product">
-                                {% if wishlists %}
-                                {% for i in wishlists %}
-                                <div class="col-lg-4">
-                                    <div class="product-item rounded wow fadeInUp" data-wow-delay="0.1s">
-                                        <div class="product-item-inner border rounded">
-                                            <div class="product-item-inner-item">
-                                                <img src="{{i.product.product_picture.url}}" style="width: 300px;height: 250px;" class="img-fluid w-100 rounded-top" alt="">
-                                                
-                                            </div>
-                                            <div class="text-center rounded-bottom p-4">
-                                                <a href="#" class="d-block mb-2">{{i.product.product_category}}</a>
-                                                <a href="#" class="d-block h4">{{i.product.product_name}}</a>
-                                               
-                                                <span class="text-primary fs-5">{{i.product.product_price}}</span>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="product-item-add border border-top-0 rounded-bottom  text-center p-4 pt-0">
-                                            <a href="{% url 'product-details' pk=i.product.pk %}"
-                                                class="btn btn-primary border-secondary rounded-pill py-2 px-4 mb-4"><i
-                                                    class="bi bi-info-circle"> </i>Details</a>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                
-                                                <div class="d-flex">
-                                                    
-                                                    <a href="#"
-                                                        class="text-primary d-flex align-items-center justify-content-center me-0"><span
-                                                            class="rounded-circle btn-sm-square border"><i
-                                                                class="fas fa-heart"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <!-- Card Content Info Section -->
+                            <div class="wishlist-content">
+                                <span class="wishlist-category">{{i.product.product_category}}</span>
+                                <a href="{% url 'product-details' pk=i.product.pk %}" class="wishlist-title" title="{{i.product.product_name}}">
+                                    {{i.product.product_name}}
+                                </a>
+                                
+                                <div class="wishlist-pricing">
+                                    <span class="wishlist-price-val">Rs. {{i.product.product_price}}</span>
                                 </div>
-                                {% endfor %}
-                                {% else %}
-                                    <h1>No Product In Wishlist</h1>
-                                {% endif %}
+                                
+                                <div class="stock-badge">
+                                    {% if i.product.product_stock < 5 %}
+                                        <span class="stock-low"><i class="fas fa-exclamation-triangle me-1"></i>Limited stock left</span>
+                                    {% else %}
+                                        <span class="stock-in"><i class="fas fa-check-circle me-1"></i>In Stock</span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Action buttons -->
+                                <div class="wishlist-actions">
+                                    <a href="{% url 'product-details' pk=i.product.pk %}" class="btn-view-details">
+                                        <i class="fas fa-eye"></i> Details
+                                    </a>
+                                    {% if i.product.product_stock > 0 %}
+                                    <a href="{% url 'add-to-cart' pk=i.product.pk %}" class="btn-cart-circle" title="Move to Cart">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </a>
+                                    {% else %}
+                                    <a href="#" class="btn-cart-circle disabled" title="Out of Stock">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                       
                     </div>
+                    {% endfor %}
                 </div>
-            </div>
+            {% else %}
+                <!-- Stunning Empty State UI -->
+                <div class="empty-wishlist-card">
+                    <div class="empty-heart-pulsate">
+                        <i class="fas fa-heart-broken"></i>
+                    </div>
+                    <h3>Your wishlist is empty</h3>
+                    <p>Explore our premium collection and save your favorite products to purchase them later.</p>
+                    <a href="{% url 'shop' cat='all' %}" class="btn-browse-products">
+                        <i class="fas fa-shopping-bag"></i> Browse Products
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
-    <!-- Shop Page End -->
+    <!-- Wishlist Page End -->
+
 </body>
 </html>
 {% endblock %}

@@ -1,0 +1,59 @@
+{% load static %}
+<!-- Footer Start -->
+<style>
+    .seller-modern-footer {
+        background: #ffffff;
+        border-top: 1px solid #eee;
+        color: #555;
+        padding: 40px 0 30px 0;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .footer-brand-minimal {
+        font-weight: 800;
+        font-size: 1.5rem;
+        color: #2b2b2b !important;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        letter-spacing: -0.5px;
+    }
+
+    .footer-brand-minimal i {
+        color: #0d6efd;
+        font-size: 1.3rem;
+    }
+
+    .seller-copyright-text {
+        font-size: 0.9rem;
+        color: #777;
+        font-weight: 500;
+    }
+
+</style>
+
+{% if request.session.email %}
+<footer class="seller-modern-footer">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <!-- Brand -->
+            <div class="col-md-6 text-center text-md-start">
+                <a href="{% url 'seller-index' %}" class="footer-brand-minimal">
+                    <i class="fas fa-shopping-bag"></i>Electro<span class="text-primary">.</span>
+                    <small class="ms-1 fw-bold text-muted" style="font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px;">Seller Portal</small>
+                </a>
+            </div>
+
+            <!-- Copyright -->
+            <div class="col-md-6 text-center text-md-end">
+                <div class="seller-copyright-text">
+                    &copy; 2026 <span class="text-dark fw-bold">Electro</span> Marketplace. All rights reserved.
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</footer>
+{% endif %}
+<!-- Footer End -->

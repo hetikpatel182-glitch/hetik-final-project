@@ -5,94 +5,312 @@
 <html lang="en">
 
 <head>
+    <title>My Profile</title>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
+    <style>
+        /* Compact Sleek Page Header style - Light Theme */
+        .page-header-compact {
+            padding-top: 2.5rem !important;
+            padding-bottom: 2.2rem !important;
+            margin-bottom: 0 !important;
+            background: #ffffff !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            position: relative;
+        }
+        .page-header-compact h2 {
+            font-size: 2.1rem !important;
+            font-weight: 800 !important;
+            color: #1e293b !important;
+            letter-spacing: -0.8px;
+            margin-bottom: 8px !important;
+        }
+        .text-primary-gradient {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800 !important;
+        }
+        .page-header-compact p.header-subtitle {
+            font-size: 0.95rem !important;
+            font-weight: 400 !important;
+            color: #64748b !important;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+            letter-spacing: 0.1px;
+            line-height: 1.5;
+        }
+        .page-header-compact .breadcrumb-item, 
+        .page-header-compact .breadcrumb-item a {
+            font-size: 0.85rem !important;
+            font-weight: 500 !important;
+            color: #64748b !important;
+            text-decoration: none !important;
+            transition: color 0.2s;
+        }
+        .page-header-compact .breadcrumb-item a:hover {
+            color: #0d6efd !important;
+        }
+        .page-header-compact .breadcrumb-item.active {
+            color: #0d6efd !important;
+            font-weight: 600 !important;
+        }
+
+        /* Form background and layout */
+        .form-bg {
+            background-color: #f8fafc !important;
+            min-height: calc(100vh - 280px);
+            padding-top: 3rem !important;
+            padding-bottom: 4rem !important;
+        }
+        .form-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 24px !important;
+            padding: 3rem !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03) !important;
+            max-width: 860px;
+            margin: 0 auto !important;
+        }
+
+        /* Input Controls Upgrade */
+        .form-control {
+            border: 1.5px solid #cbd5e1 !important;
+            border-radius: 12px !important;
+            padding: 12px 16px !important;
+            font-size: 0.95rem !important;
+            font-weight: 500 !important;
+            color: #334155 !important;
+            background-color: #ffffff !important;
+            transition: all 0.2s ease-in-out !important;
+        }
+        .form-control:focus {
+            border-color: #0d6efd !important;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1) !important;
+            background-color: #ffffff !important;
+        }
+        .form-floating > label {
+            padding: 12px 16px !important;
+            color: #64748b !important;
+            font-weight: 500 !important;
+        }
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            transform: scale(0.85) translateY(-0.6rem) translateX(0.15rem) !important;
+            color: #0d6efd !important;
+        }
+
+        /* Avatar Thumbnail wrap */
+        .avatar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 12px !important;
+            padding: 8px 16px !important;
+            height: 60px !important;
+        }
+        .avatar-img {
+            width: 42px !important;
+            height: 42px !important;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ffffff !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06) !important;
+        }
+
+        /* Custom non-overlapping file upload block */
+        .file-upload-container {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            height: 100% !important;
+            text-align: left !important;
+        }
+        .file-upload-label {
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            color: #475569 !important;
+            margin-bottom: 8px !important;
+        }
+        .file-upload-input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .file-upload-input-group .form-control {
+            padding: 12px 16px 12px 45px !important;
+            line-height: 1.5 !important;
+            height: 60px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+        .file-upload-icon {
+            position: absolute;
+            left: 16px;
+            color: #94a3b8;
+            font-size: 1.1rem;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Primary Button Style */
+        .btn-submit-premium {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 14px !important;
+            padding: 14px 28px !important;
+            font-weight: 700 !important;
+            font-size: 1rem !important;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.2) !important;
+            transition: all 0.3s !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+        .btn-submit-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(13, 110, 253, 0.35) !important;
+            color: #ffffff !important;
+        }
+
+        /* Alert notifications */
+        .custom-alert {
+            background-color: #eff6ff !important;
+            border: 1px solid #bfdbfe !important;
+            color: #1e40af !important;
+            padding: 1rem 1.5rem !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            font-size: 0.92rem !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
 </head>
 
 <body>
 
-   
-
-    <!-- Single Page Header start -->
-    <div class="container-fluid page-header py-5">
-        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">Profile</h1>
+    <!-- Compact Page Header start -->
+    <div class="container-fluid page-header-compact text-center">
+        <h2 class="wow fadeInUp" data-wow-delay="0.1s">My <span class="text-primary-gradient">Profile</span> 👤</h2>
+        <p class="header-subtitle mb-3 wow fadeInUp" data-wow-delay="0.2s">Manage your personal settings, contact coordinates, shipping addresses, and user avatar.</p>
         <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="#">Account</a></li>
-            <li class="breadcrumb-item active text-white">Profile</li>
+            <li class="breadcrumb-item active">Profile</li>
         </ol>
     </div>
-    <!-- Single Page Header End -->
+    <!-- Compact Page Header End -->
 
-    <!-- Contucts Start -->
-    <div class="container-fluid contact py-5">
-        <div class="container py-5">
-            <div class="p-5 bg-light rounded">
-                <div class="row g-4">
-                   
-                    <div class="col-lg-12">
-                       {% if msg %}
-                           <b style="color: blue;">{{msg}}</b>
-                        {% endif %}
-                        <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div class="row g-4 wow fadeInUp" data-wow-delay="0.1s">
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="name" name="fname" value="{{user.fname}}">
-                                        <label for="name">Your First Name</label>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="name" name="lname" value="{{user.lname}}">
-                                        <label for="name">Your Last Name</label>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control" id="email" name="email" value="{{user.email}}" readonly>
-                                        <label for="email">Your Email</label>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                        <input type="phone" class="form-control" id="phone" name="mobile" value="{{user.mobile}}">
-                                        <label for="phone">Your Mobile</label>
-                                    </div>
-                                </div>
-                                
-                                
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" name="address" placeholder="Address" id="message" style="height: 160px">{{user.address}}</textarea>
-                                        <label for="message">Address</label>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                       <img src="{{user.profile_picture.url}}" style="width: 100px;height: 100px;border-radius: 50%;">
-                                    </div>
-                                </div>
-                                
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                        <input type="file" class="form-control" id="phone" name="profile_picture">
-                                    </div>
-                                </div>
+    <!-- Profile Section Start -->
+    <div class="container-fluid form-bg">
+        <div class="container">
+            <div class="form-card wow fadeInUp" data-wow-delay="0.1s">
+                
+                {% if msg %}
+                    <div class="custom-alert mb-4">
+                        <i class="fas fa-info-circle"></i>
+                        <span>{{ msg }}</span>
+                    </div>
+                {% endif %}
 
-                                <div class="col-12">
-                                    <button class="btn btn-primary w-100 py-3">Update Profile</button>
+                <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row g-4">
+                        <!-- First Name -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="fname" name="fname" value="{{ user.fname }}" placeholder="Your First Name" required style="height: 60px;">
+                                <label for="fname">First Name</label>
+                            </div>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="lname" name="lname" value="{{ user.lname }}" placeholder="Your Last Name" required style="height: 60px;">
+                                <label for="lname">Last Name</label>
+                            </div>
+                        </div>
+
+                        <!-- Email Address (Read-only) -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" placeholder="Your Email" readonly style="height: 60px; background-color: #f1f5f9 !important;">
+                                <label for="email">Email Address</label>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Number -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="phone" class="form-control" id="phone" name="mobile" value="{{ user.mobile }}" placeholder="Your Mobile" required style="height: 60px;">
+                                <label for="phone">Mobile Number</label>
+                            </div>
+                        </div>
+
+                        <!-- Physical Address -->
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" name="address" placeholder="Address" id="message" style="height: 140px" required>{{ user.address }}</textarea>
+                                <label for="message">Physical Address</label>
+                            </div>
+                        </div>
+
+                        <!-- Profile Avatar Section -->
+                        <div class="col-md-6 text-start">
+                            <label class="file-upload-label">Current Profile Avatar</label>
+                            <div class="avatar-wrap">
+                                {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture.url }}" class="avatar-img" alt="Avatar">
+                                {% else %}
+                                    <div class="avatar-img d-flex align-items-center justify-content-center bg-primary text-white fw-bold fs-5" style="background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%) !important;">
+                                        {{ user.fname|slice:":1" }}{{ user.lname|slice:":1" }}
+                                    </div>
+                                {% endif %}
+                                <div class="d-flex flex-column">
+                                    <span class="text-xs text-muted" style="font-size: 0.72rem; font-weight: 600; text-transform: uppercase;">Current Avatar</span>
+                                    <span class="text-sm text-dark fw-bold" style="font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;">
+                                        {% if user.profile_picture %}{{ user.profile_picture.name }}{% else %}Default Profile Avatar{% endif %}
+                                    </span>
                                 </div>
                             </div>
-                        </form>
+                        </div>
+
+                        <!-- Choose Avatar File Input -->
+                        <div class="col-md-6">
+                            <div class="file-upload-container">
+                                <label class="file-upload-label" for="avatar_file">Change Profile Avatar</label>
+                                <div class="file-upload-input-group">
+                                    <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                                    <input type="file" class="form-control" id="avatar_file" name="profile_picture">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Update Profile Submit Button -->
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn-submit-premium">
+                                <i class="fas fa-user-check"></i> Save Changes & Update Profile
+                            </button>
+                        </div>
                     </div>
-                    
-                    
-                </div>
+
+                </form>
             </div>
         </div>
     </div>
-    <!-- Contuct End -->
+    <!-- Profile Section End -->
+
 </body>
 </html>
 {% endblock %}

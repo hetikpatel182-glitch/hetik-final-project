@@ -7,19 +7,408 @@
 <head>
     <!-- Font Awesome CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    /* Premium E-commerce Styling System */
+    body {
+        background-color: #f8fafc !important;
+    }
+    
+    .oos-img { 
+        opacity: 0.4; 
+        filter: grayscale(80%); 
+    }
+    
+    /* Luxury Product Card Design */
+    .product-card-modern {
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        border: none !important;
+        border-radius: 20px !important;
+        overflow: hidden !important;
+        background: #ffffff !important;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03) !important;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        will-change: transform, box-shadow;
+    }
+    .product-card-modern:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08) !important;
+    }
+    
+    .product-img-container {
+        position: relative;
+        padding-top: 100%;
+        background: #fdfdfd;
+        overflow: hidden;
+        transition: background 0.4s ease;
+    }
+    .product-card-modern:hover .product-img-container {
+        background: #f8fafc;
+    }
+    .product-card-modern .product-img-container img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 1.5rem;
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .product-card-modern:hover .product-img-container img {
+        transform: scale(1.08);
+    }
 
-   
+    /* Out of Stock Premium Glassmorphism Overlays */
+    .oos-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.4) !important;
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+    }
+    .oos-overlay span {
+        background: #ef4444 !important;
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        font-size: 0.8rem !important;
+        border-radius: 50px !important;
+        padding: 8px 16px !important;
+        box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4) !important;
+    }
+
+    /* Floating Interaction Wishlist Button */
+    .btn-wishlist-float {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50% !important;
+        background: #ffffff !important;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        z-index: 10;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        border: none !important;
+    }
+    .btn-wishlist-float:hover {
+        transform: scale(1.15);
+        color: #ef4444 !important;
+        box-shadow: 0 8px 16px rgba(239, 68, 68, 0.15);
+    }
+    .btn-wishlist-float.active {
+        color: #ef4444 !important;
+    }
+
+    /* Horizontal Categories Scroll Line */
+    .category-list a {
+        padding: 10px 16px !important;
+        border-radius: 12px !important;
+        color: #475569 !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        border: 1px solid transparent !important;
+        background: transparent;
+        text-decoration: none !important;
+    }
+    .category-list a:hover {
+        background: #f1f5f9 !important;
+        color: #0d6efd !important;
+        transform: translateX(4px);
+    }
+    .category-list a.text-primary.fw-bold {
+        background: #eff6ff !important;
+        color: #2563eb !important;
+        border-color: #dbeafe !important;
+    }
+
+    /* Custom Filter Panels & Collapse Headers */
+    .unified-filter-panel {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 24px !important;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03) !important;
+        padding: 28px !important;
+        transition: all 0.3s ease !important;
+    }
+    .filter-section-header {
+        cursor: pointer;
+        font-weight: 700 !important;
+        font-size: 0.8rem !important;
+        letter-spacing: 1px !important;
+        color: #334155 !important;
+        text-transform: uppercase !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        margin-bottom: 16px;
+        user-select: none;
+    }
+    .filter-section-header i.chevron {
+        transition: transform 0.3s;
+        font-size: 0.75rem;
+        color: #94a3b8;
+    }
+    .filter-section-header.collapsed i.chevron {
+        transform: rotate(-90deg);
+    }
+
+    /* Double range slider overrides */
+    .form-range {
+        height: 6px;
+        background: #cbd5e1;
+        border-radius: 10px;
+        outline: none;
+    }
+    .form-range::-webkit-slider-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #0d6efd;
+        border: 2px solid #ffffff;
+        box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    .form-range::-webkit-slider-thumb:hover {
+        transform: scale(1.15);
+        background: #0056b3;
+    }
+
+    /* Clean Sticky Results Bar */
+    .sort-sticky-bar {
+        position: sticky;
+        top: 85px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 20px;
+        padding: 16px 24px;
+        z-index: 90;
+        box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
+    }
+
+    /* Amazon/Flipkart inspired slide-out drawer on mobile */
+    @media (max-width: 991px) {
+        .unified-filter-panel {
+            position: fixed !important;
+            top: 0;
+            left: -100%;
+            width: 320px;
+            height: 100vh;
+            z-index: 2000;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            border-radius: 0 !important;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.15) !important;
+            padding-top: 80px !important;
+        }
+        .unified-filter-panel.show {
+            transform: translateX(100%);
+        }
+        .filter-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .filter-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .mobile-filter-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 18px 24px;
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+        }
+        .sort-sticky-bar {
+            top: 75px;
+        }
+    }
+    @media (min-width: 992px) {
+        .unified-filter-panel {
+            max-height: calc(100vh - 160px);
+            overflow-y: auto !important;
+            scrollbar-width: thin;
+        }
+    }
+
+    /* Skeleton Loader Shimmer */
+    .skeleton-card {
+        background: #ffffff;
+        border-radius: 20px;
+        overflow: hidden;
+        height: 100%;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    }
+    .skeleton-img {
+        width: 100%;
+        padding-top: 100%;
+        background: linear-gradient(90deg, #f8fafc 25%, #f1f5f9 50%, #f8fafc 75%);
+        background-size: 200% 100%;
+        animation: skeletonShimmer 1.4s infinite ease-in-out;
+    }
+    .skeleton-line {
+        height: 14px;
+        background: linear-gradient(90deg, #f8fafc 25%, #f1f5f9 50%, #f8fafc 75%);
+        background-size: 200% 100%;
+        animation: skeletonShimmer 1.4s infinite ease-in-out;
+        border-radius: 6px;
+        margin-bottom: 12px;
+    }
+    @keyframes skeletonShimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    /* Premium Button Actions list */
+    .product-action-footer {
+        padding-top: 15px;
+        border-top: 1.5px solid #f1f5f9;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    .btn-action-view {
+        flex-grow: 1;
+        border-radius: 50px !important;
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
+        padding: 10px 20px !important;
+        transition: all 0.3s ease !important;
+    }
+    .btn-action-view:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(13, 110, 253, 0.15);
+    }
+    .btn-action-cart {
+        width: 42px;
+        height: 42px;
+        border-radius: 50% !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0d6efd !important;
+        color: #ffffff !important;
+        border: none !important;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .btn-action-cart:hover {
+        transform: scale(1.12) rotate(-6deg);
+        box-shadow: 0 6px 15px rgba(13, 110, 253, 0.25) !important;
+    }
+
+    /* Elegant Custom form selects */
+    .form-select-sm-custom {
+        border: 1.5px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        font-size: 0.85rem !important;
+        padding: 8px 16px !important;
+        font-weight: 600 !important;
+        color: #334155 !important;
+        transition: all 0.2s !important;
+        cursor: pointer;
+    }
+    .form-select-sm-custom:focus {
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1) !important;
+    }
+
+    /* Compact Sleek Page Header style - Light Theme */
+    .page-header-compact {
+        padding-top: 2.5rem !important;
+        padding-bottom: 2.2rem !important;
+        margin-bottom: 0 !important;
+        background: #ffffff !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        position: relative;
+    }
+    .page-header-compact h2 {
+        font-size: 2.1rem !important;
+        font-weight: 800 !important;
+        color: #1e293b !important;
+        letter-spacing: -0.8px;
+        margin-bottom: 8px !important;
+    }
+    .text-primary-gradient {
+        background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800 !important;
+    }
+    .page-header-compact p.header-subtitle {
+        font-size: 0.95rem !important;
+        font-weight: 400 !important;
+        color: #64748b !important;
+        max-width: 620px;
+        margin-left: auto;
+        margin-right: auto;
+        letter-spacing: 0.1px;
+        line-height: 1.5;
+    }
+    .page-header-compact .breadcrumb-item, 
+    .page-header-compact .breadcrumb-item a {
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+        color: #64748b !important;
+        text-decoration: none !important;
+        transition: color 0.2s;
+    }
+    .page-header-compact .breadcrumb-item a:hover {
+        color: #0d6efd !important;
+    }
+    .page-header-compact .breadcrumb-item.active {
+        color: #0d6efd !important;
+        font-weight: 600 !important;
+    }
+</style>
 </head>
 
 <body>
 
     <!-- Single Page Header start -->
-    <div class="container-fluid page-header py-5">
-        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">Shop Page</h1>
+    <div class="container-fluid page-header-compact text-center">
+        <h2 class="wow fadeInUp" data-wow-delay="0.1s">Explore Our <span class="text-primary-gradient">Products</span></h2>
+        <p class="header-subtitle mb-3 wow fadeInUp" data-wow-delay="0.2s">Discover premium collections and handpicked deals from our trusted sellers</p>
         <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="#">Pages</a></li>
-            <li class="breadcrumb-item active text-white">Shop</li>
+            <li class="breadcrumb-item active">Shop</li>
         </ol>
     </div>
     <!-- Single Page Header End -->
@@ -30,72 +419,264 @@
     <div class="container-fluid shop py-5">
         <div class="container py-5">
             <div class="row g-4">
-                <div class="col-lg-3 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="product-categories mb-4">
-                        <h4>Products Categories</h4>
-                        <ul class="list-unstyled">
-                            <li>
-                                <div class="categories-item">
-                                    
-                                    <a href="{% url 'shop' cat='all' %}" class="text-dark"><i class="fa-solid fa-mobile-screen"></i>
-                                        All </a>
-                                    <span>({{all_products}})</span>
+                <div class="col-lg-3">
+                    <!-- Unified Smart Filter Panel -->
+                    <div class="filter-overlay" id="filter-overlay"></div>
+                    <div class="unified-filter-panel p-4 border rounded shadow-sm bg-white" id="filter-panel" style="position: sticky; top: 110px; z-index: 95;">
+                        <div class="mobile-filter-header d-lg-none">
+                            <h5 class="fw-bold mb-0">Filters & Sort</h5>
+                            <button type="button" class="btn-close" id="close-filter"></button>
+                        </div>
+                        <h4 class="fw-bold mb-4 d-none d-lg-flex align-items-center" style="color: #1e293b; font-size: 1.25rem;">
+                            <i class="fas fa-sliders-h me-2 text-primary" style="font-size: 1.15rem;"></i> Filter Products
+                        </h4>
+
+                        <!-- Sort Section -->
+                        <div class="filter-section mb-4">
+                            <div class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#sortCollapse" aria-expanded="true">
+                                <span><i class="fas fa-sort me-2 text-primary"></i>Sort Products</span>
+                                <i class="fas fa-chevron-down chevron"></i>
+                            </div>
+                            <div class="collapse show" id="sortCollapse">
+                                <select id="sort-selector" class="form-select form-select-sm-custom w-100" style="cursor: pointer;">
+                                    <option value="relevance">✦ Relevance</option>
+                                    <option value="price-low">↑ Price: Low to High</option>
+                                    <option value="price-high">↓ Price: High to Low</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" style="border-color: #f1f5f9; opacity: 1;">
+
+                        <!-- Categories Section -->
+                        <div class="filter-section mb-4">
+                            <div class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#categoryCollapse" aria-expanded="true">
+                                <span><i class="fas fa-th-large me-2 text-primary"></i>Categories</span>
+                                <i class="fas fa-chevron-down chevron"></i>
+                            </div>
+                            <div class="collapse show" id="categoryCollapse">
+                                <div class="category-list d-flex flex-column gap-1 pt-1">
+                                    <a href="{% url 'shop' cat='all' %}" class="d-flex justify-content-between align-items-center text-decoration-none {% if current_cat == 'all' %}text-primary fw-bold{% else %}text-dark{% endif %}">
+                                        <span><i class="fa-solid fa-layer-group me-2 text-secondary"></i> All Categories</span>
+                                        <span class="badge rounded-pill bg-light text-muted border small">{{all_products}}</span>
+                                    </a>
+                                    {% for c in categories %}
+                                    <a href="{% url 'shop' cat=c.product_category %}" class="d-flex justify-content-between align-items-center text-decoration-none {% if current_cat == c.product_category %}text-primary fw-bold{% else %}text-dark{% endif %}">
+                                        <span><i class="{{ c.icon }} me-2 text-secondary"></i> {{c.product_category}}</span>
+                                        <span class="badge rounded-pill bg-light text-muted border small">{{c.count}}</span>
+                                    </a>
+                                    {% endfor %}
                                 </div>
-                                <div class="categories-item">
-                                    
-                                    <a href="{% url 'shop' cat='mobile' %}" class="text-dark"><i class="fa-solid fa-mobile-screen"></i>
-                                        Mobile </a>
-                                    <span>({{mobiles}})</span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" style="border-color: #f1f5f9; opacity: 1;">
+
+                        <!-- Price Section -->
+                        <div class="filter-section mb-4">
+                            <div class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#priceCollapse" aria-expanded="true">
+                                <span><i class="fas fa-wallet me-2 text-primary"></i>Max Budget</span>
+                                <i class="fas fa-chevron-down chevron"></i>
+                            </div>
+                            <div class="collapse show" id="priceCollapse">
+                                <div class="pt-2">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted small">Max Price</span>
+                                        <span class="text-primary fw-bold" style="font-size: 0.95rem;">Rs. <span id="price-value">250000</span></span>
+                                    </div>
+                                    <input type="range" class="form-range" id="price-filter" min="0" max="250000" step="1000" value="250000" style="cursor: pointer;">
                                 </div>
-                            </li>
-                            <li>
-                                <div class="categories-item">
-                                    <a href="{% url 'shop' cat='ele' %}" class="text-dark"><i class="fa-solid fa-desktop"></i>
-                                        Electronics </a>
-                                    <span>({{electronics}})</span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" style="border-color: #f1f5f9; opacity: 1;">
+
+                        <!-- Availability Section -->
+                        <div class="filter-section mb-4">
+                            <div class="form-check form-switch d-flex align-items-center justify-content-between ps-0">
+                                <label class="form-check-label text-muted fw-bold small text-uppercase" for="stock-filter" style="cursor: pointer; letter-spacing: 0.5px;">
+                                    <i class="far fa-check-circle me-2 text-primary" style="font-size: 1rem;"></i>In Stock Only
+                                </label>
+                                <input class="form-check-input ms-0" type="checkbox" id="stock-filter" style="width: 2.2rem; height: 1.1rem; cursor: pointer;">
+                            </div>
+                        </div>
+
+                        <hr class="my-4" style="border-color: #f1f5f9; opacity: 1;">
+
+                        <!-- Brands Section -->
+                        <div class="filter-section mb-4">
+                            <div class="filter-section-header" data-bs-toggle="collapse" data-bs-target="#brandCollapse" aria-expanded="true">
+                                <span><i class="fas fa-tag me-2 text-primary"></i>Popular Brands</span>
+                                <i class="fas fa-chevron-down chevron"></i>
+                            </div>
+                            <div class="collapse show" id="brandCollapse">
+                                <div id="brand-filters" class="brand-list pt-2">
+                                    <!-- Brands will be populated by JS -->
                                 </div>
-                            </li>
-                        </ul>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-outline-primary btn-sm w-100 rounded-pill py-2 mt-3 fw-bold shadow-sm" id="reset-filters" style="transition: all 0.3s ease; border-width: 1.5px;">
+                            <i class="fas fa-undo-alt me-2"></i> Reset Filters
+                        </button>
                     </div>
                 </div>
-                <div class="col-lg-9 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="tab-content">
+                <div class="col-lg-9">
+                    <!-- Modern Sticky Sort & Results Top Bar -->
+                    <div class="sort-sticky-bar mb-4 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                            <h5 class="fw-bold mb-0 text-dark" id="results-count" style="font-size: 1.05rem;">Showing results...</h5>
+                            <div class="d-flex align-items-center gap-2">
+                                <button class="btn btn-outline-primary rounded-pill d-lg-none px-4" id="open-filter">
+                                    <i class="fas fa-filter me-2"></i> Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Filter Chips Container -->
+                    <div id="active-filter-chips" class="d-flex flex-wrap gap-2 mb-4"></div>
+
+                    <!-- Skeletal pre-loaders Grid (Discovery Feature) -->
+                    <div class="row g-4 mb-4" id="skeleton-loader-container">
+                        {% for i in "123456" %}
+                        <div class="col-sm-6 col-md-4">
+                            <div class="skeleton-card">
+                                <div class="skeleton-img"></div>
+                                <div class="p-4">
+                                    <div class="skeleton-line" style="width: 35%;"></div>
+                                    <div class="skeleton-line" style="width: 80%; height: 20px;"></div>
+                                    <div class="skeleton-line" style="width: 55%;"></div>
+                                    <div class="d-flex justify-content-between align-items-center mt-4">
+                                        <div class="skeleton-line" style="width: 30%; height: 22px; margin: 0;"></div>
+                                        <div class="skeleton-line" style="width: 40px; height: 40px; border-radius: 50%; margin: 0;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Actual Products Grid Container (Initially Hidden for smooth pre-load) -->
+                    <div class="tab-content" id="actual-products-container" style="display: none; opacity: 0; transition: opacity 0.5s ease;">
                         <div id="tab-5" class="tab-pane fade show p-0 active">
-                            <div class="row g-4 product">
+                            {% if search_query %}
+                            <div class="mb-4 wow fadeIn" data-wow-delay="0.1s">
+                                <h4 class="fw-bold text-dark" style="font-size: 1.25rem;">
+                                    <span class="text-muted fw-normal">Search Results for:</span> "{{search_query}}"
+                                    <a href="{% url 'shop' cat='all' %}" class="btn btn-sm btn-outline-danger rounded-pill ms-2" style="font-size: 0.72rem; vertical-align: middle;">Clear Search</a>
+                                </h4>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="row g-4 product" id="product-grid">
                                 {% for i in products %}
-                                <div class="col-lg-4">
-                                    <div class="product-item rounded wow fadeInUp" data-wow-delay="0.1s">
-                                        <div class="product-item-inner border rounded">
-                                            <div class="product-item-inner-item">
-                                                <img src="{{i.product_picture.url}}" style="width: 300px;height: 250px;" class="img-fluid w-100 rounded-top" alt="">
-                                                
+                                <div class="col-sm-6 col-md-4 product-card-col" data-price="{{i.product_price}}" data-stock="{{i.product_stock}}" data-brand="{{ i.product_name|truncatewords:1|slice:":-1" }}">
+                                    <div class="product-card-modern wow fadeInUp {% if not i.product_status or i.product_stock == 0 %}oos-item{% endif %}" data-wow-delay="0.1s">
+                                        
+                                        <!-- Image Container Section -->
+                                        <div class="product-img-container">
+                                            <a href="{% url 'product-details' pk=i.pk %}">
+                                                <img src="{{i.product_picture.url}}" alt="{{i.product_name}}">
+                                            </a>
+                                            {% if not i.product_status or i.product_stock == 0 %}
+                                            <div class="oos-overlay">
+                                                <span>Out of Stock</span>
                                             </div>
-                                            <div class="text-center rounded-bottom p-4">
-                                                <a href="#" class="d-block mb-2">{{i.product_category}}</a>
-                                                <a href="#" class="d-block h4">{{i.product_name}}</a>
-                                               
-                                                <span class="text-primary fs-5">{{i.product_price}}</span>
-                                            </div>
+                                            {% endif %}
+                                            
+                                            <!-- Luxury floating wishlist button over product photo -->
+                                            {% if i.product_status and i.product_stock > 0 %}
+                                                <a href="{% url 'add-to-wishlist' pk=i.pk %}" class="btn-wishlist-float {% if i.pk in wishlist_pks %}active{% endif %}" title="Add to Wishlist">
+                                                    <i class="{% if i.pk in wishlist_pks %}fas{% else %}far{% endif %} fa-heart"></i>
+                                                </a>
+                                            {% endif %}
                                         </div>
-                                        <div
-                                            class="product-item-add border border-top-0 rounded-bottom  text-center p-4 pt-0">
-                                            <a href="{% url 'product-details' pk=i.pk %}"
-                                                class="btn btn-primary border-secondary rounded-pill py-2 px-4 mb-4"><i
-                                                    class="bi bi-info-circle"> </i>Details</a>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                
-                                                <div class="d-flex">
-                                                    
-                                                    <a href="#"
-                                                        class="text-primary d-flex align-items-center justify-content-center me-0"><span
-                                                            class="rounded-circle btn-sm-square border"><i
-                                                                class="fas fa-heart"></i></a>
+
+                                        <!-- Content Info Section -->
+                                        <div class="product-content p-4" style="flex-grow: 1; display: flex; flex-direction: column;">
+                                            <span class="text-muted text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.8px; font-weight: 600;">{{i.product_category}}</span>
+                                            <h5 class="fw-bold mb-2" style="font-size: 1.05rem; color: #1e293b; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 44px; line-height: 1.4;">{{i.product_name}}</h5>
+                                            
+                                            <!-- Rating stars block -->
+                                            <div class="d-flex align-items-center mb-3">
+                                                {% if i.total_reviews > 0 %}
+                                                    <div class="text-warning small me-2">
+                                                        {% for star in i.stars_solid %}
+                                                            <i class="fas fa-star"></i>
+                                                        {% endfor %}
+                                                        {% for star in i.stars_empty %}
+                                                            <i class="far fa-star"></i>
+                                                        {% endfor %}
+                                                    </div>
+                                                    <span class="text-muted" style="font-size: 0.75rem;">({{ i.avg_rating }} | {{ i.total_reviews }} review{% if i.total_reviews > 1 %}s{% endif %})</span>
+                                                {% else %}
+                                                    <div class="text-muted small me-2">
+                                                        <i class="far fa-star text-secondary"></i><i class="far fa-star text-secondary"></i><i class="far fa-star text-secondary"></i><i class="far fa-star text-secondary"></i><i class="far fa-star text-secondary"></i>
+                                                    </div>
+                                                    <span class="text-muted" style="font-size: 0.75rem;">No reviews</span>
+                                                {% endif %}
+                                            </div>
+                                        
+                                            <!-- Dynamic pricing and availability block -->
+                                            <div class="mb-3 mt-auto">
+                                                {% if i.product_status and i.product_stock > 0 %}
+                                                <div class="d-flex align-items-baseline gap-2">
+                                                    <span class="text-primary fw-bold fs-5">Rs. {{i.product_price}}</span>
                                                 </div>
+                                                
+                                                <div class="mt-2">
+                                                    {% if i.product_stock < 5 %}
+                                                        <span class="text-warning fw-bold" style="font-size: 0.78rem;"><i class="fas fa-exclamation-triangle me-1"></i>Limited stock left</span>
+                                                    {% else %}
+                                                        <span class="text-success fw-bold" style="font-size: 0.78rem;"><i class="fas fa-check-circle me-1"></i>In Stock</span>
+                                                    {% endif %}
+                                                </div>
+                                                {% else %}
+                                                <span class="text-muted fw-bold fs-6"><s>Rs. {{i.product_price}}</s></span>
+                                                {% endif %}
+                                            </div>
+
+                                            <!-- Unified Luxury Call to Action Section -->
+                                            <div class="product-action-footer">
+                                                <a href="{% url 'product-details' pk=i.pk %}" class="btn btn-outline-primary btn-action-view">View Details</a>
+                                                {% if i.product_status and i.product_stock > 0 %}
+                                                <a href="{% url 'add-to-cart' pk=i.pk %}" class="btn-action-cart" title="Add to Cart">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </a>
+                                                {% else %}
+                                                <button class="btn-action-cart bg-secondary opacity-50" style="cursor: not-allowed;" disabled>
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </button>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                {% empty %}
+                                <div class="col-12 text-center py-5">
+                                    <div class="mb-4">
+                                        <i class="fas fa-search-minus fa-4x text-muted opacity-50 mb-3"></i>
+                                        <h3 class="fw-bold text-dark">No products found</h3>
+                                        <p class="text-muted">We couldn't find any products matching your criteria.</p>
+                                    </div>
+                                    <a href="{% url 'shop' cat='all' %}" class="btn btn-primary rounded-pill px-5 py-3">
+                                        <i class="fas fa-th-large me-2"></i> Browse All Products
+                                    </a>
+                                </div>
                                 {% endfor %}
+
+                                <!-- Empty State for Filters -->
+                                <div id="filter-empty-state" class="col-12 text-center py-5 wow fadeInUp" style="display: none;">
+                                    <div class="mb-4">
+                                        <i class="fas fa-filter-circle-xmark fa-4x text-muted opacity-50 mb-3"></i>
+                                        <h3 class="fw-bold text-dark">No matches found</h3>
+                                        <p class="text-muted">Try adjusting your filters to find what you're looking for.</p>
+                                    </div>
+                                    <button onclick="document.getElementById('reset-filters').click()" class="btn btn-primary rounded-pill px-5 py-3">
+                                        <i class="fas fa-undo me-2"></i> Clear Filters
+                                    </button>
+                                </div>
                             </div>
                         </div>
                        
@@ -105,6 +686,246 @@
         </div>
     </div>
     <!-- Shop Page End -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const priceFilter = document.getElementById('price-filter');
+            const priceValue = document.getElementById('price-value');
+            const stockFilter = document.getElementById('stock-filter');
+            const resetBtn = document.getElementById('reset-filters');
+            const sortSelector = document.getElementById('sort-selector');
+            const brandContainer = document.getElementById('brand-filters');
+            const productGrid = document.getElementById('product-grid');
+            const productCols = Array.from(document.querySelectorAll('.product-card-col'));
+            const emptyState = document.getElementById('filter-empty-state');
+            const resultsCount = document.getElementById('results-count');
+
+            // Extract unique brands from data-brand attributes
+            const brands = [...new Set(productCols.map(col => col.getAttribute('data-brand')))].filter(b => b).sort();
+            
+            // Populate brand checkboxes
+            brandContainer.innerHTML = brands.map(brand => `
+                <div class="form-check mb-2">
+                    <input class="form-check-input brand-checkbox" type="checkbox" value="${brand}" id="brand-${brand}">
+                    <label class="form-check-label d-flex justify-content-between align-items-center w-100" for="brand-${brand}">
+                        <span>${brand}</span>
+                        <span class="badge rounded-pill bg-light text-muted border small">${productCols.filter(c => c.getAttribute('data-brand') === brand).length}</span>
+                    </label>
+                </div>
+            `).join('');
+
+            function applyFilters() {
+                const scrollPos = window.scrollY; // Preserve scroll position to prevent visual jump
+
+                const maxPrice = parseInt(priceFilter.value);
+                const inStockOnly = stockFilter.checked;
+                const selectedBrands = Array.from(document.querySelectorAll('.brand-checkbox:checked')).map(cb => cb.value);
+                const sortValue = sortSelector.value;
+                
+                let visibleCount = 0;
+
+                // 1. Filter Logic
+                productCols.forEach(col => {
+                    const price = parseInt(col.getAttribute('data-price')) || 0;
+                    const stock = parseInt(col.getAttribute('data-stock')) || 0;
+                    const brand = col.getAttribute('data-brand') || '';
+                    
+                    const matchesPrice = price <= maxPrice;
+                    const matchesStock = !inStockOnly || stock > 0;
+                    const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(brand);
+
+                    if (matchesPrice && matchesStock && matchesBrand) {
+                        col.setAttribute('data-visible', 'true');
+                        col.style.display = 'block';
+                        
+                        // Override WOW.js hidden style to show filtered results instantly
+                        const animCard = col.querySelector('.product-card-modern');
+                        if (animCard) {
+                            animCard.style.visibility = 'visible';
+                            animCard.style.opacity = '1';
+                            animCard.style.animationName = 'none';
+                        }
+                        
+                        visibleCount++;
+                    } else {
+                        col.setAttribute('data-visible', 'false');
+                        col.style.display = 'none';
+                    }
+                });
+
+                // 2. Sorting Logic
+                const visibleCols = productCols.filter(col => col.getAttribute('data-visible') === 'true');
+                
+                if (sortValue === 'price-low') {
+                    visibleCols.sort((a, b) => parseInt(a.getAttribute('data-price')) - parseInt(b.getAttribute('data-price')));
+                } else if (sortValue === 'price-high') {
+                    visibleCols.sort((a, b) => parseInt(b.getAttribute('data-price')) - parseInt(a.getAttribute('data-price')));
+                }
+                
+                // Re-append sorted elements to the grid
+                visibleCols.forEach(col => productGrid.appendChild(col));
+
+                // Instantly restore scroll position
+                window.scrollTo(0, scrollPos);
+
+                // 3. UI Feedback
+                if (resultsCount) {
+                    resultsCount.innerHTML = `Showing <span class="text-primary fw-bold">${visibleCount}</span> results`;
+                }
+
+                if (emptyState) {
+                    emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+                    if (visibleCount === 0) {
+                        emptyState.style.visibility = 'visible';
+                        emptyState.style.opacity = '1';
+                        emptyState.style.animationName = 'none';
+                    }
+                }
+
+                // Trigger scroll event programmatically to alert WOW.js about dynamic layout shift
+                window.dispatchEvent(new Event('scroll'));
+
+                // 4. Update Filter Chips
+                const chipsContainer = document.getElementById('active-filter-chips');
+                if (chipsContainer) {
+                    chipsContainer.innerHTML = '';
+                    
+                    if (maxPrice < 250000) {
+                        createChip(`Max Price: Rs. ${maxPrice.toLocaleString()}`, 'price', '');
+                    }
+                    
+                    if (inStockOnly) {
+                        createChip('In Stock Only', 'stock', '');
+                    }
+                    
+                    selectedBrands.forEach(brand => {
+                        createChip(brand, 'brand', brand);
+                    });
+                }
+
+                function createChip(label, type, val) {
+                    const chip = document.createElement('span');
+                    chip.className = 'badge rounded-pill d-inline-flex align-items-center gap-2 px-3 py-2 text-primary border border-primary-subtle';
+                    chip.style.cssText = 'background: #eff6ff; font-weight: 500; font-size: 0.8rem; letter-spacing: 0.3px;';
+                    chip.innerHTML = `
+                        <span>${label}</span>
+                        <i class="fas fa-times cursor-pointer hover-scale text-primary" style="cursor: pointer; opacity: 0.7; font-size: 0.8rem;" onclick="removeFilterChip('${type}', '${val}')"></i>
+                    `;
+                    chipsContainer.appendChild(chip);
+                }
+            }
+
+            // Global removal handler for chips
+            window.removeFilterChip = function(type, val) {
+                if (type === 'price') {
+                    priceFilter.value = 250000;
+                    priceValue.textContent = '250000';
+                } else if (type === 'stock') {
+                    stockFilter.checked = false;
+                } else if (type === 'brand') {
+                    const cb = document.getElementById(`brand-${val}`);
+                    if (cb) {
+                        cb.checked = false;
+                    }
+                }
+                applyFilters();
+            };
+
+            // Event Listeners
+            if (priceFilter) {
+                priceFilter.addEventListener('input', function() {
+                    priceValue.textContent = parseInt(this.value).toLocaleString();
+                    applyFilters();
+                });
+            }
+
+            if (stockFilter) stockFilter.addEventListener('change', applyFilters);
+            if (sortSelector) sortSelector.addEventListener('change', applyFilters);
+            
+            // Re-bind listeners as brand-checkbox elements can be dynamic
+            const bindBrandListeners = () => {
+                document.querySelectorAll('.brand-checkbox').forEach(cb => {
+                    cb.removeEventListener('change', applyFilters);
+                    cb.addEventListener('change', applyFilters);
+                });
+            };
+            bindBrandListeners();
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', function() {
+                    priceFilter.value = priceFilter.max;
+                    priceValue.textContent = parseInt(priceFilter.max).toLocaleString();
+                    stockFilter.checked = false;
+                    sortSelector.value = 'relevance';
+                    document.querySelectorAll('.brand-checkbox').forEach(cb => cb.checked = false);
+                    applyFilters();
+                });
+            }
+
+            // Run initial filter to set result count
+            applyFilters();
+            bindBrandListeners();
+
+            // Mobile Filter Logic
+            const openFilterBtn = document.getElementById('open-filter');
+            const closeFilterBtn = document.getElementById('close-filter');
+            const filterOverlay = document.getElementById('filter-overlay');
+            const filterPanel = document.getElementById('filter-panel');
+
+            if (openFilterBtn) {
+                openFilterBtn.addEventListener('click', function() {
+                    filterPanel.classList.add('show');
+                    filterOverlay.classList.add('show');
+                    document.body.style.overflow = 'hidden'; // Prevent background scroll
+                });
+            }
+
+            function closeMobileFilter() {
+                filterPanel.classList.remove('show');
+                filterOverlay.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+
+            if (closeFilterBtn) closeFilterBtn.addEventListener('click', closeMobileFilter);
+            if (filterOverlay) filterOverlay.addEventListener('click', closeMobileFilter);
+
+            // Listen to bootstrap collapse show/hide to rotate chevrons
+            document.querySelectorAll('.collapse').forEach(collapseEl => {
+                collapseEl.addEventListener('show.bs.collapse', function() {
+                    const header = document.querySelector(`[data-bs-target="#${this.id}"]`);
+                    if (header) header.classList.remove('collapsed');
+                });
+                collapseEl.addEventListener('hide.bs.collapse', function() {
+                    const header = document.querySelector(`[data-bs-target="#${this.id}"]`);
+                    if (header) header.classList.add('collapsed');
+                });
+            });
+
+            // simulated premium discovery preloader transition
+            setTimeout(function() {
+                const skeleton = document.getElementById('skeleton-loader-container');
+                const actualContainer = document.getElementById('actual-products-container');
+                if (skeleton) {
+                    skeleton.style.transition = 'opacity 0.4s ease';
+                    skeleton.style.opacity = '0';
+                    setTimeout(() => {
+                        skeleton.style.display = 'none';
+                        if (actualContainer) {
+                            actualContainer.style.display = 'block';
+                            actualContainer.offsetHeight; // force reflow
+                            actualContainer.style.opacity = '1';
+                            
+                            // Re-apply filters to evaluate matches and force visibility of card animations
+                            applyFilters();
+                            
+                            // Alert WOW.js to recalculate scroll positions for elements
+                            window.dispatchEvent(new Event('scroll'));
+                        }
+                    }, 400);
+                }
+            }, 650);
+        });
+    </script>
 </body>
 </html>
 {% endblock %}

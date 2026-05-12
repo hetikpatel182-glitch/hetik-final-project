@@ -6,68 +6,463 @@
 
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <style>
+         /* Custom Overrides to Match Global Design System */
+         .page-header-compact {
+             padding-top: 2.5rem !important;
+             padding-bottom: 2.2rem !important;
+             margin-bottom: 0 !important;
+             background: #ffffff !important;
+             border-bottom: 1px solid #e2e8f0 !important;
+             position: relative;
+         }
+         .page-header-compact h2 {
+             font-size: 2.1rem !important;
+             font-weight: 800 !important;
+             color: #1e293b !important;
+             letter-spacing: -0.8px;
+             margin-bottom: 8px !important;
+         }
+         .text-primary-gradient {
+             background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%);
+             -webkit-background-clip: text;
+             -webkit-text-fill-color: transparent;
+             font-weight: 800 !important;
+         }
+         .page-header-compact p.header-subtitle {
+             font-size: 0.95rem !important;
+             font-weight: 400 !important;
+             color: #64748b !important;
+             max-width: 620px;
+             margin-left: auto;
+             margin-right: auto;
+             letter-spacing: 0.1px;
+             line-height: 1.5;
+         }
+         .page-header-compact .breadcrumb-item, 
+         .page-header-compact .breadcrumb-item a {
+             font-size: 0.85rem !important;
+             font-weight: 500 !important;
+             color: #64748b !important;
+             text-decoration: none !important;
+             transition: color 0.2s;
+         }
+         .page-header-compact .breadcrumb-item a:hover {
+             color: #0d6efd !important;
+         }
+         .page-header-compact .breadcrumb-item.active {
+             color: #0d6efd !important;
+             font-weight: 600 !important;
+         }
+         .page-header-compact .breadcrumb-item + .breadcrumb-item::before {
+             color: #94a3b8 !important;
+             font-family: "Font Awesome 5 Free" !important;
+             font-weight: 900 !important;
+             content: "\f105" !important;
+         }
 
+         /* Premium Product Details Card Container */
+         .product-detail-card {
+             background: #ffffff !important;
+             border-radius: 24px !important;
+             box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04) !important;
+             border: 1px solid #f1f5f9 !important;
+             overflow: hidden;
+         }
+
+         /* Product Image Preview Area */
+         .image-preview-wrapper {
+             border-radius: 20px !important;
+             overflow: hidden !important;
+             border: 1px solid #e2e8f0 !important;
+             background-color: #f8fafc !important;
+             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+         }
+         .image-preview-wrapper:hover {
+             transform: translateY(-4px);
+             box-shadow: 0 12px 25px rgba(15, 23, 42, 0.06) !important;
+             border-color: #cbd5e1 !important;
+         }
+         .image-preview-wrapper img {
+             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+         }
+         .image-preview-wrapper:hover img {
+             transform: scale(1.03);
+         }
+
+         /* Badges and Category */
+         .category-badge {
+             background-color: #eff6ff !important;
+             color: #2563eb !important;
+             font-weight: 700 !important;
+             font-size: 0.78rem !important;
+             letter-spacing: 0.5px;
+             text-transform: uppercase;
+             padding: 6px 14px !important;
+             border-radius: 50px !important;
+             display: inline-block;
+         }
+         .oos-banner {
+             background: linear-gradient(135deg, #ef4444, #f43f5e) !important;
+             color: white !important;
+             padding: 6px 14px !important;
+             border-radius: 50px !important;
+             font-weight: 700 !important;
+             font-size: 0.78rem !important;
+             letter-spacing: 0.5px;
+             display: inline-flex;
+             align-items: center;
+             gap: 6px;
+             text-transform: uppercase;
+         }
+         .oos-product-img { opacity: 0.6; filter: grayscale(50%); }
+
+         /* Premium Dynamic Price display */
+         .price-text-premium {
+             font-size: 2rem !important;
+             font-weight: 800 !important;
+             color: #0f172a !important;
+             letter-spacing: -0.5px;
+         }
+
+         /* Elegant CTA Button overrides */
+         .btn-premium-action {
+             border-radius: 50px !important;
+             font-weight: 700 !important;
+             font-size: 0.92rem !important;
+             padding: 12px 28px !important;
+             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+             display: inline-flex !important;
+             align-items: center !important;
+             gap: 8px !important;
+             border: 2px solid transparent !important;
+         }
+         .btn-premium-action-primary {
+             background: #0d6efd !important;
+             color: #ffffff !important;
+             box-shadow: 0 4px 14px rgba(13, 110, 253, 0.18) !important;
+         }
+         .btn-premium-action-primary:hover {
+             background: #0b5ed7 !important;
+             transform: translateY(-2px);
+             box-shadow: 0 8px 24px rgba(13, 110, 253, 0.28) !important;
+             color: #ffffff !important;
+         }
+         .btn-premium-action-primary:active {
+             transform: translateY(0);
+         }
+         .btn-premium-action-outline {
+             background: transparent !important;
+             border-color: #cbd5e1 !important;
+             color: #475569 !important;
+         }
+         .btn-premium-action-outline:hover {
+             border-color: #0d6efd !important;
+             color: #0d6efd !important;
+             background: #f8fafc !important;
+             transform: translateY(-2px);
+         }
+         .btn-premium-action-outline:active {
+             transform: translateY(0);
+         }
+         .btn-premium-action-danger {
+             background: #ef4444 !important;
+             color: #ffffff !important;
+             box-shadow: 0 4px 14px rgba(239, 68, 68, 0.18) !important;
+         }
+         .btn-premium-action-danger:hover {
+             background: #dc3545 !important;
+             transform: translateY(-2px);
+             box-shadow: 0 8px 24px rgba(239, 68, 68, 0.28) !important;
+             color: #ffffff !important;
+         }
+
+         /* Review items UI standardization */
+         .reviews-list-premium .review-card-premium {
+             background: #ffffff !important;
+             border: 1px solid #f1f5f9 !important;
+             border-radius: 20px !important;
+             padding: 24px !important;
+             transition: all 0.3s ease;
+         }
+         .reviews-list-premium .review-card-premium:hover {
+             transform: translateY(-2px);
+             box-shadow: 0 8px 20px rgba(15, 23, 42, 0.03) !important;
+             border-color: #e2e8f0 !important;
+         }
+
+         /* Stock and warnings labels */
+         .badge-stock {
+             padding: 6px 12px !important;
+             border-radius: 50px !important;
+             font-weight: 700 !important;
+             font-size: 0.78rem !important;
+             letter-spacing: 0.3px;
+             text-transform: uppercase;
+             display: inline-flex;
+             align-items: center;
+             gap: 6px;
+         }
+         .badge-stock-in {
+             background-color: #dcfce7 !important;
+             color: #15803d !important;
+         }
+         .badge-stock-low {
+             background-color: #fef3c7 !important;
+             color: #b45309 !important;
+         }
+         .btn-oos-disabled {
+             background: #e9ecef !important;
+             color: #adb5bd !important;
+             border-color: #dee2e6 !important;
+             cursor: not-allowed;
+             pointer-events: none;
+         }
+    </style>
 </head>
 
 <body>
 
     <!-- Single Page Header start -->
-    <div class="container-fluid page-header py-5">
-        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">Single Product</h1>
+    <div class="container-fluid page-header-compact text-center">
+        <h2 class="wow fadeInUp" data-wow-delay="0.1s">Product <span class="text-primary-gradient">Details</span></h2>
+        <p class="header-subtitle mb-3 wow fadeInUp" data-wow-delay="0.2s">Explore product details, pricing, reviews, and contact options</p>
         <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="#">Pages</a></li>
-            <li class="breadcrumb-item active text-white">Single Product</li>
+            <li class="breadcrumb-item active">Product Details</li>
         </ol>
     </div>
     <!-- Single Page Header End -->
 
-
     <!-- Single Products Start -->
-    <div class="container-fluid shop py-5">
-        <div class="container py-5">
-            <div class="row g-4">
-                
-                <div class="col-lg-7 col-xl-9 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="row g-4 single-product">
-                        <div class="col-xl-6">
-                            <div class="single-carousel owl-carousel">
-                                <div class="single-item"
-                                    data-dot="<img class='img-fluid' src='{{product.product_picture.url}}' alt=''>">
-                                    <div class="single-inner bg-light rounded">
-                                        <img src="{{product.product_picture.url}}" class="img-fluid rounded" alt="Image">
+    <div class="container-fluid shop py-5 bg-light-subtle" style="background-color: #f8fafc;">
+        <div class="container py-3">
+            <div class="row">
+                <div class="col-lg-11 col-xl-10 mx-auto wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="product-detail-card p-4 p-md-5 bg-white">
+                        <div class="row g-4 g-lg-5">
+                            
+                            <!-- Left Side: Product Images Area -->
+                            <div class="col-lg-6">
+                                <div class="single-carousel owl-carousel">
+                                    <div class="single-item" data-dot="<img class='img-fluid' src='{{product.product_picture.url}}' alt=''>">
+                                        <div class="image-preview-wrapper p-2">
+                                            <img src="{{product.product_picture.url}}" class="img-fluid rounded {% if not product.product_status or product.product_stock == 0 %}oos-product-img{% endif %}" alt="{{product.product_name}}" style="width: 100%;">
+                                        </div>
                                     </div>
                                 </div>
-                               
                             </div>
-                        </div>
-                        <div class="col-xl-6">
-                            <h4 class="fw-bold mb-3">{{product.product_name}}</h4>
-                            <p class="mb-3">Category: {{product.product_category}}</p>
                             
-                            <div class="mb-3">
-                                {% if request.session.email %}
-                                {% if cart_flag == False %}
-                                    <a href="{% url 'add-to-cart' pk=product.pk %}"><div class="btn btn-primary d-inline-block rounded text-white py-1 px-4 me-2"><i
-                                        class="bi bi-cart-plus"></i> Add To Cart </div></a>
-                                {% else %}
-                                    <a href="{% url 'remove-from-cart' pk=product.pk %}"><div class="btn btn-primary d-inline-block rounded text-white py-1 px-4 me-2"><i
-                                        class="bi bi-cart-dash"></i> Remove From Cart </div></a>
-                                {% endif %}
-                                        {% if wishlist_flag == False %}
-                                            <a href="{% url 'add-to-wishlist' pk=product.pk %}"><div class="btn btn-primary d-inline-block rounded text-white py-1 px-4 me-2"><i
-                                            class="bi bi-heart-fill"></i> Add To Wishlist </div></a>
+                            <!-- Right Side: Product Bio & Specs -->
+                            <div class="col-lg-6 d-flex flex-column justify-content-center">
+                                <!-- Category Badge -->
+                                <div class="mb-3">
+                                    <span class="category-badge"><i class="fas fa-tag me-1"></i> {{product.product_category}}</span>
+                                </div>
+
+                                <h2 class="fw-bold text-dark mb-2" style="letter-spacing: -0.5px;">{{product.product_name}}</h2>
+
+                                <!-- Reviews Stars -->
+                                <div class="d-flex align-items-center mb-4">
+                                    {% if total_reviews > 0 %}
+                                        <div class="text-warning small me-2">
+                                            {% for star in stars_solid %}
+                                                <i class="fas fa-star"></i>
+                                            {% endfor %}
+                                            {% for star in stars_empty %}
+                                                <i class="far fa-star"></i>
+                                            {% endfor %}
+                                        </div>
+                                        <span class="text-muted fw-bold small">({{ avg_rating }} / 5.0 | {{ total_reviews }} Customer Review{% if total_reviews > 1 %}s{% endif %})</span>
+                                    {% else %}
+                                        <div class="text-muted small me-2">
+                                            <i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                                        </div>
+                                        <span class="text-muted small">No reviews yet</span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Pricing and Stock Bar -->
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-3 mb-4 border-bottom">
+                                    {% if not product.product_status or product.product_stock == 0 %}
+                                    <div class="d-flex flex-column">
+                                        <span class="oos-banner mb-1"><i class="fas fa-exclamation-circle"></i> Out of Stock</span>
+                                        <h4 class="text-muted fw-bold mb-0"><s>Rs. {{product.product_price}}</s></h4>
+                                    </div>
+                                    {% else %}
+                                    <div class="d-flex align-items-baseline gap-2">
+                                        <span class="price-text-premium">Rs. {{product.product_price}}</span>
+                                    </div>
+                                    <div>
+                                        {% if product.product_stock < 5 %}
+                                            <span class="badge-stock badge-stock-low">
+                                                <i class="fas fa-exclamation-triangle"></i> Only {{ product.product_stock }} Left
+                                            </span>
                                         {% else %}
-                                            <a href="{% url 'remove-from-wishlist' pk=product.pk %}"><div class="btn btn-primary d-inline-block rounded text-white py-1 px-4 me-2"><i
-                                            class="bi bi-heartbreak"></i> Remove From Wishlist </div></a>
+                                            <span class="badge-stock badge-stock-in">
+                                                <i class="fas fa-check-circle"></i> In Stock
+                                            </span>
                                         {% endif %}
-                                {% else %}
-                                <a href="{% url 'login' %}"><div class="btn btn-primary d-inline-block rounded text-white py-1 px-4 me-2"><i
-                                        class="bi bi-box-arrow-in-right"></i> Login </div></a>
-                                {% endif %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Premium Return Policy Widget -->
+                                <div class="p-3 mb-4 rounded d-flex align-items-center gap-3 border" style="background: {% if product.returnable %}#f0fdf4{% else %}#fef2f2{% endif %}; border-color: {% if product.returnable %}#bbf7d0{% else %}#fecaca{% endif %} !important;">
+                                    <div class="d-flex align-items-center justify-content-center rounded-circle" style="width: 44px; height: 44px; background: {% if product.returnable %}#dcfce7{% else %}#fee2e2{% endif %}; flex-shrink: 0;">
+                                        <i class="fas {% if product.returnable %}fa-undo-alt text-success{% else %}fa-ban text-danger{% endif %}" style="font-size: 1.25rem;"></i>
+                                    </div>
+                                    <div style="flex-grow: 1; min-width: 0;">
+                                        <h6 class="mb-1 fw-bold {% if product.returnable %}text-success{% else %}text-danger{% endif %}" style="font-size: 0.95rem;">
+                                            {% if product.returnable %}
+                                                {{ product.return_days }} Days Return Window
+                                            {% else %}
+                                                Non-Returnable Product
+                                            {% endif %}
+                                        </h6>
+                                        <p class="mb-0 text-muted small" style="line-height: 1.4;">
+                                            {% if product.returnable %}
+                                                Eligible for return and refund within {{ product.return_days }} days of delivery.
+                                            {% else %}
+                                                This item cannot be returned or exchanged once delivered.
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Description -->
+                                <div class="mb-4">
+                                    <h6 class="fw-bold text-dark mb-2">Product Description</h6>
+                                    <p class="text-secondary small mb-0" style="line-height: 1.6;">{{product.product_desc}}</p>
+                                </div>
+
+                                <!-- CTA Buttons -->
+                                <div class="d-flex flex-wrap gap-2 align-items-center">
+                                    {% if product.product_status and product.product_stock > 0 %}
+                                        {% if request.session.email %}
+                                            {% if cart_flag == False %}
+                                                <a href="{% url 'add-to-cart' pk=product.pk %}" class="text-decoration-none">
+                                                    <button class="btn btn-premium-action btn-premium-action-primary">
+                                                        <i class="bi bi-cart-plus fs-5"></i> Add To Cart
+                                                    </button>
+                                                </a>
+                                            {% else %}
+                                                <a href="{% url 'remove-from-cart' pk=product.pk %}" class="text-decoration-none">
+                                                    <button class="btn btn-premium-action btn-premium-action-danger">
+                                                        <i class="bi bi-cart-dash fs-5"></i> Remove From Cart
+                                                    </button>
+                                                </a>
+                                            {% endif %}
+                                            <a href="{% url 'add-to-wishlist' pk=product.pk %}" class="wishlist-toggle-btn text-decoration-none">
+                                                <button class="btn btn-premium-action btn-premium-action-outline">
+                                                    <i class="bi {% if wishlist_flag %}bi-heart-fill text-danger{% else %}bi-heart{% endif %} fs-5"></i> 
+                                                    {% if wishlist_flag %}Remove From{% else %}Add To{% endif %} Wishlist
+                                                </button>
+                                            </a>
+                                        {% else %}
+                                            <a href="{% url 'login' %}" class="text-decoration-none">
+                                                <button class="btn btn-premium-action btn-premium-action-primary">
+                                                    <i class="bi bi-box-arrow-in-right fs-5"></i> Login to Purchase
+                                                </button>
+                                            </a>
+                                        {% endif %}
+                                    {% else %}
+                                        <!-- Out of Stock — disable purchase, allow wishlist -->
+                                        <button class="btn btn-oos-disabled btn-premium-action py-3 px-4">
+                                            <i class="bi bi-cart-x fs-5"></i> Out of Stock
+                                        </button>
+                                        {% if request.session.email %}
+                                            {% if wishlist_flag == False %}
+                                                <a href="{% url 'add-to-wishlist' pk=product.pk %}" class="text-decoration-none">
+                                                    <button class="btn btn-premium-action btn-premium-action-outline">
+                                                        <i class="bi bi-heart fs-5"></i> Save to Wishlist
+                                                    </button>
+                                                </a>
+                                            {% else %}
+                                                <a href="{% url 'remove-from-wishlist' pk=product.pk %}" class="text-decoration-none">
+                                                    <button class="btn btn-premium-action btn-premium-action-danger">
+                                                        <i class="bi bi-heartbreak fs-5"></i> Remove from Wishlist
+                                                    </button>
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                    <a href="{% url 'contact' %}?product_id={{product.pk}}" class="text-decoration-none">
+                                        <button class="btn btn-premium-action btn-premium-action-outline">
+                                            <i class="bi bi-envelope fs-5"></i> Contact Seller
+                                        </button>
+                                    </a>
+                                </div>
                             </div>
-                            <p class="mb-4">{{product.product_desc}}</p>    
+                            
                         </div>
+
+                        <!-- Customer Reviews Section -->
+                        <div class="col-12 mt-5">
+                            <hr class="my-4 opacity-10">
+                            <h3 class="fw-bold mb-4 text-dark d-flex align-items-center gap-2">
+                                <i class="fas fa-comments text-primary" style="color: #0d6efd !important;"></i> Customer Reviews
+                                <span class="badge rounded-pill px-3 py-1 text-white fs-6" style="font-weight: 600; background-color: #0d6efd !important;">{{ total_reviews }}</span>
+                            </h3>
+
+                            {% if total_reviews > 0 %}
+                                <!-- Ratings Overview & Progress -->
+                                <div class="row g-4 align-items-center mb-5 p-4 rounded bg-light" style="border: 1px solid #e2e8f0;">
+                                    <div class="col-md-4 text-center border-md-end border-slate">
+                                        <h1 class="display-3 fw-bold mb-1" style="color: #0d6efd;">{{ avg_rating }}</h1>
+                                        <div class="text-warning mb-2" style="font-size: 1.25rem;">
+                                            {% for star in stars_solid %}
+                                                <i class="fas fa-star"></i>
+                                            {% endfor %}
+                                            {% for star in stars_empty %}
+                                                <i class="far fa-star"></i>
+                                            {% endfor %}
+                                        </div>
+                                        <p class="text-muted mb-0">Average Product Rating</p>
+                                    </div>
+                                    <div class="col-md-8 px-md-5">
+                                        <h5 class="fw-bold mb-3">Customer feedback & thoughts</h5>
+                                        <p class="text-muted small mb-0" style="line-height: 1.6;">
+                                            Our verified buyer review program ensures all ratings and reviews are written by real customers who have completed their transaction lifecycle and had this specific product delivered to their home address.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Reviews List -->
+                                <div class="reviews-list-premium d-flex flex-column gap-3">
+                                    {% for r in reviews %}
+                                    <div class="review-card-premium">
+                                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                                            <div>
+                                                <h6 class="fw-bold text-dark mb-1"><i class="fas fa-user-circle text-secondary me-2"></i>{{ r.user.fname }} {{ r.user.lname }}</h6>
+                                                <div class="text-warning small">
+                                                    {% for star in r.stars_solid %}
+                                                        <i class="fas fa-star"></i>
+                                                    {% endfor %}
+                                                    {% if r.stars_empty %}
+                                                        {% for star in r.stars_empty %}
+                                                            <i class="far fa-star"></i>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                    <span class="text-muted ms-2 small" style="font-size: 0.8rem;">({{ r.rating }}/5)</span>
+                                                </div>
+                                            </div>
+                                            <span class="text-muted small"><i class="far fa-calendar-alt me-1"></i>{{ r.time|date:"M d, Y" }}</span>
+                                        </div>
+                                        <p class="mb-0 text-secondary" style="font-size: 0.92rem; line-height: 1.6; white-space: pre-line;">"{{ r.review_text }}"</p>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5 bg-light rounded border" style="border-color: #e2e8f0 !important;">
+                                    <i class="far fa-comment-dots fa-3x text-muted opacity-50 mb-3" style="color: #cbd5e1 !important;"></i>
+                                    <h4 class="fw-bold text-dark">No reviews yet</h4>
+                                    <p class="text-muted mb-0">Be the first verified customer to buy and review this product!</p>
+                                </div>
+                            {% endif %}
+                        </div>
+
                     </div>
                 </div>
             </div>

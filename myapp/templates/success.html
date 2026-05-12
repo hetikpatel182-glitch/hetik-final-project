@@ -1,19 +1,313 @@
 {% extends 'header.html' %}
 {% load static %}
 {% block content %}
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
- <title>Thanks for your order!</title>
- 
+    <title>Order Successful - Thank You!</title>
+    <style>
+        /* Base page background */
+        .success-page-bg {
+            background-color: #f8fafc !important;
+            min-height: calc(100vh - 120px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.5rem !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Success Main card style */
+        .success-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 24px !important;
+            box-shadow: 0 15px 45px rgba(15, 23, 42, 0.05) !important;
+            max-width: 620px;
+            width: 100%;
+            padding: 3rem 2.5rem !important;
+            text-align: center;
+            position: relative;
+            z-index: 20;
+            animation: card-appear 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes card-appear {
+            0% { transform: translateY(30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Premium Pulsating Checked Ring */
+        .checkmark-wrapper {
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+        .checkmark-circle {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: #e2fbe8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: pulse-ring 2s infinite;
+        }
+        .checkmark-icon {
+            font-size: 2.5rem;
+            color: #10b981;
+            animation: scale-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.3); }
+            70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        @keyframes scale-in {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        /* Titles and taglines */
+        .success-title {
+            font-size: 2rem !important;
+            font-weight: 800 !important;
+            color: #1e293b !important;
+            letter-spacing: -0.8px;
+            margin-bottom: 0.5rem !important;
+        }
+        .text-primary-gradient {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .success-subtitle {
+            font-size: 1rem !important;
+            color: #64748b !important;
+            margin-bottom: 2rem !important;
+        }
+
+        /* Receipt Card Details */
+        .receipt-card {
+            background: #f8fafc !important;
+            border: 1px solid #f1f5f9 !important;
+            border-radius: 16px !important;
+            padding: 1.5rem !important;
+            margin-bottom: 2rem !important;
+            text-align: left;
+        }
+        .receipt-header {
+            font-size: 0.85rem !important;
+            font-weight: 700 !important;
+            color: #475569 !important;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 1rem !important;
+            border-bottom: 1.5px dashed #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.92rem;
+        }
+        .receipt-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+        .receipt-value {
+            color: #1e293b;
+            font-weight: 600;
+        }
+        .receipt-value.price {
+            color: #0d6efd;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        /* Action Buttons */
+        .cta-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .btn-success-primary {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 12px 24px !important;
+            font-weight: 600 !important;
+            font-size: 0.95rem !important;
+            transition: all 0.3s !important;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.2) !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none !important;
+            flex: 1;
+        }
+        .btn-success-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.35) !important;
+        }
+        .btn-success-secondary {
+            background: #ffffff !important;
+            color: #475569 !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 12px !important;
+            padding: 12px 24px !important;
+            font-weight: 600 !important;
+            font-size: 0.95rem !important;
+            transition: all 0.3s !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none !important;
+            flex: 1;
+        }
+        .btn-success-secondary:hover {
+            background: #f8fafc !important;
+            color: #1e293b !important;
+            border-color: #94a3b8 !important;
+            transform: translateY(-2px);
+        }
+
+        /* Trust / Reassurance block */
+        .trust-info-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 1.8rem;
+            color: #10b981;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Confetti Falling animations */
+        .confetti-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 10;
+        }
+        .confetti-piece {
+            position: absolute;
+            width: 8px;
+            height: 12px;
+            background: #ffd700;
+            border-radius: 2px;
+            opacity: 0.75;
+            animation: fall-down 4s ease-in-out infinite;
+        }
+        @keyframes fall-down {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
 </head>
+
 <body>
- <div class="container">
- <p>
- <h3>Payment Successful</h3>
- <p>Thank you for your purchase!</p>
- <p> If you have any questions, please let us know through emails.</p>
- </p>
- </div>
+
+    <div class="container-fluid success-page-bg">
+        <!-- CSS Confetti Effect particles -->
+        <div class="confetti-container">
+            <div class="confetti-piece" style="left: 8%; background: #ffd700; animation-delay: 0.1s; animation-duration: 3.5s;"></div>
+            <div class="confetti-piece" style="left: 15%; background: #3b82f6; animation-delay: 0.4s; animation-duration: 4.2s;"></div>
+            <div class="confetti-piece" style="left: 28%; background: #10b981; animation-delay: 0.2s; animation-duration: 3.8s;"></div>
+            <div class="confetti-piece" style="left: 35%; background: #ec4899; animation-delay: 0.7s; animation-duration: 4.5s;"></div>
+            <div class="confetti-piece" style="left: 45%; background: #f59e0b; animation-delay: 0.3s; animation-duration: 3.9s;"></div>
+            <div class="confetti-piece" style="left: 58%; background: #8b5cf6; animation-delay: 0.5s; animation-duration: 4.1s;"></div>
+            <div class="confetti-piece" style="left: 67%; background: #10b981; animation-delay: 0.1s; animation-duration: 3.7s;"></div>
+            <div class="confetti-piece" style="left: 76%; background: #3b82f6; animation-delay: 0.8s; animation-duration: 4.6s;"></div>
+            <div class="confetti-piece" style="left: 85%; background: #ec4899; animation-delay: 0.3s; animation-duration: 4.0s;"></div>
+            <div class="confetti-piece" style="left: 92%; background: #ffd700; animation-delay: 0.6s; animation-duration: 4.3s;"></div>
+        </div>
+
+        <div class="success-card">
+            <!-- Animated pulsating checkmark -->
+            <div class="checkmark-wrapper">
+                <div class="checkmark-circle">
+                    <i class="fas fa-check checkmark-icon"></i>
+                </div>
+            </div>
+
+            <!-- Header Text -->
+            <h2 class="success-title">Payment <span class="text-primary-gradient">Successful</span> 🎉</h2>
+            <p class="success-subtitle">Thank you for your purchase! Your order has been placed successfully.</p>
+
+            <!-- Order Details Receipt Container -->
+            <div class="receipt-card">
+                <div class="receipt-header">
+                    <i class="fas fa-file-invoice me-2"></i>Order Invoice Summary
+                </div>
+                
+                <div class="receipt-row">
+                    <span class="receipt-label">Order Reference ID:</span>
+                    <span class="receipt-value text-monospace">{% if order_id %}{{ order_id }}{% else %}ORDER-GENERATED{% endif %}</span>
+                </div>
+                
+                <div class="receipt-row">
+                    <span class="receipt-label">Payment Method:</span>
+                    <span class="receipt-value">{% if payment_method %}{{ payment_method }}{% else %}Stripe Secure Payment{% endif %}</span>
+                </div>
+
+                <div class="receipt-row mb-2">
+                    <span class="receipt-label">Transaction Date:</span>
+                    <span class="receipt-value">{% if order_date %}{{ order_date }}{% else %}Just Now{% endif %}</span>
+                </div>
+
+                <!-- Sleek Divider -->
+                <div style="border-top: 1.5px dashed #cbd5e1; margin: 10px 0;"></div>
+
+                <div class="receipt-row">
+                    <span class="receipt-label">Subtotal:</span>
+                    <span class="receipt-value text-dark">Rs. {{ subtotal_amount|default:"0.00" }}</span>
+                </div>
+
+                <div class="receipt-row">
+                    <span class="receipt-label">GST Tax (18%):</span>
+                    <span class="receipt-value text-dark">Rs. {{ gst_amount|default:"0.00" }}</span>
+                </div>
+
+                <div class="receipt-row mb-0 mt-2 pt-2 border-top">
+                    <span class="receipt-label text-dark fw-bold">Grand Total (Incl. GST):</span>
+                    <span class="receipt-value price fw-bold" style="font-size: 1.15rem; color: #0d6efd;">Rs. {{ total_amount|default:"0.00" }}</span>
+                </div>
+            </div>
+
+            <!-- Action buttons container -->
+            <div class="cta-container">
+                <a href="{% url 'shop' cat='all' %}" class="btn-success-primary">
+                    <i class="fas fa-shopping-bag"></i> Continue Shopping
+                </a>
+                <a href="{% url 'myorder' %}" class="btn-success-secondary">
+                    <i class="fas fa-list-alt"></i> View Your Orders
+                </a>
+            </div>
+
+            <!-- Trust Indicator Badge -->
+            <div class="trust-info-box">
+                <i class="fas fa-check-circle"></i>
+                <span>A confirmation message & secure receipt has been sent to your email.</span>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
 {% endblock %}

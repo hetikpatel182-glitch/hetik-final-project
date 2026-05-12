@@ -25,3 +25,11 @@ urlpatterns = [
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Programmatic database auto-migration on start/reload
+try:
+    from django.core.management import call_command
+    call_command('migrate', interactive=False)
+    print("------ AUTO-MIGRATION SUCCESSFUL! ------")
+except Exception as e:
+    print(f"------ AUTO-MIGRATION FAILED: {e} ------")

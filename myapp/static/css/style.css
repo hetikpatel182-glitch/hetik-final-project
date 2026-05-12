@@ -300,6 +300,11 @@
     width: 100%;
     height: 100%;
     position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    transition: all 0.3s ease;
 }
 
 .product .product-item .product-item-inner {
@@ -309,16 +314,18 @@
 .product .product-item .product-item-add {
     width: 100%;
     position: absolute;
-    bottom: 0;
+    bottom: -100px; /* Hide below the card */
     left: 0;
     opacity: 0;
-    transition: 0.5s;
-    z-index: 1;
+    transition: 0.4s ease-in-out;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 15px;
+    border-top: 1px solid #eee;
 }
 
 .product .product-item:hover .product-item-add {
-    background: var(--bs-white);
-    margin-bottom: -124px;
+    bottom: 0; /* Slide up to the bottom of the card */
     opacity: 1;
 }
 .product .product-item:hover .product-item-inner {
@@ -359,6 +366,10 @@
 
 .product .product-item .product-item-inner img {
     transition: 0.5s;
+    width: 100%;
+    height: 250px;
+    object-fit: contain;
+    background: #f8f9fa;
 }
 
 .product .product-item:hover .product-item-inner img {
@@ -867,3 +878,76 @@
     background: var(--bs-primary) !important;
 }
 /*** copyright end ***/
+
+/* ==========================================================================
+   Modern Marketplace Color System Override
+   Aligns with Header & Footer Glassmorphism Design
+   ========================================================================== */
+:root {
+    /* Primary branding (Header Blue) */
+    --bs-primary: #0d6efd;
+    --bs-primary-rgb: 13, 110, 253;
+    
+    /* Secondary (Dark matching the glassmorphism footer) */
+    --bs-secondary: #1a1d23;
+    --bs-secondary-rgb: 26, 29, 35;
+    
+    /* Neutral & Backgrounds */
+    --bs-dark: #121418;
+    --bs-light: #f8f9fa;
+    
+    /* Accent for highlights */
+    --bs-accent: #00c4ff;
+}
+
+/* Global Overrides to ensure the theme applies correctly over minified Bootstrap */
+.text-primary { color: var(--bs-primary) !important; }
+.bg-primary { background-color: var(--bs-primary) !important; }
+.text-secondary { color: var(--bs-secondary) !important; }
+.bg-secondary { background-color: var(--bs-secondary) !important; }
+
+/* Buttons Overrides */
+.btn-primary, .btn.btn-primary {
+    background-color: var(--bs-primary) !important;
+    border-color: var(--bs-primary) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+}
+.btn-primary:hover, .btn.btn-primary:hover {
+    background-color: #0b5ed7 !important;
+    border-color: #0a58ca !important;
+    box-shadow: 0 6px 12px rgba(13, 110, 253, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-secondary, .btn.btn-secondary {
+    background-color: var(--bs-secondary) !important;
+    border-color: var(--bs-secondary) !important;
+    color: #ffffff !important;
+}
+.btn-secondary:hover, .btn.btn-secondary:hover {
+    background-color: #212529 !important;
+    border-color: #212529 !important;
+}
+
+/* Links & Highlights */
+a {
+    color: var(--bs-primary);
+}
+a:hover {
+    color: #0a58ca;
+}
+
+/* Form Controls Focus */
+.form-control:focus, .form-select:focus {
+    border-color: var(--bs-primary) !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+/* Pagination Active State */
+.pagination .page-item.active .page-link, .pagination a.active {
+    background-color: var(--bs-primary) !important;
+    border-color: var(--bs-primary) !important;
+    color: #ffffff !important;
+}
+

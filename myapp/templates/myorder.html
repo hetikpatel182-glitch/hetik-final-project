@@ -6,17 +6,520 @@
 
 <head>
      <script src="https://js.stripe.com/v3/"></script>
+     <style>
+         /* =====================================================================
+            MODERN & PRESTIGE ORDER TRACKING SYSTEM (RESPONSIVE)
+            ===================================================================== */
+         :root {
+             --color-completed: #10b981; /* Emerald Green */
+             --color-active: #6366f1;    /* Premium Indigo */
+             --color-pending: #cbd5e1;   /* Slate Gray */
+             --color-cancelled: #ef4444; /* Rose Red */
+         }
+
+         /* Base Tracking Steps Container */
+         .tracking-timeline-container {
+             position: relative;
+             margin: 25px 0 15px 0;
+             padding: 0 10px;
+         }
+
+         /* Base Grey Progress Background */
+         .tracking-progress-bg {
+             position: absolute;
+             top: 25px;
+             left: 40px;
+             right: 40px;
+             height: 6px;
+             background-color: #f1f5f9;
+             transform: translateY(-50%);
+             z-index: 1;
+             border-radius: 10px;
+         }
+
+         /* Active Colored Progress Overlay */
+         .tracking-progress-bar {
+             position: absolute;
+             top: 25px;
+             left: 40px;
+             height: 6px;
+             background: linear-gradient(90deg, var(--color-completed), var(--color-active));
+             transform: translateY(-50%);
+             z-index: 2;
+             transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+             border-radius: 10px;
+             width: calc(var(--progress-pct, 0) * 1% - (var(--progress-pct, 0) * 0.8px));
+         }
+
+         .tracking-timeline {
+             display: flex;
+             justify-content: space-between;
+             align-items: flex-start;
+             position: relative;
+             z-index: 3;
+             margin: 0;
+             padding: 0;
+         }
+
+         /* Individual Tracking Step */
+         .tracking-step {
+             position: relative;
+             text-align: center;
+             flex: 1;
+             background: transparent;
+             transition: all 0.3s ease;
+         }
+
+         .tracking-icon {
+             width: 50px;
+             height: 50px;
+             border-radius: 50%;
+             background-color: #f8fafc;
+             color: #94a3b8;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             margin: 0 auto 12px;
+             font-size: 18px;
+             border: 3px solid #e2e8f0;
+             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+         }
+
+         .tracking-label {
+             font-size: 0.85rem;
+             font-weight: 700;
+             color: #64748b;
+             margin-top: 4px;
+             transition: color 0.3s ease;
+         }
+
+         .tracking-date {
+             font-size: 0.72rem;
+             font-weight: 500;
+             color: #94a3b8;
+             margin-top: 3px;
+             white-space: nowrap;
+         }
+
+         /* Completed State Styles */
+         .tracking-step.completed .tracking-icon {
+             background: var(--color-completed);
+             color: #ffffff;
+             border-color: #a7f3d0;
+             transform: scale(1.05);
+         }
+         .tracking-step.completed .tracking-label {
+             color: #059669;
+         }
+         .tracking-step.completed .tracking-date {
+             color: #10b981;
+         }
+
+         /* Active State Styles */
+         .tracking-step.active .tracking-icon {
+             background: var(--color-active);
+             color: #ffffff;
+             border-color: #c7d2fe;
+             transform: scale(1.15);
+             animation: ripplePulse 2s infinite;
+         }
+         .tracking-step.active .tracking-label {
+             color: #4f46e5;
+             font-weight: 800;
+         }
+         .tracking-step.active .tracking-date {
+             color: #6366f1;
+         }
+
+         @keyframes ripplePulse {
+             0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.5), 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+             70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0), 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+             100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0), 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+         }
+
+         /* Responsive Mobile Layout */
+         @media (max-width: 767px) {
+             .tracking-timeline-container {
+                 padding-left: 45px;
+                 margin: 20px 0;
+             }
+             .tracking-progress-bg {
+                 top: 0;
+                 bottom: 0;
+                 left: 20px;
+                 width: 6px;
+                 height: 100%;
+                 transform: none;
+             }
+             .tracking-progress-bar {
+                 top: 0;
+                 left: 20px;
+                 width: 6px;
+                 height: calc(var(--progress-pct, 0) * 1% - (var(--progress-pct, 0) * 0.5px));
+                 transform: none;
+                 background: linear-gradient(180deg, var(--color-completed), var(--color-active));
+             }
+             .tracking-timeline {
+                 flex-direction: column;
+                 align-items: flex-start;
+                 gap: 24px;
+             }
+             .tracking-step {
+                 display: flex;
+                 align-items: center;
+                 text-align: left;
+                 width: 100%;
+             }
+             .tracking-icon {
+                 margin: 0 20px 0 0;
+                 flex-shrink: 0;
+                 width: 44px;
+                 height: 44px;
+                 font-size: 16px;
+             }
+             .tracking-step-info {
+                 display: flex;
+                 flex-direction: column;
+                 text-align: left;
+             }
+             .tracking-label {
+                 margin-top: 0;
+             }
+         }
+         
+         .tracking-container-row {
+             background-color: #fafbfd !important;
+             border-bottom: 1px solid #e2e8f0 !important;
+         }
+
+         /* Order Card UI Styles - Standardized to match Global Design System */
+         body {
+             background-color: #f8fafc !important;
+         }
+         
+         .order-page .order-item {
+             border: 1px solid #e2e8f0 !important;
+             border-radius: 20px !important;
+             padding: 24px !important;
+             margin-bottom: 28px !important;
+             background-color: #ffffff !important;
+             line-height: 1.6;
+             box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03) !important;
+             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+         }
+         .order-page .order-item:hover {
+             box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08) !important;
+             transform: translateY(-4px) !important;
+             border-color: #cbd5e1 !important;
+         }
+         .order-page .product-title {
+             font-size: 1.25rem !important;
+             font-weight: 800 !important;
+             margin-bottom: 10px !important;
+             color: #0f172a !important;
+             letter-spacing: -0.4px;
+         }
+         .order-page .product-meta {
+             font-size: 0.9rem !important;
+             color: #475569 !important;
+             margin-bottom: 6px !important;
+             display: flex !important;
+             align-items: center !important;
+             gap: 8px !important;
+         }
+         .order-page .status-badge {
+             padding: 6px 16px !important;
+             border-radius: 50px !important;
+             font-size: 0.8rem !important;
+             font-weight: 700 !important;
+             display: inline-flex !important;
+             align-items: center !important;
+             gap: 6px !important;
+             letter-spacing: 0.5px !important;
+             text-transform: uppercase !important;
+         }
+         
+         .order-page .order-content {
+             display: flex;
+             justify-content: space-between;
+             align-items: flex-start;
+             flex-wrap: wrap;
+             gap: 24px;
+         }
+         .order-page .order-details-left {
+             flex: 1;
+             min-width: 280px;
+         }
+         .order-page .order-details-right {
+             text-align: right;
+             min-width: 200px;
+         }
+         
+         .order-page .order-divider {
+             height: 1.5px !important;
+             background: #f1f5f9 !important;
+             margin: 24px 0 !important;
+             border: none !important;
+         }
+         
+         .order-page .btn-buyer-cancel {
+             border: 1.5px solid #dc3545;
+             color: #dc3545;
+             border: 1.5px solid #ef4444 !important;
+             color: #ef4444 !important;
+             background: transparent !important;
+             border-radius: 50px !important;
+             padding: 6px 20px !important;
+             font-size: 0.82rem !important;
+             font-weight: 700 !important;
+             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+             margin-top: 10px;
+             text-transform: uppercase;
+             letter-spacing: 0.5px;
+         }
+         .order-page .btn-buyer-cancel:hover {
+             background: #ef4444 !important;
+             color: #ffffff !important;
+             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2) !important;
+             transform: translateY(-1px);
+         }
+         .order-page .btn-buyer-cancel:disabled {
+             opacity: 0.5 !important;
+             cursor: not-allowed !important;
+         }
+         
+         @media (max-width: 768px) {
+             .order-page .order-content {
+                 flex-direction: column;
+                 gap: 16px;
+             }
+             .order-page .order-details-right {
+                 text-align: left !important;
+                 margin-top: 10px;
+                 width: 100%;
+             }
+         }
+
+         /* ===== Compact Clickable Thumbnail Support ===== */
+         .order-img-link {
+             display: block;
+             flex-shrink: 0;
+             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+         }
+         .order-img-link:hover {
+             transform: scale(1.08) !important;
+         }
+         .order-img-container {
+             width: 80px !important;
+             height: 80px !important;
+             border-radius: 14px !important;
+             border: 1.5px solid #e2e8f0 !important;
+             background-color: #ffffff !important;
+             display: flex !important;
+             align-items: center !important;
+             justify-content: center !important;
+             overflow: hidden !important;
+             flex-shrink: 0 !important;
+             box-shadow: 0 4px 10px rgba(0,0,0,0.02) !important;
+             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+         }
+         .order-img-link:hover .order-img-container {
+             border-color: #81c408 !important;
+             box-shadow: 0 8px 16px rgba(129, 196, 8, 0.1) !important;
+         }
+         .order-product-img {
+             max-width: 100% !important;
+             max-height: 100% !important;
+             width: auto !important;
+             height: auto !important;
+             object-fit: contain !important;
+             padding: 6px !important;
+         }
+         .hover-primary {
+             transition: color 0.2s ease;
+         }
+         .hover-primary:hover {
+             color: #81c408 !important; /* Matches standard Electro green highlight color */
+         }
+
+         /* Clean search input style matching site default */
+         .order-search-container {
+             max-width: 340px;
+             width: 100%;
+         }
+         .order-search-wrapper {
+             position: relative;
+             width: 100%;
+         }
+         .order-search-input {
+             border: 1.5px solid #cbd5e1 !important;
+             border-radius: 50px !important;
+             padding: 10px 20px 10px 44px !important;
+             font-size: 0.9rem !important;
+             color: #334155 !important;
+             font-weight: 500 !important;
+             transition: all 0.25s ease-in-out !important;
+             background-color: #ffffff !important;
+         }
+         .order-search-input:focus {
+             border-color: #81c408 !important;
+             outline: 0 !important;
+             box-shadow: 0 0 0 4px rgba(129, 196, 8, 0.15) !important;
+             background-color: #ffffff !important;
+         }
+         .order-search-icon {
+             position: absolute;
+             left: 18px;
+             top: 50%;
+             transform: translateY(-50%);
+             color: #64748b;
+             font-size: 0.95rem;
+             pointer-events: none;
+         }
+
+         /* =====================================================================
+            UNIFIED ACTION BOXES LAYOUT (RETURN & REVIEW BOXES)
+            ===================================================================== */
+         .action-boxes-container {
+             display: flex;
+             gap: 20px;
+             margin: 24px 0 0 0;
+             width: 100%;
+             max-width: 900px;
+             align-items: stretch;
+         }
+
+         .action-box {
+             flex: 1;
+             min-width: 0;
+             background: #ffffff;
+             border: 1px solid #e0e0e0;
+             border-radius: 12px;
+             padding: 16px;
+             display: flex;
+             flex-direction: column;
+             justify-content: space-between;
+             transition: all 0.2s ease;
+         }
+
+         .action-box:hover {
+             border-color: #ccc;
+             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+         }
+
+         .action-box.return-box {
+             background-color: #ffffff;
+         }
+         
+         .action-box.review-box {
+             background-color: #fafafa;
+         }
+
+         .action-box.reviews-locked {
+             background-color: #f8fafc;
+             opacity: 0.85;
+         }
+
+         @media (max-width: 768px) {
+             .action-boxes-container {
+                 flex-direction: column;
+                 gap: 16px;
+             }
+             .action-box {
+                 width: 100%;
+             }
+         }
+         .action-box.compact-layout {
+             max-width: 500px;
+             width: 100%;
+         }
+
+         #reviewText {
+             min-height: 80px;
+             max-height: 160px;
+             resize: vertical;
+         }
+         
+          /* ===== Notification Deep-Link Highlight ===== */
+          @keyframes notifHighlightPulse {
+              0%   { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.45); border-color: #0d6efd; }
+              50%  { box-shadow: 0 0 0 8px rgba(13, 110, 253, 0.0); border-color: #0d6efd; }
+              100% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); border-color: #e2e8f0; }
+          }
+          .order-page .order-item.notif-highlight {
+              border: 2px solid #0d6efd !important;
+              background: #f8fafc !important;
+              animation: notifHighlightPulse 1.6s ease 2;
+              transition: background 1.2s ease, border-color 1.2s ease;
+          }
+
+          /* Compact Sleek Page Header style - Light Theme */
+          .page-header-compact {
+              padding-top: 2.5rem !important;
+              padding-bottom: 2.2rem !important;
+              margin-bottom: 0 !important;
+              background: #ffffff !important;
+              border-bottom: 1px solid #e2e8f0 !important;
+              position: relative;
+          }
+          .page-header-compact h2 {
+              font-size: 2.1rem !important;
+              font-weight: 800 !important;
+              color: #1e293b !important;
+              letter-spacing: -0.8px;
+              margin-bottom: 8px !important;
+          }
+          .text-primary-gradient {
+              background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              font-weight: 800 !important;
+          }
+          .page-header-compact p.header-subtitle {
+              font-size: 0.95rem !important;
+              font-weight: 400 !important;
+              color: #64748b !important;
+              max-width: 620px;
+              margin-left: auto;
+              margin-right: auto;
+              letter-spacing: 0.1px;
+              line-height: 1.5;
+          }
+          .page-header-compact .breadcrumb-item, 
+          .page-header-compact .breadcrumb-item a {
+              font-size: 0.85rem !important;
+              font-weight: 500 !important;
+              color: #64748b !important;
+              text-decoration: none !important;
+              transition: color 0.2s;
+          }
+          .page-header-compact .breadcrumb-item a:hover {
+              color: #0d6efd !important;
+          }
+          .page-header-compact .breadcrumb-item.active {
+              color: #0d6efd !important;
+              font-weight: 600 !important;
+          }
+          .page-header-compact .breadcrumb-item + .breadcrumb-item::before {
+              color: #94a3b8 !important;
+              font-family: "Font Awesome 5 Free" !important;
+              font-weight: 900 !important;
+              content: "\f105" !important;
+          }
+      </style>
 </head>
 
 <body>
 
     <!-- Single Page Header start -->
-    <div class="container-fluid page-header py-5">
-        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">Order Page</h1>
+    <div class="container-fluid page-header-compact text-center">
+        <h2 class="wow fadeInUp" data-wow-delay="0.1s">My <span class="text-primary-gradient">Orders</span></h2>
+        <p class="header-subtitle mb-3 wow fadeInUp" data-wow-delay="0.2s">Track, manage, and review your purchases in one place</p>
         <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="#">Pages</a></li>
-            <li class="breadcrumb-item active text-white">Order Page</li>
+            <li class="breadcrumb-item active">My Orders</li>
         </ol>
     </div>
     <!-- Single Page Header End -->
@@ -24,53 +527,817 @@
     <!-- Cart Page Start -->
     <div class="container-fluid py-5">
         <div class="container py-5">
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Total</th>
-                           
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for i in carts %}
-                        <tr>
-                            <th scope="row">
-                                <p class="mb-0 py-4">{{i.product.product_name}}</p>
-                            </th>
-                            
-                            <td>
-                                <p class="mb-0 py-4">Rs. {{i.product_price}}</p>
-                            </td>
-                            <td>
-                                <div class="input-group quantity py-4" style="width: 100px;">
-                                    <form name="change-qty" method="post" action="{% url 'change-qty' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="cid" value="{{i.pk}}">
-                                        <input type="number" min="1" max="10" name="product_qty" value="{{i.product_qty}}" readonly>
-                                    </form>
+             <div class="order-page">
+                 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 pb-3 border-bottom">
+                     <span class="text-muted fw-bold small text-uppercase" style="letter-spacing: 1px;"><i class="fas fa-list-ul me-2 text-primary"></i>Your Purchase History</span>
+                     <div class="order-search-container">
+                         <div class="order-search-wrapper">
+                             <input type="text" id="orderSearchInput" class="form-control order-search-input" placeholder="Search Order ID or Product..." autocomplete="off">
+                             <span class="order-search-icon"><i class="fas fa-search"></i></span>
+                         </div>
+                     </div>
+                 </div>
+                {% if carts %}
+                    {% for i in carts %}
+                     <div class="order-item" id="buyer-order-row-{{ i.pk }}" data-product-id="{{ i.product.pk }}">
+                        <!-- Top Content: Product Info & Status -->
+                        <div class="order-content">
+                            <!-- Left Side: Details with Image Thumbnail & Custom Grid Layout -->
+                            <div class="order-details-left d-flex gap-3">
+                                <!-- Interactive Clickable Product Thumbnail -->
+                                <a href="{% url 'product-details' pk=i.product.pk %}" class="order-img-link" title="View details of {{ i.product.product_name }}">
+                                    <div class="order-img-container">
+                                        {% if i.product.product_picture %}
+                                            <img src="{{ i.product.product_picture.url }}" class="order-product-img" alt="{{ i.product.product_name }}" loading="lazy">
+                                        {% else %}
+                                            <img src="{% static 'img/placeholder.png' %}" class="order-product-img" alt="No image available" loading="lazy">
+                                        {% endif %}
+                                    </div>
+                                </a>
+
+                                <div class="flex-grow-1">
+                                    <h3 class="product-title mb-2">
+                                        <a href="{% url 'product-details' pk=i.product.pk %}" class="text-dark text-decoration-none hover-primary" title="View details of {{ i.product.product_name }}">
+                                            {{i.product.product_name}}
+                                        </a>
+                                    </h3>
+
+                                    <div class="product-meta">Price: Rs. {{i.product_price}}</div>
+                                    <div class="product-meta">Quantity: {{i.product_qty}}</div>
+                                    <div class="product-meta">Total Price: Rs. {{i.total_price}}</div>
+                                    <div class="product-meta">GST (18%): Rs. {{i.gst_amount|floatformat:2}}</div>
+                                    <div class="product-meta fw-bold text-primary">Total Paid: Rs. {{i.total_amount|floatformat:2}}</div>
+                                    
+                                    <div class="product-meta mt-2 text-muted">
+                                        <i class="fas fa-map-marker-alt text-primary me-1"></i> 
+                                        {% if i.delivery_address %}{{i.delivery_address}}{% else %}{{i.user.address}}{% endif %}
+                                    </div>
+
+                                    {% if i.delivery_status == 'delivered' and i.delivery_date %}
+                                        <div class="product-meta text-success fw-bold mt-2">
+                                            <i class="fas fa-truck-loading me-1"></i>Delivered: {{ i.delivery_date|date:"M d, Y" }}
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="mt-2 d-flex flex-wrap gap-2">
+                                        <span class="badge bg-light text-dark border" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" title="Main Order ID"><i class="fas fa-folder text-primary me-1"></i>Order ID: <strong>{{ i.display_order_id }}</strong></span>
+                                        <span class="badge bg-light text-dark border" style="font-size: 0.78rem; padding: 4px 8px; border-radius: 6px;" title="Individual Product ID"><i class="fas fa-tag text-success me-1"></i>Item ID: <strong>{{ i.display_item_order_id }}</strong></span>
                                     </div>
                                 </div>
-                            </td>
-                            <td>
-                                <p class="mb-0 py-4">Rs. {{i.total_price}}</p>
-                            </td>
-                           
-                        </tr>
-                        {% endfor %}
-                      
-                    </tbody>
-                </table>
+                            </div>
+                            
+                            <!-- Right Side: Status -->
+                            <div class="order-details-right" id="buyer-status-cell-{{ i.pk }}">
+                                {% if i.is_cancelled %}
+                                    <div class="status-badge bg-danger text-white mb-2">
+                                        <i class="fas fa-ban me-1"></i> 
+                                        {% if 'Cancelled by buyer' == i.cancel_reason %}
+                                            Cancelled by You
+                                        {% else %}
+                                            Cancelled by Seller
+                                        {% endif %}
+                                    </div>
+                                    {% if i.cancel_reason and 'Cancelled by buyer' != i.cancel_reason %}
+                                        <div class="text-danger mt-1" style="font-size: 0.85rem; font-weight: 500;">
+                                            <i class="fas fa-info-circle me-1"></i>Reason: {{i.cancel_reason}}
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    {% if i.payment_method == 'COD' %}
+                                        {% if i.cod_payment_status == 'Done' %}
+                                            <div class="status-badge bg-success text-white mb-2">
+                                                <i class="fas fa-check-circle me-1"></i> Paid (COD)
+                                            </div>
+                                        {% else %}
+                                            <div class="status-badge bg-warning text-dark mb-2">
+                                                <i class="fas fa-clock me-1"></i> Pending (COD)
+                                            </div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="status-badge bg-success text-white mb-2">
+                                            <i class="fas fa-check-circle me-1"></i> Paid (Stripe)
+                                        </div>
+                                    {% endif %}
+                                    <div class="text-muted mt-2" style="font-size: 0.8rem;">
+                                        Ordered on {{ i.time|date:"M d, Y" }}
+                                    </div>
+                                    <!-- Cancel button: only before shipment -->
+                                    {% if i.delivery_status == 'placed' or i.delivery_status == 'confirmed' %}
+                                        <button class="btn-buyer-cancel"
+                                                id="buyer-cancel-btn-{{ i.pk }}"
+                                                onclick="openBuyerCancelModal({{ i.pk }}, '{{ i.product.product_name|escapejs }}')">
+                                            <i class="fas fa-times-circle me-1"></i> Cancel Order
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if not i.is_cancelled and i.delivery_status == 'delivered' %}
+                            <!-- Return Policy & Product Reviews side-by-side action boxes -->
+                            <div class="action-boxes-container">
+                                <!-- Box 1: Return Policy & Eligibility -->
+                                {% if i.is_return_allowed and i.is_return_eligible or i.return_status != 'none' %}
+                                <div class="action-box return-box">
+                                    <div>
+                                        <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom" style="border-color: rgba(0,0,0,0.05) !important;">
+                                            <span class="fw-bold small text-muted"><i class="fas fa-undo-alt text-primary me-1"></i>Return Policy &amp; Eligibility</span>
+                                            {% if i.return_status == 'returned' or i.return_status == 'REQUESTED' %}
+                                                <span class="badge bg-warning text-dark px-2.5 py-1.5 rounded-pill" style="font-size: 0.75rem; font-weight: 600;"><i class="fas fa-hourglass-half me-1"></i>Return Request Processing</span>
+                                            {% elif i.return_status == 'COMPLETED' %}
+                                                <span class="badge bg-success text-white px-2.5 py-1.5 rounded-pill" style="font-size: 0.75rem; font-weight: 600;"><i class="fas fa-check-circle me-1"></i>Returned Successful</span>
+                                            {% elif i.is_return_allowed %}
+                                                {% if i.is_return_eligible %}
+                                                    <span class="badge bg-light text-success border border-success-subtle px-2.5 py-1.5 rounded-pill" style="font-size: 0.75rem; font-weight: 600;"><i class="fas fa-hourglass-half me-1"></i>Eligible until {{ i.return_expiry_date|date:"M d, Y" }}</span>
+                                                {% else %}
+                                                    <span class="badge bg-light text-danger border border-danger-subtle px-2.5 py-1.5 rounded-pill" style="font-size: 0.75rem; font-weight: 600;"><i class="fas fa-calendar-times me-1"></i>Expired</span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="badge bg-light text-muted border px-2.5 py-1.5 rounded-pill" style="font-size: 0.75rem; font-weight: 600;"><i class="fas fa-ban me-1"></i>Non-Returnable</span>
+                                            {% endif %}
+                                        </div>
+         
+                                        <p class="mb-3 text-muted small" style="line-height: 1.4;">
+                                            {% if i.return_status == 'returned' or i.return_status == 'REQUESTED' %}
+                                                Your return request is processing. The seller has been notified.
+                                            {% elif i.return_status == 'COMPLETED' %}
+                                                Your return has been completed successfully. Product returned to seller!
+                                            {% elif i.is_return_allowed %}
+                                                {% if i.is_return_eligible %}
+                                                    You can return this item within {{ i.product.return_days }} days from the delivery date (Delivered on {{ i.delivery_date|date:"M d, Y" }}).
+                                                {% else %}
+                                                    The {{ i.product.return_days }}-day return window (Delivered on {{ i.delivery_date|date:"M d, Y" }}) closed on {{ i.return_expiry_date|date:"M d, Y" }}.
+                                                {% endif %}
+                                            {% else %}
+                                                This product was configured as non-returnable by the seller at purchase.
+                                            {% endif %}
+                                        </p>
+                                    </div>
+
+                                    {% if i.delivery_status == 'delivered' and i.return_status == 'none' and i.is_return_allowed and i.is_return_eligible %}
+                                        <button class="btn btn-outline-danger btn-sm rounded-pill px-4 py-2 mt-auto fw-bold w-100 shadow-sm d-flex align-items-center justify-content-center gap-2" 
+                                                id="return-btn-{{ i.pk }}"
+                                                onclick="requestOrderReturn({{ i.pk }}, '{{ i.product.product_name|escapejs }}')">
+                                            <i class="fas fa-undo-alt"></i> Initiate Return / Refund
+                                        </button>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+
+                                <!-- Box 2: Product Review -->
+                                {% if i.delivery_status == 'delivered' %}
+                                    {% if i.review %}
+                                        <div class="action-box review-box review-completed {% if not i.is_return_allowed or not i.is_return_eligible and i.return_status == 'none' %}compact-layout{% endif %}" id="review-container-{{ i.pk }}">
+                                            <div>
+                                                <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom" style="border-color: rgba(0,0,0,0.05) !important;">
+                                                    <span class="fw-bold small text-muted"><i class="fas fa-star text-warning me-1"></i>Your Product Review</span>
+                                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1" style="font-size: 0.75rem; font-weight: 600;" onclick="openReviewModal({{ i.pk }}, {{ i.product.pk }}, '{{ i.product.product_name|escapejs }}', {{ i.review.rating }}, '{{ i.review.review_text|escapejs }}')">
+                                                        <i class="fas fa-edit me-1"></i>Edit Review
+                                                    </button>
+                                                </div>
+                                                <div class="text-warning mb-2" style="font-size: 0.95rem;">
+                                                    {% for star in "12345" %}
+                                                        {% if forloop.counter <= i.review.rating %}
+                                                            <i class="fas fa-star"></i>
+                                                        {% else %}
+                                                            <i class="far fa-star"></i>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                                <p class="mb-0 text-dark small" id="review-text-display-{{ i.pk }}" style="font-size: 0.88rem; line-height: 1.4; white-space: pre-line;">{% if i.review.review_text %}{{ i.review.review_text }}{% else %}<span class="text-muted" style="font-style: italic;">No comment provided</span>{% endif %}</p>
+                                            </div>
+                                            {% if not i.is_return_allowed or not i.is_return_eligible and i.return_status == 'none' %}
+                                                 <div class="mt-3 pt-2 border-top text-muted small d-flex align-items-center gap-2" style="border-color: rgba(0,0,0,0.05) !important; font-size: 0.82rem; font-weight: 500;">
+                                                     <i class="fas fa-info-circle text-secondary"></i> Return is not available for this product.
+                                                 </div>
+                                             {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <div class="action-box review-box review-pending {% if not i.is_return_allowed or not i.is_return_eligible and i.return_status == 'none' %}compact-layout{% endif %}" id="review-container-{{ i.pk }}">
+                                            <div>
+                                                <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom" style="border-color: rgba(0,0,0,0.05) !important;">
+                                                     <span class="fw-bold small text-muted"><i class="fas fa-star text-warning me-1"></i>Product Review</span>
+                                                </div>
+                                                <p class="mb-3 text-muted small" style="line-height: 1.4;">
+                                                    Help other buyers by sharing your experience with this product!
+                                                </p>
+                                            </div>
+                                            <div class="mt-auto">
+                                                <button class="btn btn-primary rounded-pill py-2 px-4 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-2 w-100" style="font-size: 0.85rem;" onclick="openReviewModal({{ i.pk }}, {{ i.product.pk }}, '{{ i.product.product_name|escapejs }}')">
+                                                    <i class="fas fa-pen-fancy"></i> Write Product Review
+                                                </button>
+                                                {% if not i.is_return_allowed or not i.is_return_eligible and i.return_status == 'none' %}
+                                                     <div class="mt-3 pt-2 border-top text-muted small d-flex align-items-center gap-2" style="border-color: rgba(0,0,0,0.05) !important; font-size: 0.82rem; font-weight: 500;">
+                                                         <i class="fas fa-info-circle text-secondary"></i> Return is not available for this product.
+                                                     </div>
+                                                 {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="action-box review-box reviews-locked">
+                                        <div>
+                                            <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom" style="border-color: rgba(0,0,0,0.05) !important;">
+                                                <span class="fw-bold small text-muted"><i class="fas fa-star text-muted me-1"></i>Product Review</span>
+                                                <span class="badge bg-light text-muted border rounded-pill px-2.5 py-1.5" style="font-size: 0.75rem; font-weight: 600;"><i class="fas fa-lock me-1"></i>Locked</span>
+                                            </div>
+                                            <p class="mb-0 text-muted small" style="line-height: 1.4;">
+                                                You can write a review and rate this product once it has been delivered successfully.
+                                            </p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if i.delivery_status != 'delivered' %}
+                        <hr class="order-divider">
+
+                        <!-- Bottom Content: Tracking Timeline -->
+                        <div class="px-2 pb-2">
+                            {% if i.is_cancelled %}
+                                <div class="alert alert-danger mb-0 d-flex align-items-center" style="border-radius: 8px;">
+                                    <i class="fas fa-exclamation-triangle fs-4 me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1 text-danger fw-bold">Tracking Unavailable</h6>
+                                        <p class="mb-0 small text-danger">This order has been cancelled, halting the delivery timeline.</p>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="tracking-timeline-container" style="--progress-pct: {% if i.delivery_status == 'placed' %}0{% elif i.delivery_status == 'confirmed' %}25{% elif i.delivery_status == 'shipped' %}50{% elif i.delivery_status == 'out_for_delivery' %}75{% elif i.delivery_status == 'delivered' %}100{% else %}0{% endif %};">
+                                    <div class="tracking-progress-bg"></div>
+                                    <div class="tracking-progress-bar"></div>
+                                    <div class="tracking-timeline">
+                                        <!-- Step 1 -->
+                                        <div class="tracking-step {% if i.delivery_status == 'placed' %}active{% else %}completed{% endif %}">
+                                            <div class="tracking-icon"><i class="fas fa-clipboard-list"></i></div>
+                                            <div class="tracking-step-info">
+                                                <div class="tracking-label">Placed</div>
+                                                <div class="tracking-date">{{ i.time|date:"M d, H:i" }}</div>
+                                            </div>
+                                        </div>
+                                        <!-- Step 2 -->
+                                        <div class="tracking-step {% if i.delivery_status == 'confirmed' %}active{% elif i.delivery_status == 'shipped' or i.delivery_status == 'out_for_delivery' or i.delivery_status == 'delivered' %}completed{% endif %}">
+                                            <div class="tracking-icon"><i class="fas fa-check-circle"></i></div>
+                                            <div class="tracking-step-info">
+                                                <div class="tracking-label">Confirmed</div>
+                                                <div class="tracking-date">
+                                                    {% if i.delivery_status != 'placed' %}
+                                                        {{ i.time|date:"M d" }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Step 3 -->
+                                        <div class="tracking-step {% if i.delivery_status == 'shipped' %}active{% elif i.delivery_status == 'out_for_delivery' or i.delivery_status == 'delivered' %}completed{% endif %}">
+                                            <div class="tracking-icon"><i class="fas fa-box"></i></div>
+                                            <div class="tracking-step-info">
+                                                <div class="tracking-label">Shipped</div>
+                                                <div class="tracking-date">
+                                                    {% if i.delivery_status == 'shipped' or i.delivery_status == 'out_for_delivery' or i.delivery_status == 'delivered' %}
+                                                        In Transit
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Step 4 -->
+                                        <div class="tracking-step {% if i.delivery_status == 'out_for_delivery' %}active{% elif i.delivery_status == 'delivered' %}completed{% endif %}">
+                                            <div class="tracking-icon"><i class="fas fa-truck"></i></div>
+                                            <div class="tracking-step-info">
+                                                <div class="tracking-label">Out for Delivery</div>
+                                                <div class="tracking-date">
+                                                    {% if i.delivery_status == 'out_for_delivery' or i.delivery_status == 'delivered' %}
+                                                        On the Way
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Step 5 -->
+                                        <div class="tracking-step {% if i.delivery_status == 'delivered' %}completed{% endif %}">
+                                            <div class="tracking-icon"><i class="fas fa-home"></i></div>
+                                            <div class="tracking-step-info">
+                                                <div class="tracking-label">Delivered</div>
+                                                <div class="tracking-date">
+                                                    {% if i.delivery_status == 'delivered' and i.delivery_date %}
+                                                        {{ i.delivery_date|date:"M d, H:i" }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-5 bg-light rounded" style="border: 1px dashed #ccc;">
+                        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No orders found</h4>
+                        <p class="text-muted mb-4">You haven't placed any orders yet.</p>
+                        <a href="{% url 'shop' %}" class="btn btn-primary px-4 rounded-pill">Start Shopping</a>
+                    </div>
+                {% endif %}
             </div>
            
         </div>
     </div>
     <!-- Cart Page End -->
     
-</body>
+<!-- ============== BUYER CANCEL ORDER MODAL ============== -->
+<div class="modal fade" id="buyerCancelModal" tabindex="-1" aria-labelledby="buyerCancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius:16px;overflow:hidden;">
+            <div class="modal-header border-0 pb-0" style="background:linear-gradient(135deg,#dc3545,#c82333);">
+                <h5 class="modal-title text-white fw-bold" id="buyerCancelModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Cancel Order
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted mb-1 small">You are about to cancel your order for:</p>
+                <p class="fw-bold mb-3 fs-6" id="buyerCancelProductName" style="color:#2b2b2b;"></p>
+                <div class="alert alert-warning d-flex align-items-start gap-2 py-2" style="font-size:0.88rem;border-radius:8px;">
+                    <i class="fas fa-info-circle mt-1"></i>
+                    <span>Orders can only be cancelled before they are shipped. This action <strong>cannot be undone</strong>.</span>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0 pb-4 px-4 gap-2">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                    <i class="fas fa-arrow-left me-2"></i>Keep Order
+                </button>
+                <button type="button" class="btn btn-danger rounded-pill px-4" id="buyerConfirmCancelBtn"
+                        onclick="submitBuyerCancellation()">
+                    <i class="fas fa-times-circle me-2"></i>Yes, Cancel Order
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- ============== BUYER RETURN ORDER MODAL ============== -->
+<div class="modal fade" id="buyerReturnModal" tabindex="-1" aria-labelledby="buyerReturnModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius:16px; overflow:hidden;">
+            <div class="modal-header border-0 pb-0" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">
+                <h5 class="modal-title text-white fw-bold" id="buyerReturnModalLabel">
+                    <i class="fas fa-undo-alt me-2"></i>Initiate Product Return
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted mb-1 small">You are about to request a return & refund for:</p>
+                <p class="fw-bold mb-3 fs-6" id="buyerReturnProductName" style="color:#2b2b2b;"></p>
+                <div class="alert alert-info d-flex align-items-start gap-2 py-3" style="font-size:0.88rem; border-radius:10px; background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d;">
+                    <i class="fas fa-info-circle mt-1" style="color: #16a34a;"></i>
+                    <span>Once submitted, the seller will be notified of your return request. Your refund will be processed in accordance with the return policy terms.</span>
+                </div>
+                <!-- Return Reason (Optional) -->
+                <div class="mb-0 mt-3">
+                    <label for="buyerReturnReason" class="form-label text-muted small fw-bold text-uppercase mb-2">Reason for Return (Optional)</label>
+                    <textarea class="form-control" id="buyerReturnReason" rows="3" placeholder="Please let the seller know why you are returning this item..." style="border-radius:10px; padding:12px; font-size:0.92rem; transition: border-color 0.2s; resize: none;" maxlength="500"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0 pb-4 px-4 gap-2">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                    <i class="fas fa-arrow-left me-2"></i>Keep Product
+                </button>
+                <button type="button" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm" id="buyerConfirmReturnBtn"
+                        onclick="submitBuyerReturn()">
+                    <i class="fas fa-check-circle me-2"></i>Confirm Return
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============== PRODUCT REVIEW MODAL ============== -->
+<div class="modal fade" id="productReviewModal" tabindex="-1" aria-labelledby="productReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius:16px; overflow:hidden;">
+            <div class="modal-header border-0 pb-0" style="background: linear-gradient(135deg, #0d6efd, #0a58ca);">
+                <h5 class="modal-title text-white fw-bold" id="productReviewModalLabel">
+                    <i class="fas fa-pen-fancy me-2"></i>Product Review & Rating
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted mb-1 small">Share your experience with:</p>
+                <p class="fw-bold mb-4 fs-6 text-dark" id="reviewProductName"></p>
+
+                <!-- Rating Stars -->
+                <div class="text-center mb-4">
+                    <label class="form-label d-block text-muted small fw-bold text-uppercase mb-2">Your Rating</label>
+                    <div class="star-rating-selector d-inline-flex gap-2 fs-2">
+                        <i class="far fa-star star-btn" data-rating="1" style="cursor:pointer; transition: transform 0.2s; color: #ffc107;" onmouseover="hoverStars(1)" onmouseout="resetStars()" onclick="selectRating(1)"></i>
+                        <i class="far fa-star star-btn" data-rating="2" style="cursor:pointer; transition: transform 0.2s; color: #ffc107;" onmouseover="hoverStars(2)" onmouseout="resetStars()" onclick="selectRating(2)"></i>
+                        <i class="far fa-star star-btn" data-rating="3" style="cursor:pointer; transition: transform 0.2s; color: #ffc107;" onmouseover="hoverStars(3)" onmouseout="resetStars()" onclick="selectRating(3)"></i>
+                        <i class="far fa-star star-btn" data-rating="4" style="cursor:pointer; transition: transform 0.2s; color: #ffc107;" onmouseover="hoverStars(4)" onmouseout="resetStars()" onclick="selectRating(4)"></i>
+                        <i class="far fa-star star-btn" data-rating="5" style="cursor:pointer; transition: transform 0.2s; color: #ffc107;" onmouseover="hoverStars(5)" onmouseout="resetStars()" onclick="selectRating(5)"></i>
+                    </div>
+                    <div class="text-muted small mt-2 fw-medium" id="rating-label">Click a star to rate</div>
+                </div>
+
+                <!-- Review Textarea -->
+                <div class="mb-3">
+                    <label for="reviewText" class="form-label text-muted small fw-bold text-uppercase mb-2">Review Details (Optional)</label>
+                    <textarea class="form-control" id="reviewText" rows="4" placeholder="What did you like or dislike about this product? How was the quality? (Optional)" style="border-radius:10px; padding:12px; font-size:0.92rem; transition: border-color 0.2s;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0 pb-4 px-4 gap-2">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                    <i class="fas fa-arrow-left me-2"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" id="submitReviewBtn" onclick="submitReviewAction()">
+                    <i class="fas fa-check-circle me-2"></i>Submit Review
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="buyerToastContainer" style="position:fixed;bottom:24px;right:24px;z-index:9999;"></div>
+
+<script>
+    var buyerCurrentOrderId = null;
+    var buyerCancelModalInstance = null;
+    
+    // Return Request Variables
+    var returnCurrentOrderId = null;
+    var buyerReturnModalInstance = null;
+    
+    // Product Review Variables
+    var selectedRating = 0;
+    var reviewCurrentCartId = null;
+    var reviewCurrentProductId = null;
+    var reviewCurrentProductName = '';
+    var productReviewModalInstance = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var modalEl = document.getElementById('buyerCancelModal');
+        if (modalEl && typeof bootstrap !== 'undefined') {
+            buyerCancelModalInstance = new bootstrap.Modal(modalEl);
+        }
+        
+        var returnModalEl = document.getElementById('buyerReturnModal');
+        if (returnModalEl && typeof bootstrap !== 'undefined') {
+            buyerReturnModalInstance = new bootstrap.Modal(returnModalEl);
+        }
+        
+        var reviewModalEl = document.getElementById('productReviewModal');
+        if (reviewModalEl && typeof bootstrap !== 'undefined') {
+            productReviewModalInstance = new bootstrap.Modal(reviewModalEl);
+        }
+    });
+
+    // Rating star hover and select interactions
+    function hoverStars(rating) {
+        var stars = document.querySelectorAll('.star-rating-selector .star-btn');
+        stars.forEach(function(star) {
+            var r = parseInt(star.getAttribute('data-rating'));
+            if (r <= rating) {
+                star.className = 'fas fa-star star-btn';
+                star.style.transform = 'scale(1.15)';
+            } else {
+                star.className = 'far fa-star star-btn';
+                star.style.transform = 'scale(1)';
+            }
+        });
+    }
+
+    function resetStars() {
+        var stars = document.querySelectorAll('.star-rating-selector .star-btn');
+        stars.forEach(function(star) {
+            var r = parseInt(star.getAttribute('data-rating'));
+            if (r <= selectedRating) {
+                star.className = 'fas fa-star star-btn';
+                star.style.transform = 'scale(1)';
+            } else {
+                star.className = 'far fa-star star-btn';
+                star.style.transform = 'scale(1)';
+            }
+        });
+        updateRatingLabel(selectedRating);
+    }
+
+    function selectRating(rating) {
+        selectedRating = rating;
+        updateRatingLabel(rating);
+    }
+
+    function updateRatingLabel(rating) {
+        var label = document.getElementById('rating-label');
+        if (!label) return;
+        
+        var text = 'Click a star to rate';
+        switch (rating) {
+            case 1: text = '1 - Poor'; break;
+            case 2: text = '2 - Fair'; break;
+            case 3: text = '3 - Good'; break;
+            case 4: text = '4 - Very Good'; break;
+            case 5: text = '5 - Excellent!'; break;
+        }
+        label.textContent = text;
+    }
+
+    function openReviewModal(cartId, productId, productName, rating = 0, reviewText = '') {
+        reviewCurrentCartId = cartId;
+        reviewCurrentProductId = productId;
+        reviewCurrentProductName = productName;
+        
+        document.getElementById('reviewProductName').textContent = productName;
+        document.getElementById('reviewText').value = reviewText;
+        
+        selectedRating = rating;
+        resetStars();
+        
+        var titleEl = document.getElementById('productReviewModalLabel');
+        var submitBtn = document.getElementById('submitReviewBtn');
+        
+        if (rating > 0) {
+            titleEl.innerHTML = '<i class="fas fa-edit me-2"></i>Update Your Review';
+            submitBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Update Review';
+        } else {
+            titleEl.innerHTML = '<i class="fas fa-pen-fancy me-2"></i>Product Review & Rating';
+            submitBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Submit Review';
+        }
+        
+        if (productReviewModalInstance) {
+            productReviewModalInstance.show();
+        }
+    }
+
+    function submitReviewAction() {
+        if (selectedRating === 0) {
+            showBuyerToast('Please select a star rating first.', 'error');
+            return;
+        }
+        
+        var reviewText = document.getElementById('reviewText').value.trim();
+        
+        var btn = document.getElementById('submitReviewBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+        
+        fetch('/submit-review/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                cart_id: reviewCurrentCartId,
+                rating: selectedRating,
+                review_text: reviewText
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            btn.disabled = false;
+            if (data.success) {
+                if (productReviewModalInstance) productReviewModalInstance.hide();
+                showBuyerToast(data.message || 'Review submitted successfully!', 'success');
+                
+                // Dynamic inline replacement
+                var container = document.getElementById('review-container-' + reviewCurrentCartId);
+                if (container) {
+                    var starsHtml = '';
+                    for (var i = 1; i <= 5; i++) {
+                        starsHtml += i <= selectedRating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+                    }
+                    
+                    var escapedProductName = reviewCurrentProductName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    var escapedReviewText = reviewText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    
+                    var reviewTextDisplay = reviewText 
+                        ? reviewText.replace(/</g, "&lt;").replace(/>/g, "&gt;") 
+                        : '<span class="text-muted" style="font-style: italic;">No comment provided</span>';
+                    
+                    container.className = "mt-4 p-3 rounded-4 border bg-light-subtle d-inline-block w-100";
+                    container.style.cssText = "max-width: 500px; background: rgba(0,0,0,0.015);";
+                    container.innerHTML = `
+                        <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom" style="border-color: rgba(0,0,0,0.05) !important;">
+                            <span class="fw-bold small text-muted"><i class="fas fa-star text-warning me-1"></i>Your Product Review</span>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1" style="font-size: 0.75rem; font-weight: 600;" onclick="openReviewModal(${reviewCurrentCartId}, ${reviewCurrentProductId}, '${escapedProductName}', ${selectedRating}, '${escapedReviewText}')">
+                                <i class="fas fa-edit me-1"></i>Edit Review
+                            </button>
+                        </div>
+                        <div class="text-warning mb-1" style="font-size: 0.95rem;">
+                            ${starsHtml}
+                        </div>
+                        <p class="mb-0 text-dark small" id="review-text-display-${reviewCurrentCartId}" style="font-size: 0.88rem; line-height: 1.4; white-space: pre-line;">${reviewTextDisplay}</p>
+                    `;
+                }
+            } else {
+                btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Submit Review';
+                showBuyerToast(data.error || 'Failed to submit review.', 'error');
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Submit Review';
+            showBuyerToast('Network error. Please try again.', 'error');
+        });
+    }
+
+    function openBuyerCancelModal(orderId, productName) {
+        buyerCurrentOrderId = orderId;
+        document.getElementById('buyerCancelProductName').textContent = productName;
+        var btn = document.getElementById('buyerConfirmCancelBtn');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-times-circle me-2"></i>Yes, Cancel Order';
+        if (buyerCancelModalInstance) buyerCancelModalInstance.show();
+    }
+
+    function submitBuyerCancellation() {
+        var btn = document.getElementById('buyerConfirmCancelBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Cancelling...';
+
+        fetch('/buyer-cancel-order/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({order_id: buyerCurrentOrderId})
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                if (buyerCancelModalInstance) buyerCancelModalInstance.hide();
+                showBuyerToast('Your order has been cancelled successfully.', 'success');
+
+                // Update the status cell dynamically (no page reload)
+                var statusCell = document.getElementById('buyer-status-cell-' + buyerCurrentOrderId);
+                if (statusCell) {
+                    statusCell.innerHTML = `
+                        <div class="status-badge bg-danger text-white mb-2">
+                            <i class="fas fa-ban me-1"></i> Cancelled by You
+                        </div>`;
+                }
+
+                // Replace tracking timeline with cancelled alert
+                var orderRow = document.getElementById('buyer-order-row-' + buyerCurrentOrderId);
+                if (orderRow) {
+                    var timeline = orderRow.querySelector('.position-relative');
+                    if (timeline) {
+                        timeline.outerHTML = `
+                            <div class="alert alert-danger mb-0 d-flex align-items-center" style="border-radius:8px;">
+                                <i class="fas fa-exclamation-triangle fs-4 me-3"></i>
+                                <div>
+                                    <h6 class="mb-1 text-danger fw-bold">Tracking Unavailable</h6>
+                                    <p class="mb-0 small text-danger">You have cancelled this order. The delivery timeline has been stopped.</p>
+                                </div>
+                            </div>`;
+                    }
+                    // Remove the cancel button
+                    var cancelBtn = document.getElementById('buyer-cancel-btn-' + buyerCurrentOrderId);
+                    if (cancelBtn) cancelBtn.remove();
+                }
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-times-circle me-2"></i>Yes, Cancel Order';
+                showBuyerToast(data.error || 'Failed to cancel. Please try again.', 'error');
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-times-circle me-2"></i>Yes, Cancel Order';
+            showBuyerToast('Network error. Please check your connection.', 'error');
+        });
+    }
+
+    function requestOrderReturn(orderId, productName) {
+        returnCurrentOrderId = orderId;
+        document.getElementById('buyerReturnProductName').textContent = productName;
+        
+        var reasonTextarea = document.getElementById('buyerReturnReason');
+        if (reasonTextarea) {
+            reasonTextarea.value = '';
+        }
+        
+        var btn = document.getElementById('buyerConfirmReturnBtn');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Confirm Return';
+        }
+        if (buyerReturnModalInstance) {
+            buyerReturnModalInstance.show();
+        }
+    }
+
+    function submitBuyerReturn() {
+        var reasonTextarea = document.getElementById('buyerReturnReason');
+        var reason = reasonTextarea ? reasonTextarea.value.trim() : '';
+
+        var btn = document.getElementById('buyerConfirmReturnBtn');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing Return...';
+        }
+
+        fetch('/buyer-return-order/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                order_id: returnCurrentOrderId,
+                return_reason: reason
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                if (buyerReturnModalInstance) {
+                    buyerReturnModalInstance.hide();
+                }
+                showBuyerToast('Return request has been submitted successfully!', 'success');
+                
+                // Dynamic inline replacement
+                const container = document.getElementById('return-btn-' + returnCurrentOrderId);
+                if (container) {
+                    container.outerHTML = `<div class="alert alert-warning py-2 px-3 text-center mb-0 small fw-bold text-warning-emphasis border border-warning mt-2" style="border-radius: 30px; background-color: #fffbeb;">
+                        <i class="fas fa-hourglass-half me-1"></i> Return Request Processing
+                    </div>`;
+                }
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1200);
+            } else {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Confirm Return';
+                }
+                showBuyerToast(data.error || 'Failed to request return. Please try again.', 'error');
+            }
+        })
+        .catch(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Confirm Return';
+            }
+            showBuyerToast('Network error. Please try again.', 'error');
+        });
+    }
+
+    function showBuyerToast(message, type) {
+        var container = document.getElementById('buyerToastContainer');
+        var bg = type === 'success' ? '#198754' : '#dc3545';
+        var icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        var toast = document.createElement('div');
+        toast.style.cssText = `background:${bg};color:#fff;padding:12px 20px;border-radius:10px;
+            margin-top:10px;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,0.15);
+            display:flex;align-items:center;gap:10px;min-width:280px;`;
+        toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 4000);
+    }
+
+    // ===== Notification Deep-Link: Highlight & Scroll =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const params = new URLSearchParams(window.location.search);
+        const highlightCartId = params.get('highlight_cart');
+        const highlightProductId = params.get('highlight');
+        
+        let target = null;
+        
+        if (highlightCartId) {
+            target = document.getElementById(`buyer-order-row-${highlightCartId}`);
+        } else if (highlightProductId) {
+            const cards = document.querySelectorAll(`[data-product-id="${highlightProductId}"]`);
+            if (cards.length) {
+                target = cards[0];
+            }
+        }
+        
+        if (!target) return;
+
+        // Highlight the targeted card and scroll to it
+        target.classList.add('notif-highlight');
+        setTimeout(() => {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 120);
+
+        // Remove highlight class after animation completes
+        setTimeout(() => { target.classList.remove('notif-highlight'); }, 4000);
+
+        // Clean URL without reload (removes ?highlight param)
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, '', cleanUrl);
+    });
+
+    // ===== Order Search Functionality =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('orderSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const filter = this.value.toUpperCase();
+                const orders = document.querySelectorAll('.order-item');
+                orders.forEach(order => {
+                    const text = order.innerText.toUpperCase();
+                    order.style.display = text.indexOf(filter) > -1 ? "" : "none";
+                });
+            });
+        }
+    });
+</script>
+
+</body>
 </html>
 {% endblock %}

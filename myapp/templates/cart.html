@@ -5,96 +5,275 @@
 <html lang="en">
 
 <head>
-     <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        /* Compact Sleek Page Header style - Light Theme */
+        .page-header-compact {
+            padding-top: 2.5rem !important;
+            padding-bottom: 2.2rem !important;
+            margin-bottom: 0 !important;
+            background: #ffffff !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            position: relative;
+        }
+        .page-header-compact h2 {
+            font-size: 2.1rem !important;
+            font-weight: 800 !important;
+            color: #1e293b !important;
+            letter-spacing: -0.8px;
+            margin-bottom: 8px !important;
+        }
+        .text-primary-gradient {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800 !important;
+        }
+        .page-header-compact p.header-subtitle {
+            font-size: 0.95rem !important;
+            font-weight: 400 !important;
+            color: #64748b !important;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+            letter-spacing: 0.1px;
+            line-height: 1.5;
+        }
+        .page-header-compact .breadcrumb-item, 
+        .page-header-compact .breadcrumb-item a {
+            font-size: 0.85rem !important;
+            font-weight: 500 !important;
+            color: #64748b !important;
+            text-decoration: none !important;
+            transition: color 0.2s;
+        }
+        .page-header-compact .breadcrumb-item a:hover {
+            color: #0d6efd !important;
+        }
+        .page-header-compact .breadcrumb-item.active {
+            color: #0d6efd !important;
+            font-weight: 600 !important;
+        }
+
+        /* Cart table styling enhancements */
+        .cart-table-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 16px !important;
+            padding: 24px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
+        }
+        .table thead th {
+            border-bottom: 1px solid #e2e8f0 !important;
+            font-weight: 700 !important;
+            color: #64748b !important;
+            font-size: 0.85rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px;
+            padding-bottom: 16px !important;
+        }
+        .table tbody td, .table tbody th {
+            border-bottom: 1px solid #f1f5f9 !important;
+            vertical-align: middle !important;
+        }
+        .qty-input {
+            border: 1.5px solid #e2e8f0 !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+            max-width: 70px !important;
+            padding: 6px 12px !important;
+            transition: border-color 0.2s !important;
+        }
+        .qty-input:focus {
+            border-color: #0d6efd !important;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1) !important;
+        }
+        .bg-light-subtle {
+            background-color: #f8fafc !important;
+        }
+        
+        /* Premium total panel styles */
+        .cart-totals-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 16px !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important;
+            padding: 24px !important;
+        }
+        .btn-checkout-premium {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%) !important;
+            border: none !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            font-size: 0.98rem !important;
+            padding: 14px 28px !important;
+            transition: all 0.3s !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15) !important;
+            display: inline-block;
+            width: calc(100% - 24px);
+            margin-left: 12px;
+            margin-right: 12px;
+            text-align: center;
+            text-decoration: none !important;
+        }
+        .btn-checkout-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.25) !important;
+            color: #ffffff !important;
+        }
+        .btn-checkout-premium:active {
+            transform: translateY(0);
+        }
+        .btn-checkout-premium:disabled {
+            background: #e2e8f0 !important;
+            color: #94a3b8 !important;
+            transform: none !important;
+            box-shadow: none !important;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 
 <body>
 
     <!-- Single Page Header start -->
-    <div class="container-fluid page-header py-5">
-        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">Cart Page</h1>
+    <div class="container-fluid page-header-compact text-center">
+        <h2 class="wow fadeInUp" data-wow-delay="0.1s">Shopping <span class="text-primary-gradient">Cart</span></h2>
+        <p class="header-subtitle mb-3 wow fadeInUp" data-wow-delay="0.2s">Review your items and proceed safely to secure checkout</p>
         <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="#">Pages</a></li>
-            <li class="breadcrumb-item active text-white">Cart Page</li>
+            <li class="breadcrumb-item active">Cart</li>
         </ol>
     </div>
     <!-- Single Page Header End -->
 
     <!-- Cart Page Start -->
-    <div class="container-fluid py-5">
-        <div class="container py-5">
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Remove</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for i in carts %}
-                        <tr>
-                            <th scope="row">
-                                <p class="mb-0 py-4">{{i.product.product_name}}</p>
-                            </th>
-                            
-                            <td>
-                                <p class="mb-0 py-4">Rs. {{i.product_price}}</p>
-                            </td>
-                            <td>
-                                <div class="input-group quantity py-4" style="width: 100px;">
-                                    <form name="change-qty" method="post" action="{% url 'change-qty' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="cid" value="{{i.pk}}">
-                                        <input type="number" min="1" max="10" name="product_qty" value="{{i.product_qty}}" onchange="this.form.submit();">
-                                    </form>
+    <div class="container-fluid py-4 bg-light-subtle">
+        <div class="container py-2">
+            <div class="cart-table-card mb-4 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="table-responsive">
+                    <table class="table mb-0 align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="border-top: none;">Name</th>
+                                <th scope="col" style="border-top: none;">Price</th>
+                                <th scope="col" style="border-top: none;">Quantity</th>
+                                <th scope="col" style="border-top: none;">Total</th>
+                                <th scope="col" style="border-top: none;">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in carts %}
+                            <tr {% if not i.product.product_status %}style="opacity: 0.7; background-color: #fff5f5;"{% endif %}>
+                                <th scope="row">
+                                    <p class="mb-0 py-3 fw-semibold text-dark">
+                                        {{i.product.product_name}}
+                                        {% if not i.product.product_status %}
+                                            <span class="badge bg-danger ms-2" style="font-size: 0.7rem;">Out of Stock</span>
+                                        {% endif %}
+                                    </p>
+                                </th>
+                                
+                                <td>
+                                    <p class="mb-0 py-3 text-secondary">Rs. {{i.product_price}}</p>
+                                </td>
+                                <td>
+                                    <div class="input-group quantity py-3" style="width: 120px;">
+                                        {% if i.product.product_status %}
+                                        <form name="change-qty" method="post" action="{% url 'change-qty' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="cid" value="{{i.pk}}">
+                                            <input type="number" min="1" max="5"
+                                                   name="product_qty"
+                                                   value="{% if i.product_qty > 5 %}5{% else %}{{i.product_qty}}{% endif %}"
+                                                   class="qty-input form-control form-control-sm text-center"
+                                                   title="Max 5 per order"
+                                                   onchange="validateQty(this)">
+                                        </form>
+                                        {% else %}
+                                        <span class="text-muted">N/A</span>
+                                        {% endif %}
                                     </div>
-                                </div>
-                            </td>
-                            <td>
-                                <p class="mb-0 py-4">Rs. {{i.total_price}}</p>
-                            </td>
-                            <td>
-                                <a href="{% url 'remove-from-cart' pk=i.product.pk %}">Remove</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                      
-                    </tbody>
-                </table>
+                                </td>
+                                <td>
+                                    <p class="mb-0 py-3 fw-bold text-dark">Rs. {{i.total_price}}</p>
+                                </td>
+                                <td>
+                                    <a href="{% url 'remove-from-cart' pk=i.product.pk %}" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2" style="font-size: 0.8rem; font-weight: 600;"><i class="fas fa-trash-alt me-2"></i>Remove</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <i class="fas fa-shopping-basket fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted fw-semibold">Your shopping cart is currently empty.</p>
+                                    <a href="{% url 'shop' cat='all' %}" class="btn btn-primary rounded-pill px-4 py-2 mt-2">Go Shopping</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
            
-            <div class="row g-4 justify-content-end">
-                <div class="col-8"></div>
-                <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
-                    <div class="bg-light rounded">
-                        <div class="p-4">
-                            <h1 class="display-6 mb-4">Cart <span class="fw-normal">Total</span></h1>
-                            <div class="d-flex justify-content-between mb-4">
-                                <h5 class="mb-0 me-4">Subtotal:</h5>
-                                <p class="mb-0">Rs. {{net_price}}</p>
+            <div class="row g-4 justify-content-end mt-2">
+                <div class="col-lg-5 col-md-7 col-sm-12">
+                    <div class="cart-totals-card wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="p-2">
+                            <h4 class="fw-bold text-dark mb-4 pb-2 border-bottom" style="font-size: 1.25rem;">Order <span class="text-primary-gradient">Summary</span></h4>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-secondary fw-medium">Subtotal:</span>
+                                <span class="fw-bold text-dark">Rs. <span class="net-price-display">{{net_price}}</span></span>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <h5 class="mb-0 me-4">Shipping</h5>
-                                <div>
-                                    <p class="mb-0">00.00</p>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-secondary fw-medium">GST ({{gst_percent}}%):</span>
+                                <span class="fw-bold text-dark">Rs. {{gst_amount}}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+                                <span class="text-secondary fw-medium">Shipping:</span>
+                                <span class="text-success fw-bold">Free</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <span class="text-dark fw-bold" style="font-size: 1.1rem;">Total:</span>
+                                <span class="text-primary fw-extrabold" style="font-size: 1.15rem; font-weight: 800;">Rs. <span class="total-price-display">{{total_price}}</span></span>
+                            </div>
+                        </div>
+                        
+                        <form id="checkout-form" method="post" action="{% url 'cod-checkout' %}">
+                            {% csrf_token %}
+                            <input type="hidden" id="net_price" name="amount" value="{{total_price}}">
+                            <input type="hidden" id="delivery_address" name="delivery_address" value="">
+                            
+                            <div class="mb-4 px-2">
+                                <h6 class="fw-bold text-dark mb-3" style="font-size: 0.9rem;">Select Payment Method:</h6>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="pay_stripe" value="stripe" checked>
+                                    <label class="form-check-label text-secondary fw-medium" for="pay_stripe">
+                                        <i class="fab fa-stripe text-primary me-1" style="font-size: 1.2rem; vertical-align: middle;"></i> Pay Online (Stripe)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="pay_cod" value="cod">
+                                    <label class="form-check-label text-secondary fw-medium" for="pay_cod">
+                                        <i class="fas fa-money-bill-wave text-success me-1" style="vertical-align: middle;"></i> Cash on Delivery
+                                    </label>
                                 </div>
                             </div>
-                            
-                        </div>
-                        <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
-                            <h5 class="mb-0 ps-4 me-4">Total</h5>
-                            <p class="mb-0 pe-4">Rs. {{net_price}}</p>
-                        </div>
-                        <form method="post">
-                            {% csrf_token %}
-                            <input type="hidden" id="net_price" name="amount" value="{{net_price}}">
-                            <button class="btn btn-primary rounded-pill px-4 py-3 text-uppercase mb-4 ms-4"
-                            type="button" id="checkout-button">Proceed Checkout</button>
+
+                            {% if is_authenticated %}
+                                {% if net_price > 0 %}
+                                <button class="btn btn-checkout-premium text-uppercase py-3"
+                                type="button" id="checkout-button">Proceed to Checkout</button>
+                                {% else %}
+                                <button class="btn btn-checkout-premium text-uppercase py-3"
+                                type="button" disabled>Nothing to Checkout</button>
+                                <p class="text-danger text-center mt-3 small fw-semibold">Remove unavailable items to proceed.</p>
+                                {% endif %}
+                            {% else %}
+                            <a href="{% url 'login' %}?next={% url 'cart' %}" class="btn btn-checkout-premium text-uppercase py-3">Login to Checkout</a>
+                            {% endif %}
                         </form>
                     </div>
                 </div>
@@ -102,41 +281,195 @@
         </div>
     </div>
     <!-- Cart Page End -->
-      <script type="text/javascript">
 
-var stripe = Stripe('pk_test_51MshH6SJuXwPfjjrrgxJ5tubbOgYAhRrqNcd4RDUSq1peWpIMZrjhIiTncSUWO9u6byeDf4KxdZPkFD4hU55mVOg00aRL5RT8x');
-var checkoutButton = document.getElementById('checkout-button');
+    <!-- Delivery Address Modal -->
+    <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
+                <div class="modal-header border-0 pb-0 px-4 pt-4">
+                    <div>
+                        <h4 class="modal-title fw-bold" id="addressModalLabel">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i> Delivery Address
+                        </h4>
+                        <p class="text-muted small mb-0">Enter where you'd like your order delivered</p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 pt-3 pb-4">
+                    <!-- Progress Indicator -->
+                    <div class="d-flex align-items-center mb-4 gap-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge rounded-pill bg-success px-3 py-2"><i class="fas fa-check me-1"></i> Cart</span>
+                            <i class="fas fa-chevron-right text-muted small"></i>
+                            <span class="badge rounded-pill bg-primary px-3 py-2"><i class="fas fa-map-pin me-1"></i> Address</span>
+                            <i class="fas fa-chevron-right text-muted small"></i>
+                            <span class="badge rounded-pill bg-light text-muted border px-3 py-2"><i class="fas fa-credit-card me-1"></i> Payment</span>
+                        </div>
+                    </div>
 
-checkoutButton.addEventListener('click', function() { 
- fetch('/create-checkout-session/', {
- method: 'POST',
-    headers:{
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest', //Necessary to work with request.is_ajax()
+                    <div class="row g-3" id="address-form-fields">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small text-uppercase">Full Name *</label>
+                            <input type="text" class="form-control rounded-pill px-4" id="addr_name" placeholder="John Doe" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-muted small text-uppercase">Phone Number *</label>
+                            <input type="tel" class="form-control rounded-pill px-4" id="addr_phone" placeholder="+91 98765 43210" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold text-muted small text-uppercase">Address Line *</label>
+                            <input type="text" class="form-control rounded-pill px-4" id="addr_line" placeholder="House No., Street, Area / Colony" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-muted small text-uppercase">City *</label>
+                            <input type="text" class="form-control rounded-pill px-4" id="addr_city" placeholder="Mumbai" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-muted small text-uppercase">State *</label>
+                            <input type="text" class="form-control rounded-pill px-4" id="addr_state" placeholder="Maharashtra" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-muted small text-uppercase">Pincode *</label>
+                            <input type="text" class="form-control rounded-pill px-4" id="addr_pincode" placeholder="400001" maxlength="6" required>
+                        </div>
+                    </div>
 
-    },
-    body: JSON.stringify({'post_data':'{{net_price}}'})
- })
- .then(function(response) {
- return response.json();
- })
- .then(function(session) {
- return stripe.redirectToCheckout({ sessionId: session.id });
- })
- .then(function(result) {
- // If `redirectToCheckout` fails due to a browser or network
- // error, you should display the localized error message to your
- // customer using `error.message`.
- if (result.error) {
- alert(result.error.message);
- }
- })
- .catch(function(error) {
- console.error('Error:', error);
- });
- });
- </script>
+                    <!-- Validation error message -->
+                    <div id="addr-error" class="alert alert-danger rounded-pill mt-3 py-2 px-4 small fw-semibold d-none">
+                        <i class="fas fa-exclamation-circle me-2"></i><span id="addr-error-msg"></span>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 px-4 pb-4 pt-0 gap-2">
+                    <button type="button" class="btn btn-light rounded-pill px-4 py-2 fw-semibold" data-bs-dismiss="modal">
+                        <i class="fas fa-arrow-left me-2"></i> Back to Cart
+                    </button>
+                    <button type="button" class="btn btn-primary rounded-pill px-5 py-2 fw-bold" id="confirm-address-btn">
+                        <i class="fas fa-lock me-2"></i> Confirm & Pay
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            var stripe        = Stripe('pk_test_51MshH6SJuXwPfjjrrgxJ5tubbOgYAhRrqNcd4RDUSq1peWpIMZrjhIiTncSUWO9u6byeDf4KxdZPkFD4hU55mVOg00aRL5RT8x');
+            var checkoutButton = document.getElementById('checkout-button');
+            var checkoutForm   = document.getElementById('checkout-form');
+            var addressModal   = null; // Lazy — avoid crash if Bootstrap not yet ready
+
+            function getModal() {
+                if (!addressModal) {
+                    addressModal = new bootstrap.Modal(document.getElementById('addressModal'), { backdrop: 'static' });
+                }
+                return addressModal;
+            }
+
+            // Step 1 — Open address modal on checkout click
+            if (checkoutButton) {
+                checkoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    getModal().show();
+                });
+            }
+
+            // Step 2 — Validate address, then trigger payment
+            var confirmBtn = document.getElementById('confirm-address-btn');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function() {
+                    var name    = document.getElementById('addr_name').value.trim();
+                    var phone   = document.getElementById('addr_phone').value.trim();
+                    var line    = document.getElementById('addr_line').value.trim();
+                    var city    = document.getElementById('addr_city').value.trim();
+                    var state   = document.getElementById('addr_state').value.trim();
+                    var pincode = document.getElementById('addr_pincode').value.trim();
+                    var errDiv  = document.getElementById('addr-error');
+                    var errMsg  = document.getElementById('addr-error-msg');
+
+                    // Validation
+                    if (!name || !phone || !line || !city || !state || !pincode) {
+                        errMsg.textContent = 'Please fill in all required fields.';
+                        errDiv.classList.remove('d-none');
+                        return;
+                    }
+                    if (!/^\d{6}$/.test(pincode)) {
+                        errMsg.textContent = 'Please enter a valid 6-digit pincode.';
+                        errDiv.classList.remove('d-none');
+                        return;
+                    }
+                    if (!/^\+?[\d\s\-]{10,15}$/.test(phone)) {
+                        errMsg.textContent = 'Please enter a valid phone number.';
+                        errDiv.classList.remove('d-none');
+                        return;
+                    }
+
+                    errDiv.classList.add('d-none');
+
+                    // Build address string and store in hidden field
+                    var fullAddress = name + ', ' + line + ', ' + city + ', ' + state + ' - ' + pincode + ' (Ph: ' + phone + ')';
+                    document.getElementById('delivery_address').value = fullAddress;
+
+                    // Step 3 — Trigger original payment flow
+                    var paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+
+                    // Loading state
+                    var btn = document.getElementById('confirm-address-btn');
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Processing...';
+
+                    if (paymentMethod === 'stripe') {
+                        fetch('/create-checkout-session/', {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            body: JSON.stringify({'post_data': '{{total_price}}', 'delivery_address': fullAddress})
+                        })
+                        .then(function(response) { return response.json(); })
+                        .then(function(session) {
+                            return stripe.redirectToCheckout({ sessionId: session.id });
+                        })
+                        .then(function(result) {
+                            if (result.error) { alert(result.error.message); }
+                        })
+                        .catch(function(error) {
+                            console.error('Stripe error:', error);
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fas fa-lock me-2"></i> Confirm & Pay';
+                        });
+                    } else if (paymentMethod === 'cod') {
+                        checkoutForm.submit();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script>
+    /* Quantity limit enforcement — max 5 per order */
+    function validateQty(input) {
+        const val = parseInt(input.value, 10);
+        if (isNaN(val) || val < 1) {
+            input.value = 1;
+        } else if (val > 5) {
+            input.value = 5;
+            let warn = document.getElementById('qty-warning');
+            if (!warn) {
+                warn = document.createElement('div');
+                warn.id = 'qty-warning';
+                warn.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#dc3545;color:#fff;padding:12px 20px;border-radius:8px;z-index:9999;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.15);opacity:0;transition:opacity 0.3s;';
+                warn.textContent = '⚠️ Max 5 items allowed per order. Quantity reset to 5.';
+                document.body.appendChild(warn);
+            }
+            void warn.offsetWidth;
+            warn.style.opacity = '1';
+            setTimeout(() => { warn.style.opacity = '0'; }, 3500);
+        }
+        input.closest('form').submit();
+    }
+    </script>
 </body>
-
 </html>
 {% endblock %}

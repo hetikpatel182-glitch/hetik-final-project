@@ -1,0 +1,90 @@
+{% extends 'seller-header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        /* Premium Header Styling */
+        .bg-primary-light {
+            background-color: rgba(13, 110, 253, 0.08) !important;
+            letter-spacing: 1px;
+            font-size: 0.78rem;
+        }
+        .header-title-gradient {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <span class="badge bg-primary-light text-primary px-3 py-2 rounded-pill fw-bold mb-2">SELLER PORTAL</span>
+            <h1 class="display-5 fw-extrabold mb-3 header-title-gradient">Seller Control Panel</h1>
+            <p class="text-muted fs-6 max-w-md mx-auto mb-4">Manage your storefront, list new inventory, and track sales performance</p>
+        </div>
+        <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="{% url 'seller-index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Account</a></li>
+            <li class="breadcrumb-item active text-white">Seller Login</li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
+
+    <!-- Contucts Start -->
+    <div class="container-fluid contact py-5">
+        <div class="container py-5">
+            <div class="p-5 bg-light rounded">
+                <div class="row g-4">
+                   
+                    <div class="col-lg-12">
+                       {% if msg %}
+                           <b style="color: blue;">{{msg}}</b>
+                        {% endif %}
+                        <form method="post" action="{% url 'seller-login' %}">
+                            {% csrf_token %}
+                            <div class="row g-4 wow fadeInUp" data-wow-delay="0.1s">
+                                <div class="col-lg-12 col-xl-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="Your Email">
+                                        <label for="email">Your Email</label>
+                                    </div>
+                                </div>    
+                                
+                                 <div class="col-lg-12 col-xl-6">
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control" id="phone" name="password" placeholder="Password">
+                                        <label for="phone">Your Password</label>
+                                    </div>
+                                </div>
+                                
+                    
+                                <div class="col-12">
+                                    <button class="btn btn-primary w-100 py-3">LogIn as Seller</button>
+                                </div>
+                                <div class="col-12 text-center">
+                                    <a href="{% url 'forgot-password' %}">Forgot Password?</a>
+                                    <hr>
+                                    <p>Are you a buyer? <a href="{% url 'login' %}">Buyer Login</a></p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Contuct End -->
+</body>
+</html>
+{% endblock %}

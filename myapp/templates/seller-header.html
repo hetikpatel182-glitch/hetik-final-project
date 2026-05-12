@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Electro - Electronics Website Template</title>
+    <title>Electro Seller</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -29,250 +29,786 @@
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}?v=3" rel="stylesheet">
 </head>
 
 <body>
 
-   
+       <style>
+        #sellerNotificationDropdown * {
+            pointer-events: none !important;
+        }
+        /* ===== Global Seller Page Header Standardization ===== */
+        /* Overrides the background-image from style.css globally for seller pages */
+        .page-header {
+            background: linear-gradient(135deg, #f8fafc, #eef2f7) !important;
+            padding: 70px 0 !important;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        /* Typography overrides for the new light background */
+        .page-header h1.text-white,
+        .page-header h1 {
+            color: #1a1a2e !important;
+            font-weight: 700;
+        }
+        
+        .page-header .breadcrumb-item, 
+        .page-header .breadcrumb-item a {
+            color: #475569 !important;
+            font-weight: 500;
+        }
+        
+        .page-header .breadcrumb-item.active,
+        .page-header .breadcrumb-item.active.text-white {
+            color: #0d6efd !important;
+            font-weight: 600;
+        }
 
-    <!-- Topbar Start -->
-    <div class="container-fluid px-5 d-none border-bottom d-lg-block">
-        <div class="row gx-0 align-items-center">
-            <div class="col-lg-4 text-center text-lg-start mb-lg-0">
-                <div class="d-inline-flex align-items-center" style="height: 45px;">
-                    <a href="#" class="text-muted me-2"> Help</a><small> / </small>
-                    <a href="#" class="text-muted mx-2"> Support</a><small> / </small>
-                    <a href="#" class="text-muted ms-2"> Contact</a>
+        /* Modern Header Styles */
+        .modern-header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
 
-                </div>
-            </div>
-            <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
-                <small class="text-dark">Call Us:</small>
-                <a href="#" class="text-muted">+91 0000000000</a>
-            </div>
+        /* Hide Number Input Spinners */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
 
+        .header-top {
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+            font-size: 0.85rem;
+        }
+
+        .brand-logo {
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: #2b2b2b !important;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .brand-logo i {
+            color: #0d6efd;
+            font-size: 1.5rem;
+        }
+
+        .modern-nav .nav-link {
+            color: #555 !important;
+            font-weight: 500;
+            padding: 1rem 1.2rem !important;
+            position: relative;
+            transition: color 0.2s;
+            text-transform: capitalize;
+            letter-spacing: 0.3px;
+        }
+
+        .modern-nav .nav-link:hover, 
+        .modern-nav .nav-link.active {
+            color: #0d6efd !important;
+        }
+
+        .modern-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: #0d6efd;
+            transition: width 0.3s ease;
+        }
+
+        .modern-nav .nav-link:hover::after,
+        .modern-nav .nav-link.active::after {
+            width: 80%;
+        }
+
+        /* ===== Seller Notification Styles (Shared Design System) ===== */
+        .notif-dropdown-header {
+            padding: 14px 18px 10px;
+            border-bottom: 1px solid #f0f4f8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .notif-dropdown-header h6 {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #1a1a2e;
+            margin: 0;
+        }
+        .seller-notification-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f5f7fb;
+            transition: background 0.18s ease, transform 0.15s ease;
+            text-decoration: none !important;
+            color: #222 !important;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+        .seller-notification-item:hover {
+            background: #f5f8ff;
+            transform: translateX(2px);
+        }
+        .seller-notification-item.unread {
+            background: #eef4ff;
+            border-left: 3px solid #3b82f6;
+        }
+        .seller-notification-item.unread:hover {
+            background: #e0ecff;
+        }
+        .notif-icon-wrap {
+            flex-shrink: 0;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            margin-top: 2px;
+        }
+        .notif-icon-wrap.cancel  { background: #fff0f0; color: #e53e3e; }
+        .notif-icon-wrap.confirm { background: #f0fff4; color: #38a169; }
+        .notif-icon-wrap.ship    { background: #fffbf0; color: #d69e2e; }
+        .notif-icon-wrap.deliver { background: #f0fffe; color: #319795; }
+        .notif-icon-wrap.reply   { background: #f5f0ff; color: #805ad5; }
+        .notif-icon-wrap.default { background: #f0f4ff; color: #4361ee; }
+        .notif-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .seller-notification-item .notif-title {
+            font-weight: 700;
+            font-size: 0.87rem;
+            color: #1a1a2e;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .seller-notification-item .notif-msg {
+            font-size: 0.78rem;
+            color: #555e7b;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.45;
+        }
+        .seller-notification-item .notif-time {
+            font-size: 0.7rem;
+            color: #a0aec0;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .notif-unread-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #3b82f6;
+            flex-shrink: 0;
+            margin-top: 6px;
+        }
+
+        /* Sliding Notification Drawer Style */
+        .notification-bar {
+            position: fixed;
+            left: -340px; /* Start hidden on the left */
+            top: 0;
+            width: 340px;
+            max-width: 100%;
+            height: 100%;
+            background: #ffffff;
+            box-shadow: 5px 0 35px rgba(0, 0, 0, 0.15);
+            z-index: 2000; /* Extremely high z-index to stay above content */
+            transition: left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .notification-bar.active {
+            left: 0; /* Slide in */
+        }
+        
+        .notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            z-index: 1999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        
+        .notification-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .notif-bar-header {
+            padding: 24px 20px 18px;
+            border-bottom: 1px solid #f0f4f8;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        
+        .notif-bar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+            scrollbar-width: thin;
+        }
+        
+        /* Prevent content cut-off & wrap text gracefully */
+        .seller-notification-item {
+            display: flex !important;
+            gap: 12px !important;
+            align-items: flex-start !important;
+            padding: 14px 20px !important;
+            border-bottom: 1px solid #f5f7fb !important;
+            transition: all 0.22s ease !important;
+            text-decoration: none !important;
+            color: #2b2b2b !important;
+            cursor: pointer !important;
+            border-left: 3px solid transparent !important;
+            white-space: normal !important;
+            word-wrap: break-word !important;
+            word-break: break-word !important;
+            transform: none !important;
+        }
+        
+        .seller-notification-item:hover {
+            background: #f8faff !important;
+            border-left-color: #3b82f6 !important;
+            transform: translateX(3px) !important;
+        }
+        
+        .seller-notification-item.unread {
+            background: #f0f5ff !important;
+            border-left-color: #3b82f6 !important;
+        }
+        
+        .seller-notification-item.unread:hover {
+            background: #e6efff !important;
+        }
+        
+        .seller-notification-item .notif-title {
+            font-weight: 700 !important;
+            font-size: 0.88rem !important;
+            color: #1a1a2e !important;
+            margin-bottom: 4px !important;
+            line-height: 1.3 !important;
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+        }
+        
+        .seller-notification-item .notif-msg {
+            font-size: 0.8rem !important;
+            color: #4a5568 !important;
+            line-height: 1.5 !important;
+            display: block !important;
+            -webkit-line-clamp: none !important;
+            overflow: visible !important;
+            white-space: normal !important;
+        }
+        
+        .seller-notification-item .notif-time {
+            font-size: 0.72rem !important;
+            color: #a0aec0 !important;
+            margin-top: 6px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+        }
+        
+        @keyframes ringbell {
+            0%, 100% { transform: rotate(0); }
+            20%, 60% { transform: rotate(15deg); }
+            40%, 80% { transform: rotate(-15deg); }
+        }
+        
+        .animate-bell {
+            display: inline-block;
+            animation: ringbell 1.5s ease infinite;
+            transform-origin: top center;
+        }
+        
+        @media (max-width: 768px) {
+            .notification-bar {
+                width: 100%;
+                left: -100%;
+            }
+            .notification-bar.active {
+                left: 0;
+            }
+        }
+
+        /* Premium Floating Action Button (FAB) */
+        .support-fab {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+            color: #ffffff !important;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(13, 110, 253, 0.35);
+            z-index: 1030;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none !important;
+        }
+
+        .support-fab:hover {
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 12px 30px rgba(13, 110, 253, 0.5);
+            background: linear-gradient(135deg, #0b5ed7, #0a4ebd);
+        }
+
+        .support-fab i {
+            font-size: 1.4rem;
+            transition: transform 0.3s ease;
+            color: #ffffff !important;
+        }
+
+        .support-fab:hover i {
+            transform: rotate(15deg);
+        }
+
+        /* Pulsing Glow Animation */
+        .support-fab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.6);
+            animation: fab-pulse 2s infinite;
+            z-index: -1;
+        }
+
+        @keyframes fab-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(13, 110, 253, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
+            }
+        }
+
+        /* FAB Tooltip */
+        .support-fab-tooltip {
+            position: absolute;
+            right: 70px;
+            background: #1e293b;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+        }
+
+        .support-fab:hover .support-fab-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .support-fab {
+                bottom: 90px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+            }
+            .support-fab-tooltip {
+                display: none;
+            }
+        }
+    </style>
+
+    <!-- Price Formatter Script -->
+    <script>
+        function formatNumberWithCommas(value) {
+            // Remove existing commas and non-numeric characters except one decimal point
+            let parts = value.toString().split(".");
+            parts[0] = parts[0].replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const priceInputs = document.querySelectorAll('.price-format-input');
             
-        </div>
-    </div>
-    <div class="container-fluid px-5 py-4 d-none d-lg-block">
-        <div class="row gx-0 align-items-center text-center">
-            <div class="col-md-4 col-lg-3 text-center text-lg-start">
-                <div class="d-inline-flex align-items-center">
-                    <a href="" class="navbar-brand p-0">
-                        <h1 class="display-5 text-primary m-0"><i
-                                class="fas fa-shopping-bag text-secondary me-2"></i>Electro</h1>
-                        <!-- <img src="{% static 'img/logo.png' %}a"' %}"Logo"> -->
-                    </a>
-                </div>
-            </div>
-           {% if request.session.email %}
-           <a href="{% url 'profile' %}" class="text-muted d-flex align-items-center justify-content-end" style="text-decoration: none;">
-       
-    <!-- Profile picture -->
-    <span class="rounded-circle border overflow-hidden" 
-          style="width: 60px; height: 60px; display: inline-block;">
-        <img src="{{ request.session.profile_picture }}" 
-             alt="Profile" 
-             style="width: 100%; height: 100%; object-fit: cover;">
-    </span>
+            priceInputs.forEach(input => {
+                // Format existing value on load
+                if (input.value) {
+                    input.value = formatNumberWithCommas(input.value);
+                }
 
-    <!-- User name -->
-    <span class="ms-2 fw-bold">{{ request.session.fname }}</span>
-</a>
+                input.addEventListener('input', function(e) {
+                    let cursorPosition = e.target.selectionStart;
+                    let oldLength = e.target.value.length;
 
-        </div>
-    </div>
-    {% endif %}
-    <!-- Topbar End -->
+                    // Allow only digits and one decimal point
+                    let rawValue = e.target.value.replace(/[^0-9.]/g, '');
+                    
+                    // Handle multiple decimal points
+                    const decimalCount = (rawValue.match(/\./g) || []).length;
+                    if (decimalCount > 1) {
+                        const firstDecimal = rawValue.indexOf('.');
+                        rawValue = rawValue.substring(0, firstDecimal + 1) + 
+                                  rawValue.substring(firstDecimal + 1).replace(/\./g, '');
+                    }
 
-    
+                    let formattedValue = formatNumberWithCommas(rawValue);
+                    e.target.value = formattedValue;
 
-    <!-- Navbar & Hero Start -->
-    <div class="container-fluid nav-bar p-0">
-        <div class="row gx-0 bg-primary px-5 align-items-center">
-            
-            <div class="col-12 col-lg-9">
-                <nav class="navbar navbar-expand-lg navbar-light bg-primary ">
-                    <a href="{% url 'seller-index' %}" class="navbar-brand d-block d-lg-none">
-                        <h1 class="display-5 text-secondary m-0"><i
-                                class="fas fa-shopping-bag text-white me-2"></i>Electro</h1>
-                        <!-- <img src="{% static 'img/logo.png' %} " alt="Logo"> -->
-                    </a>
-                    <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbarCollapse">
-                        <span class="fa fa-bars fa-1x"></span>
+                    // Adjust cursor position to prevent jumping
+                    let newLength = e.target.value.length;
+                    cursorPosition = cursorPosition + (newLength - oldLength);
+                    e.target.setSelectionRange(cursorPosition, cursorPosition);
+                });
+
+                // Before form submission, the backend will handle comma removal
+                // as implemented in views.py previously.
+            });
+        });
+    </script>
+</head>
+
+<body>
+
+    <style>
+        .profile-widget {
+            background: #f8f9fa;
+            padding: 5px 15px 5px 5px;
+            border-radius: 50px;
+            border: 1px solid #eee;
+            transition: all 0.2s;
+        }
+
+        .profile-widget:hover {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-color: #ddd;
+        }
+
+        .profile-img-wrap {
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .dropdown-menu-modern {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 10px 0;
+            margin-top: 15px !important;
+        }
+
+        .dropdown-menu-modern .dropdown-item {
+            padding: 10px 20px;
+            font-weight: 500;
+            color: #555;
+            transition: all 0.2s;
+        }
+
+        .dropdown-menu-modern .dropdown-item:hover {
+            background: #f8f9fa;
+            color: #0d6efd;
+            padding-left: 25px;
+        }
+
+        /* Category Dropdown Styling */
+        .category-btn {
+            background: #f1f5f9;
+            color: #2b2b2b;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.2s;
+        }
+        .category-btn:hover {
+            background: #e2e8f0;
+            color: #0d6efd;
+        }
+        /* Luxury Logout Modal */
+        .logout-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .logout-modal-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .logout-modal-box {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 30px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .logout-modal-backdrop.active .logout-modal-box {
+            transform: scale(1) translateY(0);
+        }
+        .logout-modal-icon {
+            width: 60px;
+            height: 60px;
+            background: #fef2f2;
+            color: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 16px;
+        }
+        .logout-modal-header h4 {
+            font-weight: 800;
+            color: #1e293b;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+        .logout-modal-header p {
+            color: #64748b;
+            font-size: 0.92rem;
+            margin-bottom: 24px;
+        }
+        .logout-modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .btn-logout-cancel {
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .btn-logout-cancel:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+        .btn-logout-confirm {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff !important;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            text-decoration: none !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-logout-confirm:hover {
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Main Navigation -->
+    <header class="modern-header">
+        <div class="container px-4">
+            <nav class="navbar navbar-expand-lg navbar-light py-2 px-0">
+                
+                <!-- Logo -->
+                <a href="{% url 'seller-index' %}" class="brand-logo me-4">
+                    <i class="fas fa-shopping-bag me-2"></i>Electro<span class="text-primary">.</span>
+                </a>
+
+                {% if request.session.email %}
+                <!-- All Categories Dropdown (Desktop) -->
+                <div class="nav-item dropdown d-none d-lg-block me-3">
+                    <button class="category-btn d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                        <i class="fa fa-bars me-2"></i> All Categories
                     </button>
-                    <div class="collapse navbar-collapse" id="navbarCollapse">
-                        <div class="navbar-nav ms-auto py-0">
-                            <a href="{% url 'seller-index' %}" class="nav-item nav-link active">Home</a>
-                            <a href="{% url 'seller-add-product' %}" class="nav-item nav-link">Add Product</a>
-                            <a href="{% url 'seller-view-product' %}" class="nav-item nav-link">View Product</a>
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Account</a>
-                                <div class="dropdown-menu m-0">
-                                    {% if request.session.email %}
-                                        <a href="404.html" class="dropdown-item">My Order</a>
-                                        <a href="{% url 'change-password' %}" class="dropdown-item">Change Password</a>
-                                        <a href="{% url 'logout' %}" class="dropdown-item">Logout</a>
-                                    {% else %}
-                                        <a href="{% url 'login' %}" class="dropdown-item">Login</a>
-                                        <a href="{% url 'signup' %}" class="dropdown-item">Sign Up</a>
-                                    {% endif %}
-
-                                    
-                                </div>
-                            </div>
-                            <a href="{% url 'contact' %}" class="nav-item nav-link me-2">Contact</a>
-                            
-                        </div>
-                        
+                    <div class="dropdown-menu dropdown-menu-modern border-0" style="width: 250px;">
+                        <ul class="list-unstyled mb-0 px-2" id="seller-category-list">
+                            <li class="dropdown-item rounded text-center text-muted">
+                                <small>Loading...</small>
+                            </li>
+                        </ul>
                     </div>
-                </nav>
-            </div>
+                </div>
+
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fas fa-bars"></span>
+                </button>
+                {% endif %}
+
+                <!-- Nav Links -->
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    {% if request.session.email %}
+                    <div class="navbar-nav modern-nav me-auto">
+                        <a href="{% url 'seller-index' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'seller-index' %}active{% endif %}">Home</a>
+                        <a href="{% url 'seller-add-product' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'seller-add-product' %}active{% endif %}">Add Product</a>
+                        <a href="{% url 'seller-view-product' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'seller-view-product' or request.resolver_match.url_name == 'seller-edit-product' or request.resolver_match.url_name == 'seller-product-details' %}active{% endif %}">My Products</a>
+                        <a href="{% url 'seller-myorder' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'seller-myorder' %}active{% endif %}">Orders</a>
+                        <a href="{% url 'seller-contact' %}" class="nav-item nav-link {% if request.resolver_match.url_name == 'seller-contact' %}active{% endif %}">Contact</a>
+                    </div>
+                    {% endif %}
+
+                    <!-- User Profile / Auth Actions -->
+                    <div class="d-flex align-items-center ms-lg-4 mt-3 mt-lg-0">
+                        {% if request.session.email %}
+
+                        <!-- Notification Bell Trigger -->
+                        <div class="nav-item me-3">
+                            <a href="javascript:void(0)" class="text-dark position-relative fs-5" id="sellerNotificationDropdown" style="transition: transform 0.2s; display: inline-block;">
+                                <i class="fas fa-bell"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark d-none" id="seller-notification-badge" style="font-size: 0.6rem;">0</span>
+                            </a>
+                        </div>
+
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle d-flex align-items-center text-decoration-none" data-bs-toggle="dropdown">
+                                <div class="profile-widget d-flex align-items-center">
+                                    <div class="profile-img-wrap me-2">
+                                        <img src="{{ request.session.profile_picture }}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                    <span class="fw-bold text-dark fs-6">{{ request.session.fname }}</span>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-modern">
+                                <a href="{% url 'profile' %}" class="dropdown-item"><i class="fas fa-user-circle me-2 text-muted"></i> My Profile</a>
+                                <a href="{% url 'seller-myorder' %}" class="dropdown-item"><i class="fas fa-box me-2 text-muted"></i> Sales & Orders</a>
+                                <a href="{% url 'seller-contact' %}" class="dropdown-item"><i class="fas fa-headset me-2 text-muted"></i> Contact Support</a>
+                                <div class="dropdown-divider"></div>
+                                <a href="{% url 'change-password' %}" class="dropdown-item"><i class="fas fa-key me-2 text-muted"></i> Security</a>
+                                <a href="#" class="dropdown-item text-danger logout-trigger-btn"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'seller-login' %}" class="btn btn-outline-primary rounded-pill px-4">Login</a>
+                            <a href="{% url 'signup' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">Sign Up</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </nav>
         </div>
-    </div>
-    <!-- Navbar & Hero End -->
+    </header>
+    <!-- Navbar End -->
 
     {% block content %}
     {% endblock %}
 
-    <!-- Footer Start -->
-    <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.2s">
-        <div class="container py-5">
-            <div class="row g-4 rounded mb-5" style="background: rgba(255, 255, 255, .03);">
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="rounded p-4">
-                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mb-4"
-                            style="width: 70px; height: 70px;">
-                            <i class="fas fa-map-marker-alt fa-2x text-primary"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-white">Address</h4>
-                            <p class="mb-2">123 Street New York.USA</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="rounded p-4">
-                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mb-4"
-                            style="width: 70px; height: 70px;">
-                            <i class="fas fa-envelope fa-2x text-primary"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-white">Mail Us</h4>
-                            <p class="mb-2">info@example.com</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="rounded p-4">
-                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mb-4"
-                            style="width: 70px; height: 70px;">
-                            <i class="fa fa-phone-alt fa-2x text-primary"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-white">Telephone</h4>
-                            <p class="mb-2">(+012) 3456 7890</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="rounded p-4">
-                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mb-4"
-                            style="width: 70px; height: 70px;">
-                            <i class="fab fa-firefox-browser fa-2x text-primary"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-white">Yoursite@ex.com</h4>
-                            <p class="mb-2">(+012) 3456 7890</p>
-                        </div>
-                    </div>
-                </div>
+    {% include 'seller-footer.html' %}
+
+
+
+
+    <!-- ================= SLIDING SELLER NOTIFICATION DRAWER ================= -->
+    <div class="notification-overlay" id="seller-notification-overlay"></div>
+    <div class="notification-bar" id="seller-notification-bar">
+        <div class="notif-bar-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <h5 class="fw-bold m-0" style="color: #1a1a2e;"><i class="fas fa-bell me-2 text-primary animate-bell"></i>Notifications</h5>
+                <button type="button" class="btn-close text-reset" id="close-seller-notification-bar" aria-label="Close" style="font-size: 0.85rem; box-shadow: none;"></button>
             </div>
-            <div class="row g-5">
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="footer-item d-flex flex-column">
-                        <div class="footer-item">
-                            <h4 class="text-primary mb-4">Newsletter</h4>
-                            <p class="mb-3">Dolor amet sit justo amet elitr clita ipsum elitr est.Lorem ipsum dolor sit
-                                amet, consectetur adipiscing elit consectetur adipiscing elit.</p>
-                            <div class="position-relative mx-auto rounded-pill">
-                                <input class="form-control rounded-pill w-100 py-3 ps-4 pe-5" type="text"
-                                    placeholder="Enter your email">
-                                <button type="button"
-                                    class="btn btn-primary rounded-pill position-absolute top-0 end-0 py-2 mt-2 me-2">SignUp</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="footer-item d-flex flex-column">
-                        <h4 class="text-primary mb-4">Customer Service</h4>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Contact Us</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Returns</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Order History</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Site Map</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Testimonials</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> My Account</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Unsubscribe Notification</a>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="footer-item d-flex flex-column">
-                        <h4 class="text-primary mb-4">Information</h4>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> About Us</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Delivery infomation</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Privacy Policy</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Terms & Conditions</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Warranty</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> FAQ</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Seller Login</a>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-6 col-xl-3">
-                    <div class="footer-item d-flex flex-column">
-                        <h4 class="text-primary mb-4">Extras</h4>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Brands</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Gift Vouchers</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Affiliates</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Wishlist</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Order History</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Track Your Order</a>
-                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Track Your Order</a>
-                    </div>
-                </div>
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-2" style="border-top: 1px solid #f0f4f8;">
+                <span class="text-muted small" style="font-size: 0.82rem; font-weight: 500;">Recent alerts</span>
+                <small class="text-primary cursor-pointer fw-bold" id="seller-mark-all-read" style="cursor: pointer; font-size: 0.82rem; text-decoration: none;">Mark all as read</small>
+            </div>
+        </div>
+        <div class="notif-bar-body" id="seller-notification-items-container">
+            <div class="p-4 text-center text-muted">
+                <i class="fas fa-bell-slash d-block mb-2 fs-3 opacity-25"></i>
+                <small>No new alerts</small>
             </div>
         </div>
     </div>
-    <!-- Footer End -->
 
-
-    <!-- Copyright Start -->
-    <div class="container-fluid copyright py-4">
-        <div class="container">
-            <div class="row g-4 align-items-center">
-                <div class="col-md-6 text-center text-md-start mb-md-0">
-                    <span class="text-white"><a href="#" class="border-bottom text-white"><i
-                                class="fas fa-copyright text-light me-2"></i>Your Site Name</a>, All right
-                        reserved.</span>
-                </div>
-                <div class="col-md-6 text-center text-md-end text-white">
-
-                    <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                    <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
-                    <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
-                    Designed By <a class="border-bottom text-white" href="https://htmlcodex.com">HTML Codex</a>.
-                    Distributed By <a class="border-bottom text-white" href="https://themewagon.com">ThemeWagon</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Copyright End -->
-
-
-    <!-- Back to Top -->
+    <!-- Back to Top & Support FAB -->
+    {% if request.session.email %}
     <a href="#" class="btn btn-primary btn-lg-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+
+    <!-- Premium Floating Action Button for Contact Support -->
+    <a href="{% url 'seller-contact' %}" class="support-fab" id="contact-fab-btn">
+        <i class="fas fa-headset"></i>
+        <span class="support-fab-tooltip">Need Help? Contact Support</span>
+    </a>
+    {% endif %}
 
 
     <!-- JavaScript Libraries -->
@@ -284,6 +820,311 @@
 
     <!-- Template Javascript -->
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const categoryList = document.getElementById("seller-category-list");
+            
+            function getCategoryIcon(catName) {
+                const name = (catName || '').toLowerCase().trim();
+                let iconClass = 'fas fa-box';
+                let iconColor = '#475569'; // Slate 600 - ultra premium slate gray
+
+                if (name.includes('electronic')) {
+                    iconClass = 'fas fa-microchip';
+                } else if (name.includes('gaming') || name.includes('game')) {
+                    iconClass = 'fas fa-gamepad';
+                } else if (name.includes('laptop') || name.includes('computer')) {
+                    iconClass = 'fas fa-laptop';
+                } else if (name.includes('mobile') || name.includes('phone')) {
+                    iconClass = 'fas fa-mobile-alt';
+                } else if (name.includes('fashion') || name.includes('cloth')) {
+                    iconClass = 'fas fa-shirt';
+                } else if (name.includes('home') || name.includes('decor') || name.includes('furniture')) {
+                    iconClass = 'fas fa-house-user';
+                } else if (name.includes('beauty') || name.includes('cosmetic') || name.includes('makeup')) {
+                    iconClass = 'fas fa-pump-soap';
+                } else if (name.includes('sport') || name.includes('fit')) {
+                    iconClass = 'fas fa-dumbbell';
+                } else if (name.includes('book')) {
+                    iconClass = 'fas fa-book-open';
+                } else if (name.includes('grocery') || name.includes('food')) {
+                    iconClass = 'fas fa-shopping-basket';
+                }
+                
+                return `<i class="${iconClass} me-2" style="width: 18px; height: 18px; color: ${iconColor}; font-size: 0.95rem; text-align: center; display: inline-flex; align-items: center; justify-content: center;"></i>`;
+            }
+
+            if(categoryList) {
+                fetch("{% url 'seller-category-counts' %}")
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.categories) {
+                            categoryList.innerHTML = '';
+                            if(data.categories.length === 0) {
+                                categoryList.innerHTML = '<li class="dropdown-item rounded mb-1 text-muted text-center"><small>No products added</small></li>';
+                            } else {
+                                data.categories.forEach(item => {
+                                    const li = document.createElement("li");
+                                    li.className = "dropdown-item rounded mb-1";
+                                    li.innerHTML = `
+                                        <div class="categories-bars-item">
+                                            <div class="d-flex align-items-center">
+                                                ${getCategoryIcon(item.product_category)}
+                                                <a href="#">${item.product_category}</a>
+                                            </div>
+                                            <span class="badge bg-light text-dark rounded-pill">${item.count}</span>
+                                        </div>
+                                    `;
+                                    categoryList.appendChild(li);
+                                });
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error fetching categories", err);
+                        categoryList.innerHTML = '<li class="dropdown-item rounded mb-1 text-danger text-center"><small>Error loading</small></li>';
+                    });
+            }
+        });
+    </script>
+
+    <!-- Seller Notification System -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const badge = document.getElementById("seller-notification-badge");
+            const container = document.getElementById("seller-notification-items-container");
+            const markAllRead = document.getElementById("seller-mark-all-read");
+            let lastSellerNotifId = localStorage.getItem('lastSellerNotifId') || 0;
+
+            // Slide Drawer Panel Toggle Mechanics
+            const notifTrigger = document.getElementById('sellerNotificationDropdown');
+            const notifBar = document.getElementById('seller-notification-bar');
+            const notifOverlay = document.getElementById('seller-notification-overlay');
+            const notifClose = document.getElementById('close-seller-notification-bar');
+
+            if (notifTrigger && notifBar && notifOverlay) {
+                notifTrigger.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    notifBar.classList.add('active');
+                    notifOverlay.classList.add('active');
+                });
+
+                const closeDrawer = function() {
+                    notifBar.classList.remove('active');
+                    notifOverlay.classList.remove('active');
+                };
+
+                if (notifClose) notifClose.addEventListener('click', closeDrawer);
+                notifOverlay.addEventListener('click', closeDrawer);
+                
+                // Close on ESC
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') closeDrawer();
+                });
+            }
+
+            function getNotifConfig(subject) {
+                const subLower = (subject || '').toLowerCase();
+                if (subLower.includes('cancel')) {
+                    return { emoji: '❌', color: '#dc3545', className: 'cancel' };
+                } else if (subLower.includes('confirm')) {
+                    return { emoji: '✅', color: '#198754', className: 'confirm' };
+                } else if (subLower.includes('ship')) {
+                    return { emoji: '📦', color: '#0d6efd', className: 'ship' };
+                } else if (subLower.includes('out for delivery') || subLower.includes('out_for_delivery')) {
+                    return { emoji: '🚚', color: '#0dcaf0', className: 'deliver' };
+                } else if (subLower.includes('delivered') || subLower.includes('deliver')) {
+                    return { emoji: '🎉', color: '#198754', className: 'deliver' };
+                } else if (subLower.includes('placed')) {
+                    return { emoji: '🧾', color: '#6c757d', className: 'placed' };
+                } else if (subLower.includes('review') || subLower.includes('rating')) {
+                    return { emoji: '⭐', color: '#ffc107', className: 'review' };
+                } else if (subLower.includes('[chatbot]')) {
+                    return { emoji: '💬', color: '#0d6efd', className: 'chatbot' };
+                } else {
+                    return { emoji: '🔔', color: '#ffc107', className: 'default' };
+                }
+            }
+
+            function fetchSellerNotifications() {
+                fetch("/get-seller-notifications/")
+                    .then(response => response.json())
+                    .then(data => {
+                        // Badge
+                        if (data.count > 0) {
+                            badge.textContent = data.count;
+                            badge.classList.remove('d-none');
+                        } else {
+                            badge.classList.add('d-none');
+                        }
+
+                        // Dropdown
+                        if (data.notifications && data.notifications.length > 0) {
+                            container.innerHTML = '';
+                            let highestId = parseInt(lastSellerNotifId) || 0;
+
+                            data.notifications.forEach(n => {
+                                // Toast on new unread notifications
+                                if (n.is_read === false && n.id > highestId) {
+                                    highestId = n.id;
+                                    showSellerNotifToast(n.subject, n.reply);
+                                }
+
+                                const config = getNotifConfig(n.subject);
+
+                                const item = document.createElement('div');
+                                item.className = `seller-notification-item ${n.is_read ? '' : 'unread'}`;
+                                item.innerHTML = `
+                                    <div class="notif-icon-wrap" style="background: ${config.color}15; font-size: 1.25rem;">${config.emoji}</div>
+                                    <div class="notif-body">
+                                        <div class="notif-title">${n.subject}</div>
+                                        <div class="notif-msg">${n.reply}</div>
+                                        <div class="notif-time"><i class="far fa-clock"></i>${n.time}</div>
+                                    </div>
+                                    ${!n.is_read ? '<div class="notif-unread-dot"></div>' : ''}
+                                `;
+                                item.addEventListener('click', function() {
+                                    let destUrl = '/seller-myorder/';
+                                    if (n.subject && n.subject.includes('[Chatbot]')) {
+                                        destUrl = '/seller-contact/';
+                                    } else if (n.cart_id) {
+                                        destUrl = `/seller-myorder/?highlight_cart=${n.cart_id}`;
+                                    } else if (n.product_id) {
+                                        destUrl = `/seller-myorder/?highlight=${n.product_id}`;
+                                    }
+                                    if (!n.is_read) {
+                                        fetch('/mark-single-read/' + n.id + '/')
+                                            .then(r => r.json())
+                                            .then(res => {
+                                                window.location.href = destUrl;
+                                            })
+                                            .catch(() => { window.location.href = destUrl; });
+                                    } else {
+                                        window.location.href = destUrl;
+                                    }
+                                });
+                                container.appendChild(item);
+                            });
+
+                            if (highestId > (parseInt(lastSellerNotifId) || 0)) {
+                                lastSellerNotifId = highestId;
+                                localStorage.setItem('lastSellerNotifId', highestId);
+                            }
+                        } else {
+                            container.innerHTML = `
+                                <div style="padding: 36px 20px; text-align: center;">
+                                    <div style="width:56px;height:56px;border-radius:50%;background:#f0f4ff;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                                        <i class="fas fa-bell-slash" style="font-size:1.4rem;color:#a0aec0;"></i>
+                                    </div>
+                                    <p style="font-weight:600;color:#2d3748;margin:0 0 4px;">All caught up!</p>
+                                    <p style="font-size:0.8rem;color:#a0aec0;margin:0;">No new notifications</p>
+                                </div>`;
+                        }
+                    })
+                    .catch(err => console.error("Error fetching seller notifications", err));
+            }
+
+            function showSellerNotifToast(title, message) {
+                const config = getNotifConfig(title);
+                let toast = document.createElement('div');
+                toast.style.cssText = `position:fixed;top:90px;right:20px;width:340px;background:#fff;border-left:5px solid ${config.color};box-shadow:0 10px 25px rgba(0,0,0,0.12);padding:16px;border-radius:10px;z-index:10000;transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1);transform:translateX(120%);opacity:0;`;
+                
+                toast.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div style="font-size: 1.8rem; margin-right: 15px; flex-shrink: 0;">${config.emoji}</div>
+                        <div style="flex-grow: 1; min-width: 0;">
+                            <h6 class="mb-1 fw-bold text-dark" style="font-size:0.95em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</h6>
+                            <p class="mb-0 text-muted" style="font-size:0.85em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${message}</p>
+                        </div>
+                        <button type="button" class="btn-close ms-auto ms-2" aria-label="Close" style="font-size:0.7em; flex-shrink: 0;" onclick="this.parentElement.parentElement.remove()"></button>
+                    </div>
+                `;
+                document.body.appendChild(toast);
+                setTimeout(() => { toast.style.transform = 'translateX(0)'; toast.style.opacity = '1'; }, 50);
+                setTimeout(() => {
+                    if (document.body.contains(toast)) {
+                        toast.style.transform = 'translateX(120%)';
+                        toast.style.opacity = '0';
+                        setTimeout(() => toast.remove(), 400);
+                    }
+                }, 8000);
+            }
+
+            if (markAllRead) {
+                markAllRead.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    fetch("/mark-seller-notifications-read/")
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                badge.classList.add('d-none');
+                                fetchSellerNotifications();
+                            }
+                        });
+                });
+            }
+
+            if (badge) {
+                fetchSellerNotifications();
+                setInterval(fetchSellerNotifications, 5000);
+            }
+        });
+    </script>
+
+    <!-- Confirm Logout Modal -->
+    <div id="logoutModal" class="logout-modal-backdrop">
+        <div class="logout-modal-box">
+            <div class="logout-modal-icon">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <div class="logout-modal-header">
+                <h4>Confirm Logout</h4>
+                <p>Are you sure you want to logout?</p>
+            </div>
+            <div class="logout-modal-actions">
+                <button type="button" class="btn-logout-cancel" id="cancelLogoutBtn">No</button>
+                <a href="{% url 'logout' %}" class="btn-logout-confirm" id="confirmLogoutBtn">Yes</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Logout Confirmation Dialog Logic
+        document.addEventListener("DOMContentLoaded", function() {
+            const logoutTriggers = document.querySelectorAll(".logout-trigger-btn");
+            const logoutModal = document.getElementById("logoutModal");
+            const cancelBtn = document.getElementById("cancelLogoutBtn");
+
+            if (logoutModal) {
+                logoutTriggers.forEach(trigger => {
+                    trigger.addEventListener("click", function(e) {
+                        e.preventDefault();
+                        logoutModal.classList.add("active");
+                    });
+                });
+
+                cancelBtn.addEventListener("click", function() {
+                    logoutModal.classList.remove("active");
+                });
+
+                // Close on click outside box
+                logoutModal.addEventListener("click", function(e) {
+                    if (e.target === logoutModal) {
+                        logoutModal.classList.remove("active");
+                    }
+                });
+
+                // Close on ESC key
+                document.addEventListener("keydown", function(e) {
+                    if (e.key === "Escape") {
+                        logoutModal.classList.remove("active");
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
+

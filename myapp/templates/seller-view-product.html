@@ -5,70 +5,418 @@
 <html lang="en">
 
 <head>
+    <title>My Products</title>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        /* Compact Sleek Page Header style - Light Theme */
+        .page-header-compact {
+            padding-top: 2.5rem !important;
+            padding-bottom: 2.2rem !important;
+            margin-bottom: 0 !important;
+            background: #ffffff !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            position: relative;
+        }
+        .page-header-compact h2 {
+            font-size: 2.1rem !important;
+            font-weight: 800 !important;
+            color: #1e293b !important;
+            letter-spacing: -0.8px;
+            margin-bottom: 8px !important;
+        }
+        .text-primary-gradient {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800 !important;
+        }
+        .page-header-compact p.header-subtitle {
+            font-size: 0.95rem !important;
+            font-weight: 400 !important;
+            color: #64748b !important;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+            letter-spacing: 0.1px;
+            line-height: 1.5;
+        }
+        .page-header-compact .breadcrumb-item, 
+        .page-header-compact .breadcrumb-item a {
+            font-size: 0.85rem !important;
+            font-weight: 500 !important;
+            color: #64748b !important;
+            text-decoration: none !important;
+            transition: color 0.2s;
+        }
+        .page-header-compact .breadcrumb-item a:hover {
+            color: #0d6efd !important;
+        }
+        .page-header-compact .breadcrumb-item.active {
+            color: #0d6efd !important;
+            font-weight: 600 !important;
+        }
 
+        /* Inventory BG */
+        .inventory-bg {
+            background-color: #f8fafc !important;
+            min-height: calc(100vh - 280px);
+            padding-top: 3rem !important;
+            padding-bottom: 4rem !important;
+        }
 
+        /* Section Header Styles */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.8rem !important;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding-bottom: 0.8rem !important;
+        }
+        .section-title {
+            font-size: 1.35rem !important;
+            font-weight: 800 !important;
+            color: #1e293b !important;
+            margin: 0 !important;
+            letter-spacing: -0.3px;
+        }
+
+        /* Premium Dashboard Product Card */
+        .dash-product-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 18px !important;
+            overflow: hidden !important;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02) !important;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+        }
+        .dash-product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08) !important;
+            border-color: #cbd5e1 !important;
+        }
+        .dash-img-wrapper {
+            position: relative;
+            background: #f8fafc;
+            padding-top: 100%;
+            overflow: hidden;
+            display: block;
+        }
+        .dash-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 1.5rem;
+            transition: transform 0.5s ease;
+        }
+        .dash-product-card:hover .dash-img {
+            transform: scale(1.06);
+        }
+        .status-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            z-index: 2;
+        }
+        .status-active {
+            background: #d1fae5 !important;
+            color: #065f46 !important;
+        }
+        .status-inactive {
+            background: #f1f5f9 !important;
+            color: #475569 !important;
+        }
+
+        /* Card Content info styling */
+        .dash-content {
+            padding: 1.4rem !important;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .dash-category {
+            font-size: 0.72rem !important;
+            font-weight: 700 !important;
+            color: #64748b !important;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 0.4rem !important;
+        }
+        .dash-title {
+            font-size: 1.02rem !important;
+            font-weight: 700 !important;
+            color: #1e293b !important;
+            line-height: 1.4;
+            margin-bottom: 0.8rem !important;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.8rem;
+            text-decoration: none !important;
+            transition: color 0.2s;
+        }
+        .dash-title:hover {
+            color: #0d6efd !important;
+        }
+
+        .dash-pricing {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+        }
+        .dash-price-val {
+            font-size: 1.22rem !important;
+            font-weight: 800 !important;
+            color: #0d6efd !important;
+        }
+        .dash-stock {
+            font-size: 0.78rem !important;
+            font-weight: 600 !important;
+        }
+
+        /* Unified Card Action Buttons */
+        .dash-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: auto;
+        }
+        .btn-view-details {
+            background: #ffffff !important;
+            color: #475569 !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 12px !important;
+            padding: 10px 16px !important;
+            font-size: 0.88rem !important;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none !important;
+        }
+        .btn-view-details:hover {
+            background: #f8fafc !important;
+            color: #1e293b !important;
+            border-color: #94a3b8 !important;
+            transform: translateY(-2px);
+        }
+        .btn-toggle-status {
+            border-radius: 12px !important;
+            padding: 8px 16px !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.3s !important;
+            text-decoration: none !important;
+        }
+        .btn-toggle-status:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Empty state design */
+        .empty-inventory-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 24px !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03) !important;
+            max-width: 580px;
+            margin: 3rem auto !important;
+            padding: 4rem 2rem !important;
+            text-align: center;
+            animation: card-appear-view 0.5s ease-out;
+        }
+        @keyframes card-appear-view {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .empty-inventory-icon {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 1.5rem;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 2.5rem;
+        }
+        .empty-inventory-card h3 {
+            font-size: 1.5rem !important;
+            font-weight: 800 !important;
+            color: #1e293b !important;
+            margin-bottom: 0.5rem !important;
+        }
+        .empty-inventory-card p {
+            font-size: 0.95rem !important;
+            color: #64748b !important;
+            margin-bottom: 2rem !important;
+        }
+        .btn-add-inventory {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 12px 36px !important;
+            font-weight: 600 !important;
+            font-size: 0.95rem !important;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.2) !important;
+            transition: all 0.3s !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none !important;
+        }
+        .btn-add-inventory:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.35) !important;
+            color: #ffffff !important;
+        }
+
+        .btn-add-shortcut {
+            background: linear-gradient(135deg, #0d6efd 0%, #2563eb 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 8px 18px !important;
+            font-weight: 600 !important;
+            font-size: 0.88rem !important;
+            box-shadow: 0 4px 10px rgba(13, 110, 253, 0.15) !important;
+            transition: all 0.3s !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none !important;
+        }
+        .btn-add-shortcut:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(13, 110, 253, 0.3) !important;
+            color: #ffffff !important;
+        }
+    </style>
 </head>
 
 <body>
 
-    <!-- Our Products Start -->
-    <div class="container-fluid product py-5">
-        <div class="container py-5">
-            <div class="tab-class">
-                <div class="row g-4">
-                    <div class="col-lg-4 text-start wow fadeInLeft" data-wow-delay="0.1s">
-                        <h1>My Products</h1>
-                    </div>
-                   
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header-compact text-center">
+        <h2 class="wow fadeInUp" data-wow-delay="0.1s">My <span class="text-primary-gradient">Products</span> 📦</h2>
+        <p class="header-subtitle mb-3 wow fadeInUp" data-wow-delay="0.2s">Manage, edit, toggle visibility, and update your listed product inventory in real-time.</p>
+        <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="{% url 'seller-index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Seller</a></li>
+            <li class="breadcrumb-item active">My Products</li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
+
+    <!-- Inventory Section Start -->
+    <div class="container-fluid inventory-bg">
+        <div class="container">
+            
+            {% if products %}
+                <!-- Section header shortcut -->
+                <div class="section-header d-flex justify-content-between align-items-center">
+                    <h3 class="section-title"><i class="fas fa-cubes me-2 text-primary"></i>Listed Inventory</h3>
+                    <a href="{% url 'seller-add-product' %}" class="btn-add-shortcut">
+                        <i class="fas fa-plus"></i> Add New Product
+                    </a>
                 </div>
-                <div class="tab-content">
-                    <div id="tab-1" class="tab-pane fade show p-0 active">
-                        <div class="row g-4">
 
-                            {% for i in products %}
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-start">
+                    {% for i in products %}
+                    <div class="col wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="dash-product-card">
+                            
+                            <!-- Image Section with overlay Active/Inactive visibility badge -->
+                            <div class="dash-img-wrapper">
+                                {% if i.product_status %}
+                                    <span class="status-badge status-active">Active</span>
+                                {% else %}
+                                    <span class="status-badge status-inactive">Inactive</span>
+                                {% endif %}
+                                <a href="{% url 'seller-product-details' pk=i.pk %}">
+                                    <img src="{{ i.product_picture.url }}" class="dash-img" alt="{{ i.product_name }}">
+                                </a>
+                            </div>
 
-                            <div class="col-md-6 col-lg-4 col-xl-3">
-                                <div class="product-item rounded wow fadeInUp" data-wow-delay="0.1s">
-                                    <div class="product-item-inner border rounded">
-                                        <div class="product-item-inner-item">
-                                            <img src="{{i.product_picture.url}}" style="width: 250px;height: 250px;" class="img-fluid w-100 rounded-top" alt="">
-                                        </div>
-                                        <div class="text-center rounded-bottom p-4">
-                                            <a href="#" class="d-block mb-2">{{i.product_category}}</a>
-                                            <a href="#" class="d-block h4">{{i.product_name}}
-                                            
-                                            <span class="text-primary fs-5">Rs. {{i.product_price}}</span>
-                                        </div>
-                                    </div>
-                                    <div
-                                        class="product-item-add border border-top-0 rounded-bottom text-center p-4 pt-0">
-                                        <a href="{% url 'seller-product-details' pk=i.pk %}"
-                                            class="btn btn-primary border-secondary rounded-pill py-2 px-4 mb-4"><i
-                                                class="fas fa-shopping-cart me-2"></i> Details </a>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            
-                                            <div class="d-flex">
-                                                <a href="#"
-                                                    class="text-primary d-flex align-items-center justify-content-center me-3"><span
-                                                        class="rounded-circle btn-sm-square border"><i
-                                                            class="fas fa-random"></i></i></a>
-                                                <a href="#"
-                                                    class="text-primary d-flex align-items-center justify-content-center me-0"><span
-                                                        class="rounded-circle btn-sm-square border"><i
-                                                            class="fas fa-heart"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <!-- Card Text Info Content -->
+                            <div class="dash-content">
+                                <span class="dash-category">{{ i.product_category }}</span>
+                                <a href="{% url 'seller-product-details' pk=i.pk %}" class="dash-title" title="{{ i.product_name }}">
+                                    {{ i.product_name }}
+                                </a>
+                                
+                                <div class="dash-pricing">
+                                    <span class="dash-price-val">Rs. {{ i.product_price }}</span>
+                                    <span class="dash-stock {% if i.product_stock > 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {% if i.product_stock > 0 %}
+                                            Stock: {{ i.product_stock }}
+                                        {% else %}
+                                            Out Of Stock
+                                        {% endif %}
+                                    </span>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="dash-actions">
+                                    <a href="{% url 'seller-product-details' pk=i.pk %}" class="btn-view-details">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </a>
+                                    
+                                    <a href="{% url 'seller-toggle-product-status' pk=i.pk %}" class="btn btn-toggle-status {% if i.product_status %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
+                                        <i class="fas {% if i.product_status %}fa-times-circle{% else %}fa-check-circle{% endif %}"></i>
+                                        {% if i.product_status %}Deactivate{% else %}Activate{% endif %}
+                                    </a>
                                 </div>
                             </div>
-                            {% endfor %}
+
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-            </div>
+            {% else %}
+                <!-- Stunning Empty State UI -->
+                <div class="empty-inventory-card">
+                    <div class="empty-inventory-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h3>No listed products</h3>
+                    <p>You haven't listed any items in your inventory yet. Start uploading your products to reach buyers.</p>
+                    <a href="{% url 'seller-add-product' %}" class="btn-add-inventory">
+                        <i class="fas fa-plus"></i> List Your First Product
+                    </a>
+                </div>
+            {% endif %}
+
         </div>
     </div>
-    <!-- Our Products End -->
+    <!-- Inventory Section End -->
 
 </body>
 </html>
