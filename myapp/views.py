@@ -1,8 +1,10 @@
 from django.shortcuts import render,redirect
-from .models import User,Product,Wishlist,Cart,Contact,Review
+from .models import User,Product,Wishlist,Cart,Contact,Review,SellerProfile
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
+from django.core.cache import cache
+from django.db.models import Count, F, Q, Sum
 import random
 import time
 import string
@@ -10,11 +12,11 @@ import requests
 from django.http import JsonResponse,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from django.db.models import Count, Q, F
 import stripe
 
 stripe.api_key = settings.STRIPE_PRIVATE_KEY
 YOUR_DOMAIN = 'http://localhost:8000'
+
 
 CATEGORIES = ["Mobile", "Laptops", "Electronics", "Accessories", "Appliances", "Smart Watches", "Tablets", "Earbuds", "Headphones", "Chargers", "Power Banks", "Cameras", "Gaming", "Computer Accessories", "Speakers", "Smart Gadgets"]
 GST_PERCENT = 18
@@ -86,8 +88,13 @@ def send_order_placed_notification(user, carts, order_id):
 
 # Create your views here.
 def attach_product_review_stats(products):
-    """Calculates and attaches average rating, total count, and pre-built star rendering lists to products."""
-    reviews = Review.objects.all()
+    """Attaches avg rating & star counts to a product list — only fetches reviews for those products."""
+    # Materialise once so we can extract PKs and iterate twice without extra queries
+    products = list(products)
+    if not products:
+        return products
+    product_ids = [p.pk for p in products]
+    reviews = Review.objects.filter(product_id__in=product_ids).only('product_id', 'rating')
     review_stats = {}
     for r in reviews:
         if r.product_id not in review_stats:
@@ -100,41 +107,41 @@ def attach_product_review_stats(products):
         p.total_reviews = stats['count']
         p.avg_rating = round(stats['sum'] / stats['count'], 1) if stats['count'] > 0 else 0
         p.avg_rating_int = int(round(p.avg_rating))
-        # Range lists for solid and empty stars
         p.stars_solid = range(p.avg_rating_int)
         p.stars_empty = range(5 - p.avg_rating_int)
     return products
 
 def index(request):
-    # Only show active products to buyers
-    products = Product.objects.filter(product_status=True)
+    # Only show active products — use select_related to avoid N+1 on seller/seller_profile
+    products = Product.objects.filter(product_status=True).select_related('seller', 'seller__seller_profile').order_by('-id')
     products = attach_product_review_stats(products)
     wishlist_pks = []
     if 'email' in request.session:
         try:
-            user=User.objects.get(email=request.session['email'])
+            user = User.objects.get(email=request.session['email'])
             wishlist_pks = list(Wishlist.objects.filter(user=user).values_list('product_id', flat=True))
-            if user.usertype=="buyer":
-                return render(request,'index.html', {'products': products, 'wishlist_pks': wishlist_pks})
+            if user.usertype == "buyer":
+                return render(request, 'index.html', {'products': products, 'wishlist_pks': wishlist_pks})
             else:
-                return redirect('seller-index')    
-        except:
-            return render(request,'index.html', {'products': products, 'wishlist_pks': wishlist_pks})
+                return redirect('seller-index')
+        except Exception:
+            return render(request, 'index.html', {'products': products, 'wishlist_pks': wishlist_pks})
     else:
         wishlist_pks = [int(pk) for pk in request.session.get('guest_wishlist', [])]
-        return render(request,'index.html', {'products': products, 'wishlist_pks': wishlist_pks})
+        return render(request, 'index.html', {'products': products, 'wishlist_pks': wishlist_pks})
     
 def seller_index(request):
     try:
         user = User.objects.get(email=request.session['email'])
         if user.usertype == "seller":
-            products = Product.objects.filter(seller=user)
-            # Safe dashboard aggregations
+            products = Product.objects.filter(seller=user).order_by('-id')
             total_products = products.count()
-            seller_orders = Cart.objects.filter(product__seller=user, payment_status=True)
-            total_orders = seller_orders.count()
-            total_revenue = sum(item.total_price for item in seller_orders if not item.is_cancelled)
-            
+            # Use DB aggregation instead of loading all cart rows into memory
+            seller_orders_qs = Cart.objects.filter(product__seller=user, payment_status=True, is_cancelled=False)
+            total_orders = Cart.objects.filter(product__seller=user, payment_status=True).count()
+            revenue_agg = seller_orders_qs.aggregate(total=Sum('total_price'))
+            total_revenue = revenue_agg['total'] or 0
+
             return render(request, 'seller-index.html', {
                 'products': products,
                 'total_products': total_products,
@@ -146,7 +153,7 @@ def seller_index(request):
     except (User.DoesNotExist, KeyError):
         return redirect('seller-login')
 
-def shop(request,cat):
+def shop(request, cat):
     if 'email' in request.session:
         try:
             user = User.objects.get(email=request.session['email'])
@@ -154,28 +161,30 @@ def shop(request,cat):
                 return redirect('seller-index')
         except User.DoesNotExist:
             pass
-            
-    # Only count active products for buyers
-    all_products_count=Product.objects.filter(product_status=True).count()
-    categories=Product.objects.filter(product_status=True).values('product_category').annotate(count=Count('id')).filter(count__gt=0).order_by('product_category')
-    
+
+    all_products_count = Product.objects.filter(product_status=True).count()
+    categories = (Product.objects.filter(product_status=True)
+                  .values('product_category')
+                  .annotate(count=Count('id'))
+                  .filter(count__gt=0)
+                  .order_by('product_category'))
+
     query = request.GET.get('q')
-    if cat=='all':
-        products=Product.objects.filter(product_status=True)
+    base_qs = Product.objects.filter(product_status=True).select_related('seller', 'seller__seller_profile')
+    if cat == 'all':
+        products = base_qs
     else:
-        products=Product.objects.filter(product_category=cat, product_status=True)
-        
+        products = base_qs.filter(product_category=cat)
+
     if query:
         products = products.filter(Q(product_name__icontains=query) | Q(product_desc__icontains=query))
-        
-    products = attach_product_review_stats(products)
-        
-    # Add icon mapping to categories
-    for category in categories:
-        cat_name = category['product_category']
-        category['icon'] = CATEGORY_ICONS.get(cat_name, 'fas fa-list')
 
-    # Get wishlist state
+    products = products.order_by('-id')
+    products = attach_product_review_stats(products)
+
+    for category in categories:
+        category['icon'] = CATEGORY_ICONS.get(category['product_category'], 'fas fa-list')
+
     wishlist_pks = []
     if 'email' in request.session:
         try:
@@ -186,7 +195,14 @@ def shop(request,cat):
     else:
         wishlist_pks = [int(pk) for pk in request.session.get('guest_wishlist', [])]
 
-    return render(request,'shop.html',{'products':products,'all_products':all_products_count,'categories':categories, 'current_cat': cat, 'search_query': query, 'wishlist_pks': wishlist_pks})
+    return render(request, 'shop.html', {
+        'products': products,
+        'all_products': all_products_count,
+        'categories': categories,
+        'current_cat': cat,
+        'search_query': query,
+        'wishlist_pks': wishlist_pks
+    })
 
 def contact(request):
     user = None
@@ -414,7 +430,230 @@ def logout(request):
     except:
         pass
     return redirect('login')
-    
+
+def become_seller(request):
+    """Secure buyer-to-seller upgrade form. GET shows pre-filled form; POST validates and upgrades."""
+    email = request.session.get('email')
+    if not email:
+        return redirect('login')
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return redirect('login')
+
+    # Only buyers can upgrade — prevent tampering / double-upgrade
+    if user.usertype != "buyer":
+        return redirect('profile')
+
+    if request.method == "GET":
+        return render(request, 'become-seller.html', {'user': user})
+
+    # ── POST: validate and process ──────────────────────────────────────
+    business_name = request.POST.get('business_name', '').strip()
+    gst_number = request.POST.get('gst_number', '').strip()
+
+    errors = {}
+    if not business_name:
+        errors['business_name'] = 'Business Name is required.'
+    elif len(business_name) > 200:
+        errors['business_name'] = 'Business Name must be under 200 characters.'
+
+    if gst_number and len(gst_number) > 20:
+        errors['gst_number'] = 'GST Number must be under 20 characters.'
+
+    if errors:
+        return render(request, 'become-seller.html', {
+            'user': user,
+            'errors': errors,
+            'form_data': request.POST,
+        })
+
+    # Save SellerProfile (create or update, in case of edge case retry)
+    seller_profile, _ = SellerProfile.objects.get_or_create(user=user)
+    seller_profile.business_name = business_name
+    seller_profile.gst_number = gst_number or None
+    seller_profile.save()
+
+    # Upgrade role — backend-enforced, cannot be bypassed from frontend
+    user.usertype = "seller"
+    user.save()
+
+    # Update session so header reflects new role immediately
+    request.session['usertype'] = "seller"
+
+    return redirect('seller-index')
+
+
+def google_callback(request):
+
+    """Serves the OAuth callback page that reads access_token from URL fragment."""
+    return render(request, 'google_callback.html')
+
+
+@csrf_exempt
+def google_login(request):
+    if request.method == "POST":
+        try:
+            # Detect mode: redirect mode sends form POST 'credential', popup sends JSON 'id_token'
+            content_type = request.content_type or ''
+            is_redirect_mode = 'application/x-www-form-urlencoded' in content_type
+
+            if is_redirect_mode:
+                id_token_str = request.POST.get('credential')
+                email = None
+                fname = lname = picture_url = ''
+            else:
+                data = json.loads(request.body)
+                id_token_str = data.get('id_token') or data.get('credential')
+                # Custom OAuth button sends access_token + user info directly
+                email = data.get('email')
+                fname = data.get('fname', 'Google')
+                lname = data.get('lname', 'User')
+                picture_url = data.get('picture', '')
+                access_token = data.get('access_token')
+
+            # If we received an access_token with user info (custom button flow)
+            if not is_redirect_mode and access_token and email:
+                # Verify access_token is valid by calling Google's userinfo endpoint
+                verify_resp = requests.get(
+                    'https://www.googleapis.com/oauth2/v3/userinfo',
+                    headers={'Authorization': f'Bearer {access_token}'},
+                    timeout=10
+                )
+                if verify_resp.status_code != 200 or verify_resp.json().get('email') != email:
+                    return JsonResponse({'status': 'error', 'message': 'Invalid access token'}, status=400)
+                # Token verified — skip id_token flow below and go directly to user creation
+                id_token_str = None
+
+            if not id_token_str and not (not is_redirect_mode and access_token and email):
+                if is_redirect_mode:
+                    return redirect('login')
+                return JsonResponse({'status': 'error', 'message': 'Token is missing'}, status=400)
+            
+            # If using id_token flow (GIS or redirect mode), verify the token
+            if id_token_str:
+                google_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={id_token_str}"
+                response = requests.get(google_url, timeout=10)
+                
+                if response.status_code != 200:
+                    if is_redirect_mode:
+                        return redirect('login')
+                    return JsonResponse({'status': 'error', 'message': 'Invalid token signature or expired'}, status=400)
+                
+                token_info = response.json()
+                
+                if token_info.get('aud') != settings.GOOGLE_CLIENT_ID:
+                    if is_redirect_mode:
+                        return redirect('login')
+                    return JsonResponse({'status': 'error', 'message': 'Audience mismatch'}, status=400)
+                    
+                email = token_info.get('email')
+                if not email:
+                    if is_redirect_mode:
+                        return redirect('login')
+                    return JsonResponse({'status': 'error', 'message': 'Email not provided by Google'}, status=400)
+                fname = token_info.get('given_name', 'Google')
+                lname = token_info.get('family_name', 'User')
+                picture_url = token_info.get('picture', '')
+                
+            # Retrieve or create User
+            created = False
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+
+                
+                # Create a secure user instance
+                # User models require mobile, address, password, profile_picture
+                import random
+                import string
+                from django.core.files.base import ContentFile
+                
+                password = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+                user = User(
+                    fname=fname,
+                    lname=lname,
+                    email=email,
+                    mobile=0,
+                    address="Registered with Google",
+                    password=password,
+                    usertype="buyer"
+                )
+                
+                if picture_url:
+                    try:
+                        img_response = requests.get(picture_url, timeout=5)
+                        if img_response.status_code == 200:
+                            user.profile_picture.save(f"google_{email}.jpg", ContentFile(img_response.content), save=False)
+                    except Exception as img_err:
+                        # If profile image fails to download, continue anyway
+                        pass
+                
+                user.save()
+                created = True
+                
+            # Log the user in manually via session
+            request.session['email'] = user.email
+            request.session['fname'] = user.fname
+            request.session['profile_picture'] = user.profile_picture.url if user.profile_picture else ""
+            
+            # Retrieve wishlist & cart counts
+            wishlists = Wishlist.objects.filter(user=user)
+            carts = Cart.objects.filter(user=user, payment_status=False)
+            request.session['wishlist_count'] = len(wishlists)
+            request.session['cart_count'] = len(carts)
+            
+            # Safe guest cart / wishlist merging (similar to standard login)
+            if user.usertype == "buyer":
+                guest_cart = request.session.get('guest_cart', {})
+                if guest_cart:
+                    for pk_str, item in guest_cart.items():
+                        try:
+                            product = Product.objects.get(pk=int(pk_str))
+                            cart, cart_created = Cart.objects.get_or_create(
+                                user=user, 
+                                product=product, 
+                                payment_status=False,
+                                defaults={
+                                    'product_price': product.product_price,
+                                    'product_qty': item['qty'],
+                                    'total_price': item['qty'] * product.product_price
+                                }
+                            )
+                            if not cart_created:
+                                cart.product_qty += item['qty']
+                                cart.total_price = cart.product_qty * product.product_price
+                                cart.save()
+                        except Product.DoesNotExist:
+                            pass
+                    del request.session['guest_cart']
+
+                guest_wishlist = request.session.get('guest_wishlist', [])
+                if guest_wishlist:
+                    for pk_str in guest_wishlist:
+                        try:
+                            product = Product.objects.get(pk=int(pk_str))
+                            Wishlist.objects.get_or_create(user=user, product=product)
+                        except Product.DoesNotExist:
+                            pass
+                    del request.session['guest_wishlist']
+            
+            # Return response based on mode
+            if is_redirect_mode:
+                return redirect('index' if user.usertype == 'buyer' else 'seller-index')
+            else:
+                redirect_target = '/' if user.usertype == 'buyer' else '/seller-index/'
+                return JsonResponse({'status': 'success', 'redirect_url': redirect_target, 'created': created})
+            
+        except Exception as e:
+            if is_redirect_mode:
+                return redirect('login')
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+            
+    return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)
+
+
 def profile(request):
     try:
         user=User.objects.get(email=request.session['email'])
@@ -431,6 +670,15 @@ def profile(request):
         except:
             pass
         user.save()
+        
+        # Update Seller-Specific Information if applicable
+        if hasattr(user, 'seller_profile'):
+            seller_prof = user.seller_profile
+            if 'business_name' in request.POST:
+                seller_prof.business_name = request.POST.get('business_name')
+            if 'gst_number' in request.POST:
+                seller_prof.gst_number = request.POST.get('gst_number')
+            seller_prof.save()
         msg="Profile Updated Successfully"
         request.session['profile_picture']=user.profile_picture.url
         
@@ -1031,6 +1279,14 @@ def success(request):
                 gst_val = (total_subtotal * gst_percent) / 100
                 grand_total = round(total_subtotal + gst_val, 2)
                 payment_method_display = "Online (Stripe)" if last_order.payment_method == 'Stripe' else "Cash on Delivery"
+                gst_numbers = set()
+                for item in purchased_items:
+                    try:
+                        if hasattr(item.product.seller, 'seller_profile') and item.product.seller.seller_profile.gst_number:
+                            gst_numbers.add(item.product.seller.seller_profile.gst_number)
+                    except Exception:
+                        pass
+                seller_gst_numbers_str = ", ".join(gst_numbers) if gst_numbers else "N/A"
                 
                 return render(request, 'success.html', {
                     'order_id': order_id,
@@ -1039,7 +1295,8 @@ def success(request):
                     'gst_amount': round(gst_val, 2),
                     'total_amount': grand_total,
                     'purchased_items': purchased_items,
-                    'order_date': last_order.time.strftime('%b %d, %Y %H:%M')
+                    'order_date': last_order.time.strftime('%b %d, %Y %H:%M'),
+                    'seller_gst_numbers': seller_gst_numbers_str
                 })
             return redirect('index')
 
@@ -1081,6 +1338,16 @@ def success(request):
             del request.session['temp_delivery_address']
             
         request.session['cart_count'] = 0
+        
+        gst_numbers = set()
+        for item in item_list:
+            try:
+                if hasattr(item.product.seller, 'seller_profile') and item.product.seller.seller_profile.gst_number:
+                    gst_numbers.add(item.product.seller.seller_profile.gst_number)
+            except Exception:
+                pass
+        seller_gst_numbers_str = ", ".join(gst_numbers) if gst_numbers else "N/A"
+        
         return render(request, 'success.html', {
             'order_id': order_id,
             'payment_method': 'Online (Stripe)',
@@ -1088,7 +1355,8 @@ def success(request):
             'gst_amount': round(gst_val, 2),
             'total_amount': grand_total,
             'purchased_items': item_list,
-            'order_date': timezone.now().strftime('%b %d, %Y %H:%M')
+            'order_date': timezone.now().strftime('%b %d, %Y %H:%M'),
+            'seller_gst_numbers': seller_gst_numbers_str
         })
     except:
         return redirect('login')
@@ -1433,14 +1701,13 @@ def seller_myorder(request):
     try:
         user = User.objects.get(email=request.session['email'])
         if user.usertype == "seller":
-            orders = Cart.objects.filter(product__seller=user, payment_status=True).order_by('-time')
-            
-            # Fetch reviews for seller products and attach to matching orders
-            reviews = Review.objects.filter(product__seller=user)
+            orders = (Cart.objects.filter(product__seller=user, payment_status=True)
+                      .select_related('user', 'product', 'product__seller')
+                      .order_by('-time'))
+            reviews = Review.objects.filter(product__seller=user).only('cart_id', 'rating', 'review_text', 'time')
             review_map = {r.cart_id: r for r in reviews if r.cart_id}
             for order in orders:
                 order.review = review_map.get(order.pk)
-                
             return render(request, 'seller-myorder.html', {'orders': orders})
         else:
             return redirect('index')
@@ -1736,18 +2003,33 @@ def seller_deliver_order(request):
 def seller_category_counts(request):
     if 'email' not in request.session:
         return JsonResponse({'error': 'Unauthorized'}, status=401)
-    
     try:
         seller = User.objects.get(email=request.session['email'])
-        counts = Product.objects.filter(seller=seller).values('product_category').annotate(count=Count('id')).filter(count__gt=0).order_by('product_category')
-        return JsonResponse({'categories': list(counts)})
+        cache_key = f'seller_cat_counts_{seller.pk}'
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return JsonResponse({'categories': cached})
+        counts = list(Product.objects.filter(seller=seller)
+                      .values('product_category')
+                      .annotate(count=Count('id'))
+                      .filter(count__gt=0)
+                      .order_by('product_category'))
+        cache.set(cache_key, counts, 30)
+        return JsonResponse({'categories': counts})
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 
 def global_category_counts(request):
-    # Only count active products for buyers
-    counts = Product.objects.filter(product_status=True).values('product_category').annotate(count=Count('id')).filter(count__gt=0).order_by('product_category')
-    return JsonResponse({'categories': list(counts)})
+    cached = cache.get('global_cat_counts')
+    if cached is not None:
+        return JsonResponse({'categories': cached})
+    counts = list(Product.objects.filter(product_status=True)
+                  .values('product_category')
+                  .annotate(count=Count('id'))
+                  .filter(count__gt=0)
+                  .order_by('product_category'))
+    cache.set('global_cat_counts', counts, 60)
+    return JsonResponse({'categories': counts})
 def seller_reply(request):
     if request.method == "POST":
         contact_id = request.POST.get('contact_id')

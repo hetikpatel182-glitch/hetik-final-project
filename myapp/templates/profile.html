@@ -311,6 +311,48 @@
     </div>
     <!-- Profile Section End -->
 
+    <!-- Become a Seller Section (only for buyers) -->
+    {% if user.usertype == "buyer" %}
+    <div class="container-fluid py-4" style="background:#f0f7ff; border-top: 1px solid #dbeafe;">
+        <div class="container">
+            <div style="max-width:860px; margin:0 auto; background:#fff; border:1.5px solid #bfdbfe; border-radius:20px; padding:2rem 2.5rem; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;">
+                <div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                        <span style="background:#eff6ff;color:#2563eb;border-radius:30px;padding:4px 14px;font-size:0.78rem;font-weight:700;letter-spacing:0.5px;">CURRENT ROLE: BUYER</span>
+                    </div>
+                    <h5 style="font-weight:800;color:#1e293b;margin:0 0 6px;">Want to sell on our platform?</h5>
+                    <p style="color:#64748b;margin:0;font-size:0.9rem;">Upgrade your account to Seller and start listing your products today. Free & instant.</p>
+                </div>
+                <a href="{% url 'become-seller' %}" style="flex-shrink:0;text-decoration:none;">
+                    <button type="button" style="
+                        background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);
+                        color:#fff;border:none;border-radius:14px;
+                        padding:13px 28px;font-weight:700;font-size:0.95rem;
+                        cursor:pointer;display:flex;align-items:center;gap:8px;
+                        box-shadow:0 4px 14px rgba(245,158,11,0.3);
+                        transition:all 0.3s;white-space:nowrap;">
+                        <i class="fas fa-store"></i> Become a Seller
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% elif user.usertype == "seller" %}
+    <div class="container-fluid py-3" style="background:#f0fdf4; border-top: 1px solid #bbf7d0;">
+        <div class="container">
+            <div style="max-width:860px;margin:0 auto;display:flex;align-items:center;gap:12px;">
+                <i class="fas fa-check-circle" style="color:#16a34a;font-size:1.4rem;"></i>
+                <div>
+                    <span style="background:#dcfce7;color:#15803d;border-radius:30px;padding:4px 14px;font-size:0.78rem;font-weight:700;">SELLER ACCOUNT</span>
+                    <p style="margin:4px 0 0;color:#64748b;font-size:0.88rem;">You have a Seller account. <a href="{% url 'seller-index' %}" style="color:#16a34a;font-weight:600;">Go to Seller Dashboard →</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+
 </body>
 </html>
 {% endblock %}

@@ -126,6 +126,16 @@ class Review(models.Model):
     def __str__(self):
         return f"{self.user.fname} - {self.product.product_name} ({self.rating} Stars)"
 
+class SellerProfile(models.Model):
+    """Stores seller-specific business info, linked 1-to-1 with the User."""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='seller_profile')
+    business_name = models.CharField(max_length=200)
+    gst_number = models.CharField(max_length=20, blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.business_name} ({self.user.email})"
+
 # =====================================================================
 # AUTO-HEALING MIGRATION: Injects new columns dynamically
 # =====================================================================
@@ -188,6 +198,16 @@ try:
             cursor.execute("ALTER TABLE myapp_cart ADD COLUMN return_reason text NULL")
         if "is_restocked" not in columns:
             cursor.execute("ALTER TABLE myapp_cart ADD COLUMN is_restocked integer NOT NULL DEFAULT 0")
+        # Auto-heal myapp_sellerprofile table if missing
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS myapp_sellerprofile (
+                id integer PRIMARY KEY AUTOINCREMENT,
+                business_name varchar(200) NOT NULL DEFAULT '',
+                gst_number varchar(20) NULL,
+                created_at datetime NOT NULL,
+                user_id integer NOT NULL UNIQUE REFERENCES myapp_user(id) ON DELETE CASCADE
+            )
+        """)
         conn.commit()
         conn.close()
 except Exception as e:

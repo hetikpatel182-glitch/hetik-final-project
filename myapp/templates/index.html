@@ -615,7 +615,8 @@
                         <h4 class="mb-2" style="font-size: 1.1rem; font-weight: 600; color: #1e293b; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 44px;">{{ product.product_name }}</h4>
                         
                         <div class="mb-3">
-                            <span class="text-muted" style="font-size: 0.8rem; font-weight: 500;"><i class="fas fa-store me-1 text-primary"></i> {{ product.seller.fname }} {{ product.seller.lname }}</span>
+                            <span class="text-muted" style="font-size: 0.8rem; font-weight: 500;"><i class="fas fa-store me-1 text-primary"></i>
+                            {% if product.seller.seller_profile %}{{ product.seller.seller_profile.business_name }}{% else %}{{ product.seller.fname }} {{ product.seller.lname }}{% endif %}</span>
                         </div>
                         
                         <!-- Stock Status Indicator -->

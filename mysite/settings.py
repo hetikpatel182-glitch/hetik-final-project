@@ -138,3 +138,6 @@ EMAIL_HOST_PASSWORD = 'cclz dule kkak rqpq'
 
 STRIPE_PUBLIC_KEY='pk_test_51MshH6SJuXwPfjjrrgxJ5tubbOgYAhRrqNcd4RDUSq1peWpIMZrjhIiTncSUWO9u6byeDf4KxdZPkFD4hU55mVOg00aRL5RT8x'
 STRIPE_PRIVATE_KEY='sk_test_51MshH6SJuXwPfjjry2IkUKMu8iyfVbVspwNw3RvLshMUCMRRCiNSeWmf17dCfVe0IFHRwq3zYTOc2NBXFSHKbVMw00rJtyc3CY'
+
+# Google Identity Services Integration
+GOOGLE_CLIENT_ID = '48525277306-6udtus2l4jpup2rb12lbksnrkl8ulv4e.apps.googleusercontent.com'

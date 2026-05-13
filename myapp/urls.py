@@ -56,4 +56,10 @@ urlpatterns = [
     path('get-buyer-recent-orders/', views.get_buyer_recent_orders, name='get-buyer-recent-orders'),
     path('search-suggestions/', views.search_suggestions, name='search-suggestions'),
     path('get-buyer-chats/', views.get_buyer_chats, name='get-buyer-chats'),
+    path('google-login/', views.google_login, name='google-login'),
+    path('google-callback/', views.google_callback, name='google-callback'),
+    path('become-seller/', views.become_seller, name='become-seller'),
 ]
+
+
+

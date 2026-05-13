@@ -556,11 +556,18 @@
                                 </a>
 
                                 <div class="flex-grow-1">
-                                    <h3 class="product-title mb-2">
+                                    <h3 class="product-title mb-1">
                                         <a href="{% url 'product-details' pk=i.product.pk %}" class="text-dark text-decoration-none hover-primary" title="View details of {{ i.product.product_name }}">
                                             {{i.product.product_name}}
                                         </a>
                                     </h3>
+                                    
+                                    <div class="product-meta mb-2" style="font-size: 0.85rem;">
+                                        <i class="fas fa-store text-warning me-1"></i> Sold by: 
+                                        <strong class="text-dark">
+                                            {% if i.product.seller.seller_profile %}{{ i.product.seller.seller_profile.business_name }}{% else %}{{ i.product.seller.fname }} {{ i.product.seller.lname }}{% endif %}
+                                        </strong>
+                                    </div>
 
                                     <div class="product-meta">Price: Rs. {{i.product_price}}</div>
                                     <div class="product-meta">Quantity: {{i.product_qty}}</div>

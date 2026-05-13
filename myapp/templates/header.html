@@ -1401,14 +1401,13 @@
 
 
     <!-- JavaScript Libraries -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'lib/wow/wow.min.js' %}"></script>
-    <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %} "></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="{% static 'lib/wow/wow.min.js' %}" defer></script>
+    <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}" defer></script>
 
     <!-- Template Javascript -->
-    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/main.js' %}" defer></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const globalCategoryList = document.getElementById("global-category-list");
@@ -1785,10 +1784,18 @@
                 });
             }
 
-            // Initial fetch and poll every 5 seconds (near real-time tracking)
+            // Fetch on load, then poll every 30s — pauses when tab is hidden
             if (badge) {
                 fetchNotifications();
-                setInterval(fetchNotifications, 5000);
+                let notifInterval = setInterval(fetchNotifications, 30000);
+                document.addEventListener('visibilitychange', function() {
+                    if (document.hidden) {
+                        clearInterval(notifInterval);
+                    } else {
+                        fetchNotifications();
+                        notifInterval = setInterval(fetchNotifications, 30000);
+                    }
+                });
             }
         });
     </script>

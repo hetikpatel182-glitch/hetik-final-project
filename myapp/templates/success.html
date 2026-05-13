@@ -284,6 +284,13 @@
                     <span class="receipt-value text-dark">Rs. {{ gst_amount|default:"0.00" }}</span>
                 </div>
 
+                {% if seller_gst_numbers and seller_gst_numbers != 'N/A' %}
+                <div class="receipt-row">
+                    <span class="receipt-label">Seller GST No:</span>
+                    <span class="receipt-value text-muted" style="font-size: 0.85rem;">{{ seller_gst_numbers }}</span>
+                </div>
+                {% endif %}
+
                 <div class="receipt-row mb-0 mt-2 pt-2 border-top">
                     <span class="receipt-label text-dark fw-bold">Grand Total (Incl. GST):</span>
                     <span class="receipt-value price fw-bold" style="font-size: 1.15rem; color: #0d6efd;">Rs. {{ total_amount|default:"0.00" }}</span>

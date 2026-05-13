@@ -266,6 +266,31 @@
                             </div>
                         </div>
 
+                        <!-- Seller Business Info -->
+                        {% if user.seller_profile %}
+                        <div class="col-12 mt-4 mb-2">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="fas fa-briefcase" style="color:#d97706; font-size:1.2rem;"></i>
+                                <span style="font-weight:800; color:#92400e; font-size:1.1rem;">Business Details</span>
+                                <span style="background:#fef3c7; color:#92400e; border-radius:30px; padding:3px 12px; font-size:0.75rem; font-weight:700; margin-left:auto;">SELLER</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="business_name" name="business_name" value="{{ user.seller_profile.business_name }}" placeholder="Business Name" required style="height: 60px; background:#fffbeb; border:1px solid #fde68a;">
+                                <label for="business_name" style="color:#92400e; font-weight:600;">Business Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="gst_number" name="gst_number" value="{{ user.seller_profile.gst_number|default_if_none:'' }}" placeholder="GST Number" style="height: 60px; background:#fffbeb; border:1px solid #fde68a;">
+                                <label for="gst_number" style="color:#92400e; font-weight:600;">GST Number (Optional)</label>
+                            </div>
+                        </div>
+                        <div class="col-12"><hr style="border-color: #fde68a; opacity: 1;"></div>
+                        {% endif %}
+
+
                         <!-- Profile Avatar Section -->
                         <div class="col-md-6 text-start">
                             <label class="file-upload-label">Current Profile Avatar</label>
@@ -310,6 +335,7 @@
         </div>
     </div>
     <!-- Profile Section End -->
+
 
 </body>
 </html>
