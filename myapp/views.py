@@ -113,7 +113,7 @@ def attach_product_review_stats(products):
 
 def index(request):
     # Only show active products — use select_related to avoid N+1 on seller/seller_profile
-    products = Product.objects.filter(product_status=True).select_related('seller', 'seller__seller_profile').order_by('-id')
+    products = Product.objects.filter(product_status=True).select_related('seller', 'seller__seller_profile').order_by('-id')[:12]
     products = attach_product_review_stats(products)
     wishlist_pks = []
     if 'email' in request.session:
