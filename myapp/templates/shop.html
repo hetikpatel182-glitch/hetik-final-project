@@ -654,26 +654,41 @@
                                     </div>
                                 </div>
                                 {% empty %}
-                                <div class="col-12 text-center py-5">
+                                <style>
+                                    @keyframes floatEmpty {
+                                        0% { transform: translateY(0px); }
+                                        50% { transform: translateY(-12px); }
+                                        100% { transform: translateY(0px); }
+                                    }
+                                    .btn-hover-bounce:hover {
+                                        transform: translateY(-4px) scale(1.05);
+                                        box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4) !important;
+                                    }
+                                </style>
+                                <div class="col-12 text-center py-5 wow fadeInUp" data-wow-delay="0.1s">
                                     <div class="mb-4">
-                                        <i class="fas fa-search-minus fa-4x text-muted opacity-50 mb-3"></i>
-                                        <h3 class="fw-bold text-dark">No products found</h3>
-                                        <p class="text-muted">We couldn't find any products matching your criteria.</p>
+                                        <div class="empty-icon-wrap mx-auto mb-4" style="width: 120px; height: 120px; background: rgba(13, 110, 253, 0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: floatEmpty 3.5s ease-in-out infinite;">
+                                            <i class="fas fa-search-minus fa-4x text-primary opacity-75"></i>
+                                        </div>
+                                        <h3 class="fw-bold text-dark mb-3">No products found</h3>
+                                        <p class="text-muted fs-5" style="max-width: 500px; margin: 0 auto;">We couldn't find any products matching your search criteria. Try exploring our collection instead.</p>
                                     </div>
-                                    <a href="{% url 'shop' cat='all' %}" class="btn btn-primary rounded-pill px-5 py-3">
+                                    <a href="{% url 'shop' cat='all' %}" class="btn btn-primary rounded-pill px-5 py-3 btn-hover-bounce mt-2" style="transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(13, 110, 253, 0.2); font-weight: 600; font-size: 1.05rem;">
                                         <i class="fas fa-th-large me-2"></i> Browse All Products
                                     </a>
                                 </div>
                                 {% endfor %}
 
                                 <!-- Empty State for Filters -->
-                                <div id="filter-empty-state" class="col-12 text-center py-5 wow fadeInUp" style="display: none;">
+                                <div id="filter-empty-state" class="col-12 text-center py-5 wow fadeInUp" style="display: none; animation: fadeIn 0.5s;">
                                     <div class="mb-4">
-                                        <i class="fas fa-filter-circle-xmark fa-4x text-muted opacity-50 mb-3"></i>
-                                        <h3 class="fw-bold text-dark">No matches found</h3>
-                                        <p class="text-muted">Try adjusting your filters to find what you're looking for.</p>
+                                        <div class="empty-icon-wrap mx-auto mb-4" style="width: 120px; height: 120px; background: rgba(108, 117, 125, 0.08); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: floatEmpty 3.5s ease-in-out infinite;">
+                                            <i class="fas fa-filter-circle-xmark fa-4x text-secondary opacity-75"></i>
+                                        </div>
+                                        <h3 class="fw-bold text-dark mb-3">No matches found</h3>
+                                        <p class="text-muted fs-5" style="max-width: 500px; margin: 0 auto;">Try adjusting your filters to find what you're looking for.</p>
                                     </div>
-                                    <button onclick="document.getElementById('reset-filters').click()" class="btn btn-primary rounded-pill px-5 py-3">
+                                    <button onclick="document.getElementById('reset-filters').click()" class="btn btn-secondary rounded-pill px-5 py-3 btn-hover-bounce mt-2" style="transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(108, 117, 125, 0.2); font-weight: 600; font-size: 1.05rem;">
                                         <i class="fas fa-undo me-2"></i> Clear Filters
                                     </button>
                                 </div>
