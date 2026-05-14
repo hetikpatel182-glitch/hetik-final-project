@@ -267,7 +267,7 @@
                         </div>
 
                         <!-- Seller Business Info -->
-                        {% if user.seller_profile %}
+                        {% if user.usertype == 'seller' %}
                         <div class="col-12 mt-4 mb-2">
                             <div class="d-flex align-items-center gap-2 mb-2">
                                 <i class="fas fa-briefcase" style="color:#d97706; font-size:1.2rem;"></i>

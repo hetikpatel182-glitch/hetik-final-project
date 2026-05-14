@@ -672,7 +672,10 @@ def profile(request):
         user.save()
         
         # Update Seller-Specific Information if applicable
-        if hasattr(user, 'seller_profile'):
+        if user.usertype == 'seller':
+            if not hasattr(user, 'seller_profile'):
+                SellerProfile.objects.create(user=user, business_name=user.fname + " " + user.lname)
+                
             seller_prof = user.seller_profile
             if 'business_name' in request.POST:
                 seller_prof.business_name = request.POST.get('business_name')
