@@ -2095,7 +2095,7 @@ def get_buyer_recent_orders(request):
         return JsonResponse({'orders': []})
     try:
         user = User.objects.get(email=request.session['email'])
-        orders = Cart.objects.filter(user=user, delivery_status='delivered', is_cancelled=False, return_status='none').order_by('-time')[:10]
+        orders = Cart.objects.filter(user=user, is_cancelled=False).order_by('-time')[:15]
         order_list = []
         for o in orders:
             order_list.append({
