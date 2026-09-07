@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +22,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-yt2k2@w@$f0@rr94okvccd=q@!&h_vs-3x&66e9f1%dbjhmjh2'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-yt2k2@w@$f0@rr94okvccd=q@!&h_vs-3x&66e9f1%dbjhmjh2'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.pythonanywhere.com']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.pythonanywhere.com',
+    '.vercel.app',
+    '.now.sh',
+]
+
+# Allow additional hosts via environment variable (comma-separated)
+EXTRA_HOSTS = os.environ.get('ALLOWED_HOSTS', '')
+if EXTRA_HOSTS:
+    ALLOWED_HOSTS += [h.strip() for h in EXTRA_HOSTS.split(',') if h.strip()]
 
 
 # Application definition
@@ -38,11 +53,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     'myapp',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -73,12 +91,14 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# Uses DATABASE_URL env var in production, falls back to SQLite for local dev
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 
@@ -117,27 +137,71 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = BASE_DIR / 'staticfiles_build' / 'static'
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+# Media files — Cloudinary in production, local filesystem in development
+if os.environ.get('CLOUDINARY_URL'):
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
+        'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
+        'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
+    }
+    MEDIA_URL = '/media/'
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    MEDIA_URL = '/media/'
 
 
+# Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'hetikpatel182@gmail.com'
-EMAIL_HOST_PASSWORD = 'cclz dule kkak rqpq'       
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'hetikpatel182@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 
-
-STRIPE_PUBLIC_KEY='pk_test_51MshH6SJuXwPfjjrrgxJ5tubbOgYAhRrqNcd4RDUSq1peWpIMZrjhIiTncSUWO9u6byeDf4KxdZPkFD4hU55mVOg00aRL5RT8x'
-STRIPE_PRIVATE_KEY='sk_test_51MshH6SJuXwPfjjry2IkUKMu8iyfVbVspwNw3RvLshMUCMRRCiNSeWmf17dCfVe0IFHRwq3zYTOc2NBXFSHKbVMw00rJtyc3CY'
+# Stripe configuration
+STRIPE_PUBLIC_KEY = os.environ.get(
+    'STRIPE_PUBLIC_KEY',
+    'pk_test_51MshH6SJuXwPfjjrrgxJ5tubbOgYAhRrqNcd4RDUSq1peWpIMZrjhIiTncSUWO9u6byeDf4KxdZPkFD4hU55mVOg00aRL5RT8x'
+)
+STRIPE_PRIVATE_KEY = os.environ.get(
+    'STRIPE_PRIVATE_KEY',
+    'sk_test_51MshH6SJuXwPfjjry2IkUKMu8iyfVbVspwNw3RvLshMUCMRRCiNSeWmf17dCfVe0IFHRwq3zYTOc2NBXFSHKbVMw00rJtyc3CY'
+)
 
 # Google Identity Services Integration
-GOOGLE_CLIENT_ID = '48525277306-6udtus2l4jpup2rb12lbksnrkl8ulv4e.apps.googleusercontent.com'
+GOOGLE_CLIENT_ID = os.environ.get(
+    'GOOGLE_CLIENT_ID',
+    '48525277306-6udtus2l4jpup2rb12lbksnrkl8ulv4e.apps.googleusercontent.com'
+)
+
+# CSRF Trusted Origins for Vercel
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.vercel.app',
+    'https://*.now.sh',
+]
+EXTRA_CSRF = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
+if EXTRA_CSRF:
+    CSRF_TRUSTED_ORIGINS += [o.strip() for o in EXTRA_CSRF.split(',') if o.strip()]
+
+# Production security settings (Vercel handles SSL at the edge)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = False  # Vercel handles HTTPS redirection
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

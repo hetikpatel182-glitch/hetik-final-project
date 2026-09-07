@@ -7,3 +7,26 @@ __pycache__
 .env
 myvenv/
 venv/
+
+# Database
+db.sqlite3
+
+# Static build output
+staticfiles_build/
+
+# Media uploads (local dev)
+media/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel/
+
+# Brain / agent artifacts
+brain/

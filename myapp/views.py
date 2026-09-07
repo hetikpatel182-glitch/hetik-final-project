@@ -12,10 +12,11 @@ import requests
 from django.http import JsonResponse,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+import os
 import stripe
 
 stripe.api_key = settings.STRIPE_PRIVATE_KEY
-YOUR_DOMAIN = 'http://localhost:8000'
+YOUR_DOMAIN = os.environ.get('SITE_DOMAIN', 'http://localhost:8000')
 
 
 CATEGORIES = ["Mobile", "Laptops", "Electronics", "Accessories", "Appliances", "Smart Watches", "Tablets", "Earbuds", "Headphones", "Chargers", "Power Banks", "Cameras", "Gaming", "Computer Accessories", "Speakers", "Smart Gadgets"]
