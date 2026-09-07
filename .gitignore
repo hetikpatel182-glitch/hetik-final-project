@@ -11,11 +11,7 @@ venv/
 # Database
 db.sqlite3
 
-# Static build output
-staticfiles_build/
-
-# Media uploads (local dev)
-media/
+# Static & Media are included for serverless deployment
 
 # IDE
 .vscode/
